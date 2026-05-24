@@ -1,0 +1,32 @@
+---
+name: Custom issue template
+about: Describe this issue template's purpose here.
+title: "[category]: title"
+labels: ''
+assignees: ''
+
+---
+
+---
+name: Custom issue template
+about: Describe this issue template's purpose here.
+title: ''
+labels: ''
+assignees: ''
+
+---
+
+## 🧩 작업 내용
+- 어떤 작업을 할지 간단히 설명해주세요
+
+## 🛠 작업 상세 내용 
+- [ ] 작업 1
+- [ ] 작업 2
+- [ ] 작업 3
+
+## 📸 참고 자료 (선택)
+- 디자인 링크 (Figma 등)
+- API 문서 (Swagger 등)
+- 참고 이미지
+
+## 🤯 관련 이슈 (선택)
