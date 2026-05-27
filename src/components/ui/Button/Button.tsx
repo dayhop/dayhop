@@ -55,12 +55,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, selected, Icon, children, ...props }, ref) => {
+  ({ className, variant, size, selected, Icon, children, type = 'button', ...props }, ref) => {
     const hasIcon = Boolean(Icon);
 
     return (
       <button
         ref={ref}
+        type={type}
         className={cn(
           buttonVariants({
             variant,
