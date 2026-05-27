@@ -74,7 +74,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {Icon && <span className="inline-flex h-5 w-5 items-center justify-center">{Icon}</span>}
-        <span className="inline-block">{children}</span>
+        {children && <span className="inline-block">{children}</span>}
       </button>
     );
   }
