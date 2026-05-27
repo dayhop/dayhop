@@ -14,7 +14,7 @@ const buttonVariants = cva(
         secondary:
           //secondary에서도 active 색상 임의 지정 피그마 시안::  #C6C8CF
           "justify-center bg-white text-gray-700 active:bg-[#2f6bff] active:text-[#FFF] disabled:text-[#C6C8CF] border border-[#C6C8CF]",
-        text: "bg-white text-gray-700 border border-gray-200 active:bg-[#E5F3FF]",
+        text: "bg-white text-gray-700 border border-gray-200 hover:bg-[#E5F3FF]",
       },
       size: {
         lg: "h-[54px] px-10 rounded-[16px]",
