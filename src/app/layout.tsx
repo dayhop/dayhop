@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "dayhop",
-  description: "dayhop",
+  title: 'DayHOP',
+  description: '오늘의 취향을 발견하고 가볍게 HOP하는 체험 플랫폼',
 };
 
 export default function RootLayout({
