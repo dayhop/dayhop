@@ -1,14 +1,23 @@
 import type { NextConfig } from 'next';
-import type { RuleSetRule } from 'webpack';
+
+type WebpackRule = {
+  test?: RegExp;
+  issuer?: unknown;
+  resourceQuery?: {
+    not?: RegExp[];
+  };
+  exclude?: RegExp;
+  [key: string]: unknown;
+};
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
   webpack(config) {
     const fileLoaderRule = config.module.rules.find(
-      (rule: RuleSetRule | '...') =>
+      (rule: WebpackRule | '...') =>
         rule !== '...' && rule.test instanceof RegExp && rule.test.test('.svg')
-    ) as RuleSetRule | undefined;
+    ) as WebpackRule | undefined;
 
     if (!fileLoaderRule) {
       return config;
