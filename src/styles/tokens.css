@@ -1,5 +1,7 @@
 @layer base {
   :root {
+    --font-sans: var(--font-pretendard), sans-serif;
+
     --color-white: #ffffff;
     --color-black: #000000;
 
