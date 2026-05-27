@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         loaders: ['@svgr/webpack'],
         as: '*.js',
       },
+
+      '*.svg?url': {
+        as: '*.svg',
+      },
     },
   },
 };
