@@ -1,25 +1,47 @@
 import React, { forwardRef } from "react";
+
 import { cva, type VariantProps } from "class-variance-authority";
+import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center w-auto cursor-pointer font-medium px-4 transition-colors disabled:opacity-50 disabled:pointer-events-none px-10 py-3.5",
+  "inline-flex items-center w-full cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none",
   {
     variants: {
       variant: {
-        primary: "bg-[#3D9EF2] text-white disabled:bg-[#C6C8CF]",
+        primary:
+          "justify-center bg-[#3D9EF2] text-white disabled:bg-[#C6C8CF] active:bg-[#2f6bff]", //active 색상 임의로 지정
         secondary:
-          "bg-white text-gray-700 active:bg-[#3D9EF2] active:text-[#FFF] disabled:text-[#C6C8CF] border border-[#C6C8CF]",
-        text: "bg-white text-gray-700 border border-gray-200",
+          //secondary에서도 active 색상 임의 지정 피그마 시안::  #C6C8CF
+          "justify-center bg-white text-gray-700 active:bg-[#2f6bff] active:text-[#FFF] disabled:text-[#C6C8CF] border border-[#C6C8CF]",
+        text: "bg-white text-gray-700 border border-gray-200 active:bg-[#E5F3FF]",
       },
       size: {
-        lg: "h-13.5 rounded-[16px]",
-        md: "h-12 rounded-[14px]",
-        sm: "py-3 rounded-[12px]",
+        lg: "h-[54px] px-10 rounded-[16px]",
+        md: "h-[48px] px-8 rounded-[14px]",
+        sm: "h-[40px] px-6 rounded-[12px]",
+      },
+      withIcon: {
+        true: "gap-2",
+        false: "",
+      },
+      selected: {
+        true: "bg-[#E5F3FF]",
+        false: "",
       },
     },
+    compoundVariants: [
+      {
+        variant: "text",
+        selected: true,
+        className: "bg-[#E5F3FF] text-black",
+      },
+    ],
     defaultVariants: {
       variant: "primary",
       size: "lg",
+      withIcon: false,
+      selected: false,
     },
   },
 );
@@ -27,24 +49,34 @@ const buttonVariants = cva(
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     className?: string;
-    leftIcon?: React.ReactNode;
+    Icon?: React.ReactNode;
   };
 
-const cn = (...classes: Array<string | false | null | undefined>) =>
-  classes.filter(Boolean).join(" ");
-
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, leftIcon, children, ...props }, ref) => {
-    const hasIcon = Boolean(leftIcon);
+  ({ className, variant, size, selected, Icon, children, ...props }, ref) => {
+    const hasIcon = Boolean(Icon);
 
     return (
       <button
         ref={ref}
-        className={cn(buttonVariants({ variant, size }), className)}
+        className={cn(
+          buttonVariants({
+            variant,
+            size,
+            selected: selected,
+            withIcon: hasIcon,
+          }),
+          className,
+        )}
         {...props}
       >
-        {leftIcon && (
-          <span className="inline-flex items-center">{leftIcon}</span>
+        {Icon && (
+          <span className="inline-flex items-center justify-center h-5 w-5">
+            {Icon}
+          </span>
         )}
         <span className="inline-block">{children}</span>
       </button>
