@@ -48,7 +48,7 @@ const buttonVariants = cva(
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     className?: string;
-    Icon?: React.ReactNode;
+    Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   };
 
 export function cn(...inputs: ClassValue[]) {
@@ -73,7 +73,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {Icon && <span className="inline-flex h-5 w-5 items-center justify-center">{Icon}</span>}
+        {Icon && (
+          <span className="inline-flex h-5 w-5 items-center justify-center">
+            <Icon />
+          </span>
+        )}
         {children && <span className="inline-block">{children}</span>}
       </button>
     );

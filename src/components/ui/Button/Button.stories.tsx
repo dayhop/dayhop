@@ -1,7 +1,7 @@
 import Button from './Button';
 
-import { GoogleIcon } from '@/assets/icon_google';
-import { UserIcon } from '@/assets/icon_user';
+import GoogleIcon from '@/assets/Button/GoogleIcon.svg';
+import UserIcon from '@/assets/Button/UserIcon.svg';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 const meta: Meta<typeof Button> = {
@@ -38,7 +38,7 @@ export const Secondary: Story = {
   args: {
     variant: 'secondary',
     size: 'lg',
-    Icon: <GoogleIcon />,
+    Icon: GoogleIcon,
     children: '구글로그인',
   },
 };
@@ -47,7 +47,7 @@ export const Text: Story = {
   args: {
     variant: 'text',
     size: 'md',
-    Icon: <UserIcon />,
+    Icon: UserIcon,
     selected: false,
   },
   render: (args) => (
