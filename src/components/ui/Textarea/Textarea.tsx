@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -29,12 +30,14 @@ export const Textarea = ({
   id,
   ...props
 }: TextareaProps) => {
+  const generatedId = useId();
+  const textareaId = id ?? generatedId;
   const count = String(value ?? '').length;
 
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={id} className={textareaLabelClassName[variant]}>
+        <label htmlFor={textareaId} className={textareaLabelClassName[variant]}>
           {label}
         </label>
       )}
@@ -47,7 +50,7 @@ export const Textarea = ({
         )}
       >
         <textarea
-          id={id}
+          id={textareaId}
           value={value}
           maxLength={maxLength}
           {...props}
