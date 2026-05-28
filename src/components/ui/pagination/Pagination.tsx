@@ -1,5 +1,5 @@
-import Left from '@/assets/pagination/left_arrow.svg';
-import Right from '@/assets/pagination/right_arrow.svg';
+import Left from '@/assets/icon/left_arrow.svg';
+import Right from '@/assets/icon/right_arrow.svg';
 
 interface PaginationProps {
   paginationCount: number;
@@ -26,19 +26,6 @@ export function Pagination({
       >
         <Left width={8} height={12} />
       </button>
-      {/* {Array.from({ length: paginationCount }).map((_, index) => {
-        const isActive = currentPage === index + 1;
-        return (
-          <button
-            key={index}
-            onClick={() => clickPage(index + 1)}
-            className={`flex h-6 w-6 cursor-pointer items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
-          >
-            {index + 1}
-          </button>
-        );
-      })} */}
-
       {paginationCount <= SHOWITEM
         ? Array.from({ length: paginationCount }).map((_, index) => {
             const isActive = currentPage === index + 1;
