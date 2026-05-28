@@ -1,20 +1,3 @@
 @import 'tailwindcss';
 @import '../styles/tokens.css';
-
-.custom-textarea-scrollbar::-webkit-scrollbar {
-  width: 3px;
-}
-
-.custom-textarea-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-textarea-scrollbar::-webkit-scrollbar-thumb {
-  background: #c6c8cf;
-  border-radius: 9999px;
-}
-
-.custom-textarea-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #c6c8cf transparent;
-}
+@import '../styles/scrollbar.css';
