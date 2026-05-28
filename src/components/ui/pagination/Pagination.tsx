@@ -15,6 +15,8 @@ export function Pagination({
   clickNext,
   clickPage,
 }: PaginationProps) {
+  const SHOWITEM = 5;
+
   return (
     <div className="flex h-10 w-80 items-center justify-center gap-1">
       <button
@@ -24,7 +26,7 @@ export function Pagination({
       >
         <Left width={8} height={12} />
       </button>
-      {Array.from({ length: paginationCount }).map((_, index) => {
+      {/* {Array.from({ length: paginationCount }).map((_, index) => {
         const isActive = currentPage === index + 1;
         return (
           <button
@@ -35,7 +37,37 @@ export function Pagination({
             {index + 1}
           </button>
         );
-      })}
+      })} */}
+
+      {paginationCount <= SHOWITEM
+        ? Array.from({ length: paginationCount }).map((_, index) => {
+            const isActive = currentPage === index + 1;
+            return (
+              <button
+                key={index}
+                onClick={() => clickPage(index + 1)}
+                className={`flex h-6 w-6 cursor-pointer items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
+              >
+                {index + 1}
+              </button>
+            );
+          })
+        : Array.from({ length: SHOWITEM }).map((_, index) => {
+            const pageNumber =
+              currentPage >= SHOWITEM + 1 ? currentPage - (SHOWITEM - 1) + index : index + 1;
+
+            const isActive = currentPage === pageNumber;
+
+            return (
+              <button
+                key={index}
+                onClick={() => clickPage(pageNumber)}
+                className={`flex h-6 w-6 cursor-pointer items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
+              >
+                {pageNumber}
+              </button>
+            );
+          })}
       <button
         className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:cursor-default disabled:opacity-30"
         onClick={clickNext}
