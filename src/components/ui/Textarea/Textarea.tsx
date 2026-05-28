@@ -10,7 +10,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 const textareaLabelClassName = {
-  default: 'mb-[10px] block text-[16px] font-bold text-[#1F1F22] md:text-base',
+  default: 'mb-[10px] block text-[16px] font-bold text-(--color-text-primary) md:text-base',
   review: 'mb-3 block text-[16px] font-bold text-black md:text-[18px]',
 };
 
@@ -40,7 +40,7 @@ const Textarea = ({
       )}
       <div
         className={twMerge(
-          'w-full overflow-hidden border border-[#E0E0E5] bg-white',
+          'w-full overflow-hidden border border-(--color-border-default) bg-(--color-bg)',
           'focus-within:border-gray-300',
           textareaVariantClassName[variant],
           className
@@ -52,7 +52,7 @@ const Textarea = ({
           maxLength={maxLength}
           {...props}
           className={twMerge(
-            'custom-textarea-scrollbar h-full w-full resize-none bg-transparent text-sm leading-[1.8] font-medium outline-none',
+            'custom-textarea-scrollbar h-full w-full resize-none bg-transparent text-sm leading-[1.8] font-medium text-(--color-text-primary) outline-none',
             'md:text-base',
             'placeholder:text-[#9FA0A7]'
           )}
@@ -60,7 +60,7 @@ const Textarea = ({
       </div>
 
       {showCount && maxLength && (
-        <div className="mt-2 text-right text-[13px] font-medium text-[#707177]">
+        <div className="mt-2 text-right text-[13px] font-medium text-gray-600">
           {count}/{maxLength}
         </div>
       )}
