@@ -8,12 +8,14 @@ interface PaginationProps {
   currentPage: number;
   clickPrev: () => void;
   clickNext: () => void;
+  clickPage: (page: number) => void;
 }
 export function Pagination({
   paginationCount,
   currentPage,
   clickPrev,
   clickNext,
+  clickPage,
 }: PaginationProps) {
   return (
     <div className="flex h-10 w-76 items-center justify-center gap-1">
@@ -27,12 +29,13 @@ export function Pagination({
       {Array.from({ length: paginationCount }).map((_, index) => {
         const isActive = currentPage === index + 1;
         return (
-          <div
+          <button
             key={index}
+            onClick={() => clickPage(index + 1)}
             className={`flex h-6 w-6 items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
           >
             {index + 1}
-          </div>
+          </button>
         );
       })}
       <button
