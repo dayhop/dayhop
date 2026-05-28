@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 
 type TextareaVariant = 'default' | 'review';
 
-interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   variant?: TextareaVariant;
   showCount?: boolean;
   label?: string;
