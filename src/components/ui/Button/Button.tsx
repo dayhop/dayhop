@@ -5,15 +5,16 @@ import { twMerge } from 'tailwind-merge';
 import { clsx, type ClassValue } from 'clsx';
 
 const buttonVariants = cva(
-  'inline-flex items-center w-full cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none',
+  'inline-flex items-center cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none',
   {
     variants: {
       variant: {
-        primary: 'justify-center bg-[#3D9EF2] text-white disabled:bg-[#C6C8CF] active:bg-[#2f6bff]', //active 색상 임의로 지정
+        primary:
+          'justify-center bg-primary-500 text-white disabled:bg-gray-200 active:bg-primary-dark', //active 색상 임의로 지정
         secondary:
           //secondary에서도 active 색상 임의 지정 피그마 시안::  #C6C8CF
-          'justify-center bg-white text-gray-700 active:bg-[#2f6bff] active:text-[#FFF] disabled:text-[#C6C8CF] border border-[#C6C8CF]',
-        text: 'bg-white text-gray-700 border border-gray-200 hover:bg-[#E5F3FF]',
+          'justify-center bg-white text-gray-700 active:bg-primary-dark active:text-white disabled:text-gray-200 border border-gray-200',
+        text: 'bg-white text-gray-700 border border-gray-200 hover:bg-primary-100',
       },
       size: {
         lg: 'h-[54px] px-10 rounded-[16px]',
@@ -25,7 +26,7 @@ const buttonVariants = cva(
         false: '',
       },
       selected: {
-        true: 'bg-[#E5F3FF]',
+        true: 'bg-primary-100',
         false: '',
       },
     },
@@ -33,7 +34,7 @@ const buttonVariants = cva(
       {
         variant: 'text',
         selected: true,
-        className: 'bg-[#E5F3FF] text-black',
+        className: 'bg-primary-100 text-black',
       },
     ],
     defaultVariants: {
@@ -49,13 +50,17 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     className?: string;
     Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    width?: string | number;
   };
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, selected, Icon, children, type = 'button', ...props }, ref) => {
+  (
+    { className, variant, size, selected, Icon, children, type = 'button', width, style, ...props },
+    ref
+  ) => {
     const hasIcon = Boolean(Icon);
 
     return (
@@ -71,6 +76,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           }),
           className
         )}
+        style={{ width, ...style }}
         {...props}
       >
         {Icon && (
