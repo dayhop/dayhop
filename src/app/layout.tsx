@@ -1,6 +1,15 @@
 import type { Metadata } from 'next';
+
+import localFont from 'next/font/local';
 import Toast from '@/components/ui/Toast';
 import './globals.css';
+
+const pretendard = localFont({
+  src: '../../public/fonts/PretendardVariable.woff2',
+  variable: '--font-pretendard',
+  weight: '100 900',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'DayHOP',
@@ -14,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>
+      <body className={pretendard.variable}>
         {children}
         <Toast />
       </body>
