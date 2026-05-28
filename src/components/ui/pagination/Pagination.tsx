@@ -21,7 +21,7 @@ export function Pagination({
     <div className="flex h-10 w-80 items-center justify-center gap-1">
       <button
         onClick={clickPrev}
-        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:cursor-not-allowed disabled:opacity-30"
+        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:cursor-default disabled:opacity-30"
         disabled={currentPage <= 1}
       >
         <Image src={left} width={8} height={12} alt="왼쪽 이동 버튼" />
@@ -32,14 +32,14 @@ export function Pagination({
           <button
             key={index}
             onClick={() => clickPage(index + 1)}
-            className={`flex h-6 w-6 items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
+            className={`flex h-6 w-6 cursor-pointer items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
           >
             {index + 1}
           </button>
         );
       })}
       <button
-        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:cursor-not-allowed disabled:opacity-30"
+        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:cursor-default disabled:opacity-30"
         onClick={clickNext}
         disabled={currentPage >= paginationCount}
       >
