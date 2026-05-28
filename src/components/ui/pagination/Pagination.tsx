@@ -17,12 +17,13 @@ export function Pagination({
 }: PaginationProps) {
   return (
     <div className="flex h-10 w-76 items-center justify-center gap-1">
-      <div
+      <button
         onClick={clickPrev}
-        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1"
+        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:opacity-30"
+        disabled={currentPage === 1}
       >
         <Image src={left} width={7} height={11} alt="왼쪽 이동 버튼" />
-      </div>
+      </button>
       {Array.from({ length: paginationCount }).map((_, index) => {
         const isActive = currentPage === index + 1;
         return (
@@ -34,12 +35,13 @@ export function Pagination({
           </div>
         );
       })}
-      <div
-        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1"
+      <button
+        className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:opacity-30"
         onClick={clickNext}
+        disabled={currentPage === paginationCount}
       >
         <Image src={right} width={7} height={11} alt="오른쪽 이동 버튼" />
-      </div>
+      </button>
     </div>
   );
 }
