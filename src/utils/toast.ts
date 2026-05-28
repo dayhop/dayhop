@@ -1,5 +1,3 @@
-'use client';
-
 import { toast, type ToastOptions } from 'react-hot-toast';
 
 export const showToast = {
