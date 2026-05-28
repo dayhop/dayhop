@@ -12,13 +12,13 @@ export const EmptyState = ({ message }: EmptyStateProps) => {
       <div className="mx-auto flex h-[182px] w-[182px] items-center justify-center">
         <Image
           src={emptyImg}
-          alt="비어 있음"
+          alt=""
           width={122}
           height={122}
           className="object-contain opacity-80"
         />
       </div>
-      <h3 className="text-lg font-medium text-gray-600">{message}</h3>
+      <p className="text-lg font-medium text-gray-600">{message}</p>
     </div>
   );
 };
