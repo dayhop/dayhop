@@ -1,7 +1,7 @@
 import Button from './Button';
 
-import GoogleIcon from '@/assets/Button/GoogleIcon.svg';
-import UserIcon from '@/assets/Button/UserIcon.svg';
+import GoogleIcon from '@/assets/icon/GoogleIcon.svg';
+import UserIcon from '@/assets/icon/UserIcon.svg';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 const meta: Meta<typeof Button> = {
