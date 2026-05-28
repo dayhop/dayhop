@@ -3,12 +3,22 @@ import { ReactNode } from 'react';
 interface ModalProps {
   children: ReactNode;
   className?: string;
+  onClose?: () => void;
 }
 
-const Modal = ({ children, className }: ModalProps) => {
+// TODO: cn 유틸 머지 후 className 병합 방식 변경
+const Modal = ({ children, className = '', onClose }: ModalProps) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className={"rounded-2xl bg-white p-6 shadow-lg " + (className ?? "")}>{children}</div>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]"
+      onClick={onClose}
+    >
+      <div
+        className={`rounded-2xl bg-white p-6 shadow-lg ${className}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
     </div>
   );
 };
