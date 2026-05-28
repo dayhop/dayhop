@@ -1,4 +1,3 @@
-import React from 'react';
 import ImgEmpty from '@/assets/icons/img-empty.svg';
 
 export interface EmptyStateProps {
@@ -11,7 +10,7 @@ export const EmptyState = ({ message }: EmptyStateProps) => {
       <div className="mx-auto flex h-[182px] w-[182px] items-center justify-center">
         <ImgEmpty width={122} height={122} className="opacity-80" />
       </div>
-      <p className="text-lg font-medium text-gray-600">{message}</p>
+      <p className="text-text-secondary text-lg font-medium">{message}</p>
     </div>
   );
 };
