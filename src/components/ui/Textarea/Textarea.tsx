@@ -43,7 +43,7 @@ export const Textarea = ({
       )}
       <div
         className={twMerge(
-          'w-full overflow-hidden border border-(--color-border-default) bg-(--color-bg)',
+          'border-border-default bg-bg w-full overflow-hidden border',
           'focus-within:border-gray-300',
           textareaVariantClassName[variant],
           className
@@ -55,9 +55,9 @@ export const Textarea = ({
           maxLength={maxLength}
           {...props}
           className={twMerge(
-            'custom-textarea-scrollbar h-full w-full resize-none bg-transparent text-sm leading-[1.8] font-medium text-(--color-text-primary) outline-none',
+            'custom-textarea-scrollbar text-text-primary h-full w-full resize-none bg-transparent text-sm leading-[1.8] font-medium outline-none',
             'md:text-base',
-            'placeholder:text-(--color-text-placeholder)'
+            'placeholder:text-text-placeholder'
           )}
         />
       </div>
