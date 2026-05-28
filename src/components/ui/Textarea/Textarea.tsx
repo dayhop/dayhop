@@ -19,7 +19,7 @@ const textareaVariantClassName = {
   review: 'h-[179px] p-5 rounded-xl shadow-[0_4px_24px_0_rgba(156,180,202,0.20)]',
 };
 
-const Textarea = ({
+export const Textarea = ({
   variant = 'default',
   showCount = false,
   maxLength,
@@ -67,5 +67,3 @@ const Textarea = ({
     </div>
   );
 };
-
-export default Textarea;
