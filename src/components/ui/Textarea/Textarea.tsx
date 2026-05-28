@@ -10,7 +10,7 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
 }
 
 const textareaLabelClassName = {
-  default: 'mb-[10px] block text-[16px] font-bold text-(--color-text-primary) md:text-base',
+  default: 'mb-[10px] block text-[16px] font-bold text-text-primary md:text-base',
   review: 'mb-3 block text-[16px] font-bold text-black md:text-[18px]',
 };
 
