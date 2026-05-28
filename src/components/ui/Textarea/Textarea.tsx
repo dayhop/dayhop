@@ -54,7 +54,7 @@ const Textarea = ({
           className={twMerge(
             'custom-textarea-scrollbar h-full w-full resize-none bg-transparent text-sm leading-[1.8] font-medium text-(--color-text-primary) outline-none',
             'md:text-base',
-            'placeholder:text-[#9FA0A7]'
+            'placeholder:text-(--color-text-placeholder)'
           )}
         />
       </div>

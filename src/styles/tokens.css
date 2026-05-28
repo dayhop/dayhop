@@ -49,5 +49,6 @@
   --color-text-primary: var(--color-gray-950);
   --color-text-secondary: var(--color-gray-700);
   --color-text-tertiary: var(--color-gray-500);
+  --color-text-placeholder: var(--color-gray-400);
   --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
 }
