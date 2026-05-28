@@ -1,9 +1,17 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import './globals.css';
+
+const pretendard = localFont({
+  src: '../../public/fonts/PretendardVariable.woff2',
+  variable: '--font-pretendard',
+  weight: '100 900',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: "dayhop",
-  description: "dayhop",
+  title: 'dayhop',
+  description: 'dayhop',
 };
 
 export default function RootLayout({
@@ -13,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className={pretendard.variable}>{children}</body>
     </html>
   );
 }
