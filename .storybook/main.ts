@@ -18,13 +18,8 @@ const config: StorybookConfig = {
       },
     },
   },
-  async viteFinal(config) {
-    config.plugins = [
-      svgr({
-        include: '**/*.svg',
-      }),
-      ...(config.plugins ?? []),
-    ];
+  viteFinal: async (config) => {
+    config.plugins = [svgr({ include: '**/*.svg' }), ...(config.plugins ?? [])];
     return config;
   },
 };
