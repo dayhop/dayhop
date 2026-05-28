@@ -7,11 +7,11 @@
 }
 
 .custom-textarea-scrollbar::-webkit-scrollbar-thumb {
-  background: #c6c8cf;
+  background: var(--color-gray-200);
   border-radius: 9999px;
 }
 
 .custom-textarea-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #c6c8cf transparent;
+  scrollbar-color: var(--color-gray-200) transparent;
 }
