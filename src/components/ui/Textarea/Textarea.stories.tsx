@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Textarea } from './Textarea';
 
 const meta = {
-  title: '/UI/Textarea',
+  title: 'UI/Textarea',
   component: Textarea,
   tags: ['autodocs'],
 } satisfies Meta<typeof Textarea>;
@@ -10,6 +11,13 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+type TextareaProps = React.ComponentProps<typeof Textarea>;
+
+const ControlledTextarea = (args: TextareaProps) => {
+  const [value, setValue] = useState('');
+
+  return <Textarea {...args} value={value} onChange={(e) => setValue(e.target.value)} />;
+};
 
 //textarea - default : 체험 등록/수정 폼에서 사용
 export const Default: Story = {
@@ -22,6 +30,7 @@ export const Default: Story = {
 
 //textarea - review : 리뷰 작성하기 모달에서 사용
 export const Review: Story = {
+  render: (args) => <ControlledTextarea {...args} />,
   args: {
     variant: 'review',
     label: '소중한 경험을 들려주세요',
