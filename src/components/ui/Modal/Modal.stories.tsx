@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 
-import Modal from './Modal';
+import { Modal } from './Modal';
 
 const meta = {
   title: 'UI/Modal',
@@ -36,6 +36,7 @@ const CloseOnOverlayClickExample = () => {
         <Modal onClose={() => setIsOpen(false)} className="w-[400px]">
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold">모달 제목</h2>
+
             <p>바깥 영역을 클릭하면 모달이 닫힙니다.</p>
 
             <button

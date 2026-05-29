@@ -7,7 +7,7 @@ interface ModalProps {
 }
 
 // TODO: cn 유틸 머지 후 className 병합 방식 변경
-const Modal = ({ children, className = '', onClose }: ModalProps) => {
+export const Modal = ({ children, className = '', onClose }: ModalProps) => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]"
@@ -22,5 +22,3 @@ const Modal = ({ children, className = '', onClose }: ModalProps) => {
     </div>
   );
 };
-
-export default Modal;

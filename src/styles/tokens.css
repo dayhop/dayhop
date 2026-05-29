@@ -37,7 +37,6 @@
   --color-status-completed-bg: #daf0ff;
   --color-status-completed-text: #0d6cd1;
 
-<<<<<<< HEAD
   --color-status-approved-bg: #ddf9f9;
   --color-status-approved-text: #1790a0;
 
@@ -50,23 +49,5 @@
   --color-text-secondary: var(--color-gray-700);
   --color-text-tertiary: var(--color-gray-500);
   --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
-<<<<<<< HEAD
-=======
-    --color-status-approved-bg: #ddf9f9;
-    --color-status-approved-text: #1790a0;
-
-    /*  시멘틱  */
-
-    --color-bg: var(--color-white);
-    --color-bg-surface: var(--color-gray-50);
-    --color-bg-footer: var(--color-gray-100);
-    --color-text-primary: var(--color-gray-950);
-    --color-text-secondary: var(--color-gray-700);
-    --color-text-tertiary: var(--color-gray-500);
-    --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
-  }
->>>>>>> 30c0554 (chore: 시멘틱 토큰 추가)
-=======
   --color-overlay: rgba(0, 0, 0, 0.5);
->>>>>>> 498d61a (feat: modal 컴포넌트 스토리 및 컬러팔레트 수정)
 }
