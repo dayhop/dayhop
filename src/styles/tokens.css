@@ -51,4 +51,5 @@
   --color-text-tertiary: var(--color-gray-500);
   --color-text-placeholder: var(--color-gray-400);
   --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
+  --color-overlay: rgba(0, 0, 0, 0.5);
 }
