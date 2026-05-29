@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import IconStar from '@/assets/icons/icon_star.svg';
 
 export interface StarRatingProps {
@@ -22,11 +22,11 @@ export const StarRating = ({
   if (mode === 'display') {
     const formattedRating = rating.toFixed(1);
     return (
-      <div className="inline-flex items-center gap-1">
+      <div className="inline-flex items-center gap-1" aria-label={`평점 ${formattedRating}점`}>
         <IconStar className="text-yellow h-4 w-4 [&_path]:fill-current" />
-        <span className="text-sm font-semibold text-gray-800">{formattedRating}</span>
+        <span className="text-text-primary text-sm font-semibold">{formattedRating}</span>
         {reviewCount !== undefined && (
-          <span className="text-sm text-gray-400">({reviewCount})</span>
+          <span className="text-text-tertiary text-sm">({reviewCount})</span>
         )}
       </div>
     );
@@ -36,7 +36,12 @@ export const StarRating = ({
   const activeRating = hoverRating !== null ? hoverRating : rating;
 
   return (
-    <div className="inline-flex items-center gap-1" onMouseLeave={() => setHoverRating(null)}>
+    <div
+      role="radiogroup"
+      aria-label="별점 평가"
+      className="inline-flex items-center gap-1"
+      onMouseLeave={() => setHoverRating(null)}
+    >
       {Array.from({ length: maxStars }).map((_, index) => {
         const starValue = index + 1;
         const isHighlighted = starValue <= activeRating;
@@ -45,13 +50,18 @@ export const StarRating = ({
           <button
             key={index}
             type="button"
+            role="radio"
+            aria-checked={rating === starValue}
+            aria-label={`별 ${starValue}개`}
             onClick={() => onChange?.(starValue)}
             onMouseEnter={() => setHoverRating(starValue)}
-            className="cursor-pointer p-0.5 transition-colors duration-150 focus:outline-none"
+            onFocus={() => setHoverRating(starValue)}
+            onBlur={() => setHoverRating(null)}
+            className="text-text-tertiary focus-visible:ring-primary cursor-pointer rounded-md p-0.5 transition-all duration-150 focus:outline-none focus-visible:ring-2"
           >
             <IconStar
               className={`h-6 w-6 transition-colors duration-150 [&_path]:fill-current ${
-                isHighlighted ? 'text-yellow' : 'text-gray-200'
+                isHighlighted ? 'text-yellow' : 'text-text-tertiary'
               }`}
             />
           </button>
