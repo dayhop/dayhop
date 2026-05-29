@@ -44,7 +44,7 @@ export const Textarea = ({
       <div
         className={twMerge(
           'border-border-default bg-bg w-full overflow-hidden border',
-          'focus-within:border-gray-300',
+          'focus-within:border-primary',
           textareaVariantClassName[variant],
           className
         )}
