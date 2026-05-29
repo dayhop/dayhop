@@ -18,7 +18,7 @@ export function Pagination({
   const SHOWITEM = 5;
 
   return (
-    <div className="flex h-10 w-80 items-center justify-center gap-1">
+    <nav aria-label="pagenation" className="flex h-10 w-80 items-center justify-center gap-1">
       <button
         onClick={clickPrev}
         className="flex h-6 w-6 cursor-pointer items-center justify-center pt-1 disabled:cursor-default disabled:opacity-30"
@@ -49,7 +49,7 @@ export function Pagination({
               <button
                 key={index}
                 onClick={() => clickPage(pageNumber)}
-                className={`flex h-6 w-6 cursor-pointer items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-gray-400'}`}
+                className={`flex h-6 w-6 cursor-pointer items-center justify-center p-2 text-sm ${isActive ? 'font-bold text-black' : 'text-text-tertiary'}`}
               >
                 {pageNumber}
               </button>
@@ -62,6 +62,6 @@ export function Pagination({
       >
         <Right width={8} height={12} />
       </button>
-    </div>
+    </nav>
   );
 }
