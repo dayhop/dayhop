@@ -1,7 +1,11 @@
-import Button from './Button';
+import { Button } from './Button';
 
 import GoogleIcon from '@/assets/icon/GoogleIcon.svg';
 import UserIcon from '@/assets/icon/UserIcon.svg';
+import ListIcon from '@/assets/icon/ListIcon.svg';
+import CalendarIcon from '@/assets/icon/CalendarIcon.svg';
+import SettingIcon from '@/assets/icon/SettingIcon.svg';
+
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 const meta: Meta<typeof Button> = {
@@ -19,10 +23,6 @@ const meta: Meta<typeof Button> = {
     },
     disabled: { control: 'boolean' },
     Icon: { control: false },
-    width: {
-      control: 'text',
-      description: '버튼의 넓이 (예: "100%", "300px", 200)',
-    },
   },
 };
 
@@ -43,7 +43,6 @@ export const Secondary: Story = {
     variant: 'secondary',
     size: 'lg',
     Icon: GoogleIcon,
-    width: '500px',
     children: '구글로그인',
   },
 };
@@ -52,21 +51,20 @@ export const Text: Story = {
   args: {
     variant: 'text',
     size: 'md',
-    Icon: UserIcon,
     selected: false,
   },
   render: (args) => (
     <div className="flex w-80 flex-col items-center gap-4">
-      <Button {...args} width={300}>
+      <Button {...args} className="w-75" Icon={UserIcon}>
         내 정보
       </Button>
-      <Button {...args} width={300} selected={true}>
+      <Button {...args} className="w-75" selected={true} Icon={ListIcon}>
         예약내역
       </Button>
-      <Button {...args} width={300}>
+      <Button {...args} className="w-75" Icon={CalendarIcon}>
         내 체험 관리
       </Button>
-      <Button {...args} width={300}>
+      <Button {...args} className="w-75" Icon={SettingIcon}>
         예약현황
       </Button>
     </div>
@@ -77,7 +75,7 @@ export const CustomWidth: Story = {
   args: {
     variant: 'primary',
     size: 'lg',
-    width: '300px',
+    className: 'w-75',
     children: '넓이 300px',
   },
 };
@@ -96,6 +94,26 @@ export const Sizes: Story = {
       </Button>
       <Button {...args} size="lg">
         Large
+      </Button>
+    </div>
+  ),
+};
+
+export const DisabledButton: Story = {
+  args: {
+    size: 'lg',
+    children: 'Disabled Button',
+  },
+  render: (args) => (
+    <div>
+      <Button {...args} disabled={true} variant="primary">
+        Disabled Button
+      </Button>
+      <Button {...args} disabled={true} variant="secondary">
+        Disabled Button
+      </Button>
+      <Button {...args} disabled={true} variant="text" Icon={UserIcon}>
+        Disabled Button
       </Button>
     </div>
   ),

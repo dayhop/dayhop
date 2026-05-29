@@ -1,20 +1,17 @@
 import React, { forwardRef } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
-import { twMerge } from 'tailwind-merge';
-import { clsx, type ClassValue } from 'clsx';
-
+import { cn } from '@/utils/cn';
 const buttonVariants = cva(
-  'inline-flex items-center cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none',
+  'inline-flex items-center cursor-pointertransition-colors disabled:pointer-events-none font-medium w-full',
   {
     variants: {
       variant: {
         primary:
-          'justify-center bg-primary-500 text-white disabled:bg-gray-200 active:bg-primary-dark', //active 색상 임의로 지정
+          'justify-center bg-primary-500 text-white disabled:bg-gray-200 active:bg-primary-dark',
         secondary:
-          //secondary에서도 active 색상 임의 지정 피그마 시안::  #C6C8CF
           'justify-center bg-white text-gray-700 active:bg-primary-dark active:text-white disabled:text-gray-200 border border-gray-200',
-        text: 'bg-white text-gray-700 border border-gray-200 hover:bg-primary-100',
+        text: 'bg-white hover:bg-primary-100 text-gray-600',
       },
       size: {
         lg: 'h-[54px] px-10 rounded-[16px]',
@@ -50,15 +47,11 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     className?: string;
     Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    width?: string | number;
   };
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, selected, Icon, children, type = 'button', width, style, ...props },
+    { className, variant, size, selected, Icon, children, type = 'button', style, ...props },
     ref
   ) => {
     const hasIcon = Boolean(Icon);
@@ -76,12 +69,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           }),
           className
         )}
-        style={{ width, ...style }}
+        style={{ ...style }}
         {...props}
       >
         {Icon && (
           <span className="inline-flex h-5 w-5 items-center justify-center">
-            <Icon />
+            <Icon
+              className={cn(
+                variant === 'text' && (selected ? 'text-primary-500' : 'text-gray-600')
+              )}
+            />
           </span>
         )}
         {children && <span className="inline-block">{children}</span>}
@@ -90,5 +87,3 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 Button.displayName = 'Button';
-
-export default Button;
