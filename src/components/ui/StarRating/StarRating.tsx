@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import IconStar from '@/assets/icons/icon_star.svg';
 
 export interface StarRatingProps {
