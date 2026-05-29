@@ -32,7 +32,7 @@ export const Textarea = ({
 }: TextareaProps) => {
   const generatedId = useId();
   const textareaId = id ?? generatedId;
-  const count = String(value ?? '').length; // showCount는 value 기반으로 계산되므로 제어 컴포넌트 방식 사용을 권장합니다.
+  const count = String(value ?? '').length;
 
   return (
     <div className="w-full">
