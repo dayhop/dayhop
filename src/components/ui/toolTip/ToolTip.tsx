@@ -1,19 +1,68 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Delete from '@/assets/icons/Delete.svg';
 import Polygon from '@/assets/icons/Polygon.svg';
 
 interface ToolTipProps {
   message: string;
-  children: React.ReactNode;
+  targetId: string;
+  align?: 'left' | 'right';
+  placement?: 'top' | 'bottom';
 }
 
-export function ToolTip({ message, children }: ToolTipProps) {
-  console.log({ children });
+export function ToolTip({
+  message,
+  targetId,
+  align = 'right',
+  placement = 'bottom',
+}: ToolTipProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      const targetElement = document.getElementById(targetId);
+      const rel = targetElement?.getBoundingClientRect();
+      if (targetElement && rel) {
+        const anchorX = rel.x + window.scrollX + rel.width / 3;
+        const anchorY =
+          placement === 'top' ? rel.y + window.scrollY : rel.y + window.scrollY + rel.height;
+        setPosition({ x: anchorX, y: anchorY });
+      }
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
+  }, [targetId]);
+
+  const onClickClose = () => {
+    setIsOpen(false);
+  };
+
+  if (!isOpen || !position) return null;
+
   return (
-    <div className="m-0 flex flex-col p-0">
-      <Polygon />
-      <div className="bg-primary flex w-fit items-center rounded-sm px-2.5 py-2 text-xs text-white">
-        <span>{message}</span>
-        <Delete width={9} height={9} className="ml-2 cursor-pointer text-2xl" />
+    <div
+      className="pointer-events-none absolute z-50"
+      style={{ left: position.x, top: position.y }}
+    >
+      <div
+        className={`pointer-events-auto absolute flex w-max ${
+          placement === 'top' ? 'bottom-0 mb-1 flex-col-reverse' : 'top-0 mt-1 flex-col'
+        }`}
+        style={{
+          transform: align === 'right' ? 'translateX(-16px)' : 'translateX(calc(-100% + 16px))',
+        }}
+      >
+        <Polygon
+          className={`${align === 'right' ? 'ml-2' : 'mr-2 ml-auto'} ${placement === 'top' ? '-mt-0.5 rotate-180' : '-mb-0.5'}`}
+        />
+        <div className="bg-primary flex items-center justify-center rounded px-3 py-2 shadow-lg">
+          <div className="text-xs text-white">{message}</div>
+          <Delete className="ml-2 cursor-pointer" onClick={onClickClose} />
+        </div>
       </div>
     </div>
   );
