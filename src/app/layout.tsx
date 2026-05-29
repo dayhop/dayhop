@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+
 import localFont from 'next/font/local';
+import Toast from '@/components/ui/Toast';
 import './globals.css';
 
 const pretendard = localFont({
@@ -10,8 +12,8 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'dayhop',
-  description: 'dayhop',
+  title: 'DayHOP',
+  description: '오늘의 취향을 발견하고 가볍게 HOP하는 체험 플랫폼',
 };
 
 export default function RootLayout({
@@ -21,7 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={pretendard.variable}>{children}</body>
+      <body className={pretendard.variable}>
+        {children}
+        <Toast />
+      </body>
     </html>
   );
 }
