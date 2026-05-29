@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge'; // TODO: 공통 cn 유틸 적용 후 twMerge 제거 예정
 
 type TextareaVariant = 'default' | 'review';
 
