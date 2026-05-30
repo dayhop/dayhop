@@ -18,6 +18,12 @@ const avatarSizeClassName = {
   lg: 'h-[70px] w-[70px] md:h-[120px] md:w-[120px]',
 };
 
+const avatarSizes = {
+  sm: '(max-width: 767px) 20px, 24px',
+  md: '30px',
+  lg: '(max-width: 767px) 70px, 120px',
+};
+
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
   const [isError, setIsError] = useState(false);
 
@@ -30,7 +36,15 @@ export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', classNam
       )}
     >
       {src && !isError ? (
-        <Image src={src} alt={alt} fill className="object-cover" onError={() => setIsError(true)} />
+        <Image
+          key={src}
+          src={src}
+          alt={alt}
+          fill
+          sizes={avatarSizes[size]}
+          className="object-cover"
+          onError={() => setIsError(true)}
+        />
       ) : (
         <DefaultAvatar className="h-full w-full" role="img" aria-label={alt} />
       )}
