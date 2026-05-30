@@ -54,7 +54,7 @@ export const Default: Story = {
 //src 이미지가 있을 경우
 export const WithSrcImage: Story = {
   args: {
-    src: '/images/avatar-sample.jpg',
+    src: '@/assets/images/avatar-sample.jpg',
   },
 };
 
