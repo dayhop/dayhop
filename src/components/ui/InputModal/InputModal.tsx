@@ -23,7 +23,7 @@ export const InputModal = ({
   return (
     <Modal onClose={onCancel} className={className}>
       <div className="relative flex flex-col gap-4">
-        <button type="button" onClick={onCancel} className="absolute top-0 right-0">
+        <button type="button" onClick={onCancel} className="absolute top-0 right-0" aria-label="닫기">
           <CloseIcon width={24} height={24} fill="currentColor" />
         </button>
 
