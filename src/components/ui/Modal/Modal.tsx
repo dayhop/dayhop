@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect } from 'react';
+import { cn } from '@/utils/cn';
 
 interface ModalProps {
   children: ReactNode;
@@ -8,7 +9,6 @@ interface ModalProps {
   onClose?: () => void;
 }
 
-// TODO: cn 유틸 머지 후 className 병합 방식 변경
 export const Modal = ({ children, className = '', onClose }: ModalProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -26,7 +26,7 @@ export const Modal = ({ children, className = '', onClose }: ModalProps) => {
       <div
         role="dialog"
         aria-modal="true"
-        className={`rounded-2xl bg-white p-6 shadow-lg ${className}`}
+        className={cn('rounded-2xl bg-white p-6 shadow-lg', className)}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
