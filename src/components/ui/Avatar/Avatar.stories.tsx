@@ -5,10 +5,37 @@ const meta = {
   title: 'Components/UI/Avatar',
   component: Avatar,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+#### Avatar
+
+- src가 없으면 기본 아바타 이미지가 표시됩니다.
+- size는 sm, md, lg를 지원합니다.
+
+#### Size
+- sm: 모바일 20px / md 이상 24px
+- md: 30px
+- lg: 모바일 70px / md 이상 120px
+
+#### 기타
+- 필요 시 className으로 스타일을 확장할 수 있습니다.
+        `,
+      },
+    },
+  },
   argTypes: {
     size: {
       control: 'select',
       options: ['sm', 'md', 'lg'],
+      description: '아바타 크기',
+    },
+    src: {
+      description: '프로필 이미지 URL',
+    },
+    className: {
+      description: '추가 스타일 클래스',
     },
   },
 } satisfies Meta<typeof Avatar>;
