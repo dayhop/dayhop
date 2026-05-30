@@ -5,7 +5,6 @@ const meta = {
   title: 'Components/ToolTip',
   component: ToolTip,
   parameters: {
-    // 툴팁이 화면 밖으로 나가지 않도록 캔버스를 중앙에 배치합니다.
     layout: 'centered',
   },
   tags: ['autodocs'],
@@ -28,7 +27,6 @@ const meta = {
   decorators: [
     (Story) => (
       <div className="flex h-64 w-full min-w-[300px] items-center justify-center rounded-lg border border-dashed border-gray-300">
-        {/* 툴팁이 위치를 계산할 수 있도록 가상의 타겟 요소를 렌더링해 둡니다. */}
         <div id="storybook-tooltip-target" className="h-10 w-10 rounded-md bg-gray-400"></div>
         <Story />
       </div>

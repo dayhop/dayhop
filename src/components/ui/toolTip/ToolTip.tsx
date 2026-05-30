@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Delete from '@/assets/icons/Delete.svg';
 import Polygon from '@/assets/icons/Polygon.svg';
 
@@ -34,8 +35,12 @@ export function ToolTip({
 
     updatePosition();
     window.addEventListener('resize', updatePosition);
-    return () => window.removeEventListener('resize', updatePosition);
-  }, [targetId]);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [targetId, placement]);
 
   const onClickClose = () => {
     setIsOpen(false);
@@ -43,7 +48,7 @@ export function ToolTip({
 
   if (!isOpen || !position) return null;
 
-  return (
+  return createPortal(
     <div
       className="pointer-events-none absolute z-50"
       style={{ left: position.x, top: position.y }}
@@ -61,9 +66,12 @@ export function ToolTip({
         />
         <div className="bg-primary flex items-center justify-center rounded px-3 py-2 shadow-lg">
           <div className="text-xs text-white">{message}</div>
-          <Delete className="ml-2 cursor-pointer" onClick={onClickClose} />
+          <button className="ml-2 cursor-pointer" onClick={onClickClose}>
+            <Delete />
+          </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
