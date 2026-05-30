@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 import DefaultAvatar from '@/assets/images/avatar-default.svg';
@@ -16,6 +19,8 @@ const avatarSizeClassName = {
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
+  const [isError, setIsError] = useState(false);
+
   return (
     <div
       className={twMerge(
@@ -24,8 +29,8 @@ export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', classNam
         className
       )}
     >
-      {src ? (
-        <Image src={src} alt={alt} fill className="object-cover" />
+      {src && !isError ? (
+        <Image src={src} alt={alt} fill className="object-cover" onError={() => setIsError(true)} />
       ) : (
         <DefaultAvatar className="h-full w-full" role="img" aria-label={alt} />
       )}
