@@ -1,58 +1,50 @@
-import { Modal } from '../Modal';
 import CloseIcon from '@/assets/icons/icon-close.svg';
 
+import { Button } from '../Button';
+import { Modal } from '../Modal';
+
 interface InputModalProps {
-  title: string;
-  date: string;
+  message: string;
   value: string;
   onChange: (value: string) => void;
-  onClose: () => void;
-  onSubmit: () => void;
+  onConfirm: () => void;
+  onCancel: () => void;
   className?: string;
 }
 
 export const InputModal = ({
-  title,
-  date,
+  message,
   value,
   onChange,
-  onClose,
-  onSubmit,
+  onConfirm,
+  onCancel,
   className,
 }: InputModalProps) => {
   return (
-    <Modal onClose={onClose} className={className}>
-      <div className="relative flex flex-col">
-        <button type="button" onClick={onClose} className="absolute top-0 right-0">
+    <Modal onClose={onCancel} className={className}>
+      <div className="relative flex flex-col gap-4">
+        <button type="button" onClick={onCancel} className="absolute top-0 right-0">
           <CloseIcon width={24} height={24} fill="currentColor" />
         </button>
 
-        <div className="mt-4 text-center">
-          <h2 className="text-sm font-bold">{title}</h2>
-          <p className="mt-1 text-xs text-gray-400">{date}</p>
-        </div>
+        <p className="pr-8 text-sm font-bold">{message}</p>
 
-        <div className="mt-4 flex justify-center gap-1 text-3xl text-gray-200">★ ★ ★ ★ ★</div>
-
-        <p className="mt-5 text-sm font-bold">소중한 경험을 들려주세요</p>
-
-        <textarea
+        <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          maxLength={100}
-          placeholder="체험에서 느낀 경험을 자유롭게 남겨주세요"
-          className="mt-2 h-[150px] resize-none rounded-xl border border-gray-200 p-4 text-sm outline-none"
+          placeholder="내용을 입력해주세요"
+          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none"
         />
 
-        <p className="mt-1 text-right text-xs text-gray-400">{value.length}/100</p>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={onCancel}>
+            취소
+          </Button>
 
-        <button
-          type="button"
-          onClick={onSubmit}
-          className="bg-primary-500 mt-3 rounded-lg py-3 text-sm font-bold text-white"
-        >
-          작성하기
-        </button>
+          <Button variant="primary" size="sm" onClick={onConfirm}>
+            확인
+          </Button>
+        </div>
       </div>
     </Modal>
   );

@@ -21,22 +21,21 @@ const InputModalExample = () => {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="rounded bg-blue-500 px-4 py-2 text-white"
+        className="bg-primary-500 rounded px-4 py-2 text-white"
       >
         모달 열기
       </button>
 
       {isOpen && (
         <InputModal
-          title="함께 배우면 즐거운 스트릿 댄스"
-          date="2023. 02. 14 / 11:00 - 12:30 (10명)"
+          message="내용을 입력해주세요."
           value={value}
           onChange={setValue}
-          onClose={() => setIsOpen(false)}
-          onSubmit={() => {
-            alert(`리뷰 내용: ${value}`);
+          onConfirm={() => {
+            alert(`입력값: ${value}`);
             setIsOpen(false);
           }}
+          onCancel={() => setIsOpen(false)}
           className="w-[336px] rounded-3xl"
         />
       )}
