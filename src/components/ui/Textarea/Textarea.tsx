@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
-import { twMerge } from 'tailwind-merge'; // TODO: 공통 cn 유틸 적용 후 twMerge 제거 예정
+import { cn } from '@/utils/cn';
 
 type TextareaVariant = 'default' | 'review';
 
@@ -42,7 +42,7 @@ export const Textarea = ({
         </label>
       )}
       <div
-        className={twMerge(
+        className={cn(
           'border-border-default bg-bg w-full overflow-hidden border',
           'focus-within:border-primary',
           textareaVariantClassName[variant],
@@ -54,7 +54,7 @@ export const Textarea = ({
           value={value}
           maxLength={maxLength}
           {...props}
-          className={twMerge(
+          className={cn(
             'custom-textarea-scrollbar text-text-primary h-full w-full resize-none bg-transparent text-sm leading-[1.8] font-medium outline-none',
             'md:text-base',
             'placeholder:text-text-placeholder'
