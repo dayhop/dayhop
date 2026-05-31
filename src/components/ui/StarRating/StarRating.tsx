@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import IconStar from '@/assets/icons/icon_star.svg';
 
 export interface StarRatingProps {
@@ -6,6 +7,7 @@ export interface StarRatingProps {
   reviewCount?: number;
   onChange?: (rating: number) => void;
   maxStars?: number;
+  className?: string;
 }
 
 export const StarRating = ({
@@ -14,6 +16,7 @@ export const StarRating = ({
   reviewCount,
   onChange,
   maxStars = 5,
+  className = '',
 }: StarRatingProps) => {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
@@ -21,7 +24,10 @@ export const StarRating = ({
   if (mode === 'display') {
     const formattedRating = rating.toFixed(1);
     return (
-      <div className="inline-flex items-center gap-1" aria-label={`평점 ${formattedRating}점`}>
+      <div
+        className={`inline-flex items-center gap-1 ${className}`}
+        aria-label={`평점 ${formattedRating}점`}
+      >
         <IconStar className="text-yellow h-4 w-4 [&_path]:fill-current" />
         <span className="text-text-primary text-sm font-semibold">{formattedRating}</span>
         {reviewCount !== undefined && (
@@ -38,7 +44,7 @@ export const StarRating = ({
     <div
       role="radiogroup"
       aria-label="별점 평가"
-      className="inline-flex items-center gap-1"
+      className={`inline-flex items-center gap-1 ${className}`}
       onMouseLeave={() => setHoverRating(null)}
     >
       {Array.from({ length: maxStars }).map((_, index) => {
