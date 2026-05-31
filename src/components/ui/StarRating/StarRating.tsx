@@ -53,7 +53,7 @@ export const StarRating = ({
 
         return (
           <button
-            key={index}
+            key={starValue}
             type="button"
             role="radio"
             aria-checked={rating === starValue}
