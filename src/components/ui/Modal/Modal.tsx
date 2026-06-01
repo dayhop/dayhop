@@ -7,16 +7,22 @@ interface ModalProps {
   children: ReactNode;
   className?: string;
   onClose?: () => void;
+  ariaLabel?: string;
 }
 
-export const Modal = ({ children, className = '', onClose }: ModalProps) => {
+export const Modal = ({ children, className = '', onClose, ariaLabel }: ModalProps) => {
   useEffect(() => {
     if (!onClose) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [onClose]);
 
   return (
@@ -27,6 +33,7 @@ export const Modal = ({ children, className = '', onClose }: ModalProps) => {
       <div
         role="dialog"
         aria-modal="true"
+        aria-label={ariaLabel}
         className={cn('rounded-2xl bg-white p-6 shadow-lg', className)}
         onClick={(e) => e.stopPropagation()}
       >
