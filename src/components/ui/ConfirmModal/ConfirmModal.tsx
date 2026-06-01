@@ -17,8 +17,8 @@ export const ConfirmModal = ({
   onClose,
   onConfirm,
   message,
-  confirmText = '아니요',
-  cancelText = '취소하기',
+  confirmText = '확인',
+  cancelText = '취소',
 }: ConfirmModalProps) => {
   if (!isOpen) return null;
 
