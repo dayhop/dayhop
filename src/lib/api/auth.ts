@@ -8,8 +8,10 @@ export const postLogin = async (body: LoginRequest): Promise<LoginResponse> => {
   return data;
 };
 
-export const refreshToken = async (): Promise<TokenResponse> => {
-  const { data } = await instance.post<TokenResponse>('/auth/tokens');
+export const postRefreshToken = async (): Promise<TokenResponse> => {
+  const { data } = await instance.post<TokenResponse>('/auth/tokens', {
+    withCredentials: true,
+  });
 
   return data;
 };
