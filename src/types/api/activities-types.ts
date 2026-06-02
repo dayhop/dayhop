@@ -1,0 +1,162 @@
+export interface GetActivitiesParams {
+  method: 'cursor' | 'offset';
+  cursorId?: number;
+  category?: '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+  keyword?: string;
+  sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest';
+  page?: number;
+  size?: number;
+}
+
+export interface ActivityItem {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  category: '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+  price: number;
+  address: string;
+  bannerImageUrl: string;
+  rating: number;
+  reviewCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubImage {
+  id: number;
+  imageUrl: string;
+}
+
+export interface Schedule {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface ActivityResponse extends ActivityItem {
+  subImages: SubImage[];
+  schedules: Schedule[];
+}
+
+export interface GetActivitiesResponse {
+  cursorId: number | null;
+  totalCount: number;
+  activities: ActivityItem[];
+}
+
+export interface PostActivitiesData {
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  price: number;
+  schedules: Schedules[];
+  bannerImageUrl: string;
+  subImageUrls: string[];
+}
+
+export type Schedules = {
+  date: string;
+  startTime: string;
+  endTime: string;
+};
+
+export interface PostActivitiesResponse {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  address: string;
+  bannerImageUrl: string;
+  rating: number;
+  reviewCount: number;
+  createdAt: string;
+  updatedAt: string;
+  subImages: SubImages[];
+  schedules: ScheduleDate[];
+}
+
+export type SubImages = {
+  imageUrl: string;
+  id: number;
+};
+
+export type ScheduleTime = {
+  endTime: string;
+  startTime: string;
+  id: number;
+};
+
+export type ScheduleDate = {
+  times: ScheduleTime[];
+  date: string;
+};
+
+export interface GetActivityAvailableScheduleParams {
+  year: string;
+  month: string;
+}
+
+export interface GetActivityAvailableScheduleResponse {
+  date: string;
+  times: ScheduleTime[];
+}
+
+export interface GetActivityReviewsResponses {
+  averageRating: number;
+  totalCount: number;
+  reviews: Reviews[];
+}
+
+export interface Reviews {
+  id: number;
+  user: User;
+  activityId: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type User = {
+  profileImageUrl: string;
+  nickname: string;
+  id: number;
+};
+
+export interface PostActivityReservationsResponse {
+  id: number;
+  teamId: string;
+  userId: number;
+  activityId: number;
+  scheduleId: number;
+  status: Status;
+  reviewSubmitted: boolean;
+  totalPrice: number;
+  headCount: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type Status = 'pending' | 'confirmed' | 'cancelled';
+
+export interface GetActivityReviews {
+  page?: number;
+  size?: number;
+}
+
+export interface PostActivityReservationsData {
+  scheduleId: number;
+  headCount: number;
+}
+
+export interface PostActivitiesImageResponse {
+  activityImageUrl: string;
+}
