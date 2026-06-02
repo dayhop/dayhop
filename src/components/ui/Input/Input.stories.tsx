@@ -40,7 +40,7 @@ export const Disabled: Story = {
   args: {
     placeholder: '이메일을 입력해 주세요',
     className: 'w-80',
-    isDisabled: true,
+    disabled: true,
   },
 };
 

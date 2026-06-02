@@ -9,7 +9,6 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   isWarning?: boolean;
-  isDisabled?: boolean;
 }
 
 export default function Input({
@@ -17,7 +16,6 @@ export default function Input({
   prefix,
   suffix,
   isWarning,
-  isDisabled,
   className,
   type,
   ...props
@@ -30,12 +28,11 @@ export default function Input({
       <div
         className={`flex h-[54px] items-center gap-2 rounded-2xl border bg-gray-50 px-4 ${
           isWarning ? 'border-red-500' : 'border-gray-200'
-        } ${isDisabled ? 'opacity-40' : ''}`}
+        }`}
       >
         {prefix}
         <input
-          className="w-full bg-transparent text-gray-950 placeholder-gray-400 outline-none disabled:cursor-not-allowed"
-          disabled={isDisabled}
+          className="w-full bg-transparent text-gray-950 placeholder-gray-400 outline-none disabled:cursor-not-allowed disabled:opacity-40"
           type={isPassword ? (showPassword ? 'text' : 'password') : type}
           {...props}
         />
