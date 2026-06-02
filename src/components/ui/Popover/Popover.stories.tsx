@@ -13,17 +13,46 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    trigger: '메뉴 열기',
     items: [
       {
         label: '수정하기',
-        onClick: () => alert('수정하기 클릭'),
+        onClick: () => alert('수정'),
       },
       {
         label: '삭제하기',
+        onClick: () => alert('삭제'),
         variant: 'delete',
-        onClick: () => alert('삭제하기 클릭'),
       },
     ],
   },
+  render: (args) => (
+    <div className="ml-50">
+      <Popover {...args} />
+    </div>
+  ),
+};
+
+import EditIcon from '@/assets/icon/EditIcon.svg';
+import DeleteIcon from '@/assets/icon/DeleteIcon.svg';
+export const WithIcon: Story = {
+  args: {
+    items: [
+      {
+        label: '수정하기',
+        icon: <EditIcon />,
+        onClick: () => alert('수정'),
+      },
+      {
+        label: '삭제하기',
+        icon: <DeleteIcon />,
+        onClick: () => alert('삭제'),
+        variant: 'delete',
+      },
+    ],
+  },
+  render: (args) => (
+    <div className="ml-50">
+      <Popover {...args} />
+    </div>
+  ),
 };
