@@ -9,7 +9,7 @@ const meta: Meta<typeof Input> = {
   tags: ['autodocs'],
   argTypes: {
     isWarning: { control: 'boolean' },
-    isDisabled: { control: 'boolean' },
+    disabled: { control: 'boolean' },
     warningText: { control: 'text' },
     prefix: { control: false },
     suffix: { control: false },
