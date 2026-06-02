@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import KebabIcon from '@/assets/icon/KebabIcon.svg';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/utils/cn';
+import KebabIcon from '@/assets/icon/KebabIcon.svg';
 
 type PopoverItem = {
   label: string;
@@ -17,9 +17,28 @@ export interface PopoverProps {
 
 export const Popover = ({ trigger, items }: PopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!popoverRef.current) return;
+
+      if (!popoverRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
-    <div className="relative inline-flex">
+    <div ref={popoverRef} className="relative inline-flex">
       <button
         type="button"
         aria-label="메뉴 열기"
