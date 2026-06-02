@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import Delete from '@/assets/icons/Delete.svg';
-import Polygon from '@/assets/icons/Polygon.svg';
+import Delete from '@/assets/icon/Delete.svg';
+import Polygon from '@/assets/icon/Polygon.svg';
 
 interface ToolTipProps {
   message: string;
