@@ -1,14 +1,25 @@
 import { useState } from 'react';
-import IconStar from '@/assets/icons/icon_star.svg';
+import IconStar from '@/assets/icons/icon-star.svg';
 
-export interface StarRatingProps {
-  mode?: 'display' | 'interactive';
+interface BaseStarRatingProps {
   rating?: number;
-  reviewCount?: number;
-  onChange?: (rating: number) => void;
   maxStars?: number;
   className?: string;
 }
+
+export interface DisplayStarRatingProps extends BaseStarRatingProps {
+  mode?: 'display';
+  reviewCount?: number;
+  onChange?: never;
+}
+
+export interface InteractiveStarRatingProps extends BaseStarRatingProps {
+  mode: 'interactive';
+  reviewCount?: never;
+  onChange: (rating: number) => void;
+}
+
+export type StarRatingProps = DisplayStarRatingProps | InteractiveStarRatingProps;
 
 export const StarRating = ({
   mode = 'display',
@@ -75,5 +86,3 @@ export const StarRating = ({
     </div>
   );
 };
-
-export default StarRating;
