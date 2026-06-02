@@ -60,6 +60,14 @@ export const WithSuffix: Story = {
   },
 };
 
+export const Password: Story = {
+  args: {
+    placeholder: '비밀번호를 입력해 주세요',
+    className: 'w-80',
+    type: 'password',
+  },
+};
+
 export const WithPrefixAndSuffix: Story = {
   args: {
     placeholder: '내가 원하는 체험은',

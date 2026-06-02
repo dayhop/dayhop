@@ -1,3 +1,9 @@
+'use client';
+
+import { useState } from 'react';
+import EyeOnIcon from '@/assets/icon/EyeOnIcon.svg';
+import EyeOffIcon from '@/assets/icon/EyeOffIcon.svg';
+
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
   warningText?: string;
   prefix?: React.ReactNode;
@@ -13,8 +19,12 @@ export default function Input({
   isWarning,
   isDisabled,
   className,
+  type,
   ...props
 }: InputProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === 'password';
+
   return (
     <div className={`flex flex-col gap-2 ${className ?? ''}`}>
       <div
@@ -26,9 +36,24 @@ export default function Input({
         <input
           className="w-full bg-transparent text-gray-950 placeholder-gray-400 outline-none disabled:cursor-not-allowed"
           disabled={isDisabled}
+          type={isPassword ? (showPassword ? 'text' : 'password') : type}
           {...props}
         />
-        {suffix}
+        {isPassword ? (
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? (
+              <EyeOnIcon width={20} height={20} />
+            ) : (
+              <EyeOffIcon width={20} height={20} />
+            )}
+          </button>
+        ) : (
+          suffix
+        )}
       </div>
       {isWarning && warningText && <p className="text-sm text-red-500">{warningText}</p>}
     </div>
