@@ -1,4 +1,3 @@
-'use client';
 import * as T from '@/types/api/activities-types';
 import instance from './instance';
 

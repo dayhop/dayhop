@@ -1,7 +1,9 @@
+export type ActivityCategory = '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+
 export interface GetActivitiesParams {
   method: 'cursor' | 'offset';
   cursorId?: number;
-  category?: '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+  category?: ActivityCategory;
   keyword?: string;
   sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest';
   page?: number;
@@ -13,7 +15,7 @@ export interface ActivityItem {
   userId: number;
   title: string;
   description: string;
-  category: '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+  category: ActivityCategory;
   price: number;
   address: string;
   bannerImageUrl: string;
@@ -48,16 +50,16 @@ export interface GetActivitiesResponse {
 
 export interface PostActivitiesData {
   title: string;
-  category: string;
+  category: ActivityCategory;
   description: string;
   address: string;
   price: number;
-  schedules: Schedules[];
+  schedules: ActivityScheduleInput[];
   bannerImageUrl: string;
   subImageUrls: string[];
 }
 
-export type Schedules = {
+export type ActivityScheduleInput = {
   date: string;
   startTime: string;
   endTime: string;
