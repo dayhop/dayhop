@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import KebabIcon from '@/assets/icon/KebabIcon.svg';
+import { cn } from '@/utils/cn';
 
 type PopoverItem = {
   label: string;
@@ -9,7 +11,7 @@ type PopoverItem = {
   variant?: 'default' | 'delete';
 };
 export interface PopoverProps {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   items: PopoverItem[];
 }
 
@@ -17,14 +19,34 @@ export const Popover = ({ trigger, items }: PopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
-      <button onClick={() => setIsOpen((prev) => !prev)}>{trigger}</button>
+    <div className="relative inline-flex">
+      <button
+        type="button"
+        aria-label="메뉴 열기"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        className="cursor-pointer"
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        {trigger ?? <KebabIcon aria-hidden="true" />}
+      </button>
 
       {isOpen && (
-        <div>
+        <div
+          role="menu"
+          className="absolute top-0 right-full flex flex-col rounded-lg border border-[#DFDFDF] bg-white px-2.5 py-3 text-center whitespace-nowrap"
+        >
           {items.map((item) => (
             <button
               key={item.label}
+              type="button"
+              role="menuitem"
+              className={cn(
+                'relative flex cursor-pointer items-center gap-2.25 rounded-md px-3 py-2.5 text-base font-medium transition-colors',
+                item.variant === 'delete'
+                  ? 'text-[#E5484D] hover:bg-[rgba(229,72,77,0.1)]'
+                  : 'text-gray-700 hover:bg-[rgba(237,238,242,0.5)]'
+              )}
               onClick={() => {
                 item.onClick();
                 setIsOpen(false);
