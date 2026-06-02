@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import EyeOnIcon from '@/assets/icon/EyeOnIcon.svg';
 import EyeOffIcon from '@/assets/icon/EyeOffIcon.svg';
+import { cn } from '@/utils/cn';
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
   warningText?: string;
@@ -24,11 +25,12 @@ export default function Input({
   const isPassword = type === 'password';
 
   return (
-    <div className={`flex flex-col gap-2 ${className ?? ''}`}>
+    <div className={cn('flex flex-col gap-2', className)}>
       <div
-        className={`flex h-[54px] items-center gap-2 rounded-2xl border bg-gray-50 px-4 has-[:disabled]:opacity-40 ${
+        className={cn(
+          'flex h-[54px] items-center gap-2 rounded-2xl border bg-gray-50 px-4 has-[:disabled]:opacity-40',
           isWarning ? 'border-red-500' : 'border-gray-200'
-        }`}
+        )}
       >
         {prefix}
         <input
@@ -39,7 +41,8 @@ export default function Input({
         {isPassword ? (
           <button
             type="button"
-            className="cursor-pointer"
+            className="cursor-pointer disabled:cursor-not-allowed"
+            disabled={props.disabled}
             onClick={() => setShowPassword((prev) => !prev)}
           >
             {showPassword ? (
