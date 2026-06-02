@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ToolTip } from './ToolTip';
 
 const meta = {
-  title: 'Components/ToolTip',
+  title: 'Components/UI/ToolTip',
   component: ToolTip,
   parameters: {
     layout: 'centered',
