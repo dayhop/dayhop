@@ -13,9 +13,10 @@ type PopoverItem = {
 export interface PopoverProps {
   trigger?: React.ReactNode;
   items: PopoverItem[];
+  menuClassName?: string;
 }
 
-export const Popover = ({ trigger, items }: PopoverProps) => {
+export const Popover = ({ trigger, items, menuClassName }: PopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +54,10 @@ export const Popover = ({ trigger, items }: PopoverProps) => {
       {isOpen && (
         <div
           role="menu"
-          className="absolute top-0 right-full flex flex-col rounded-lg border border-[#DFDFDF] bg-white px-2.5 py-3 text-center whitespace-nowrap"
+          className={cn(
+            'absolute top-0 right-full flex flex-col rounded-lg border border-[#DFDFDF] bg-white px-2.5 py-3 text-center whitespace-nowrap',
+            menuClassName
+          )}
         >
           {items.map((item) => (
             <button
