@@ -15,20 +15,20 @@ export interface CreateSignUpRequest {
 
 export type CreateSignUpResponse = User;
 
-export type GetUsersResponse = User;
+export type GetMyUserResponse = User;
 
-export interface UpdateUsersRequest {
+export interface UpdateMyUserRequest {
   nickname?: string;
   profileImageUrl?: string;
   newPassword?: string;
 }
 
-export type UpdateUsersResponse = User;
+export type UpdateMyUserResponse = User;
 
-export interface CreateUsersImageRequest {
+export interface CreateUserImageRequest {
   image: File;
 }
 
-export interface CreateUsersImageResponse {
+export interface CreateUserImageResponse {
   profileImageUrl: string;
 }
