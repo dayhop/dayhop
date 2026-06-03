@@ -31,6 +31,10 @@ export interface ReservationCount {
   confirmed: number;
   completed: number;
 }
+export interface GetMyActivityReservationDashboardParams {
+  year: string;
+  month: string;
+}
 
 export interface GetMyActivityReservationDashboardResponse {
   date: string;
