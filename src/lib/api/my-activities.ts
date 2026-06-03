@@ -21,7 +21,7 @@ export async function getMyActivityReservationDashboard(
 
 export async function getMyActivityReservedSchedule(
   activityId: number,
-  params: { date: string }
+  params: T.GetMyActivityReservedScheduleParams
 ): Promise<T.GetMyActivityReservedScheduleResponse[]> {
   const response = await instance.get<T.GetMyActivityReservedScheduleResponse[]>(
     `/my-activities/${activityId}/reserved-schedule`,
