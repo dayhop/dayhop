@@ -10,7 +10,7 @@ export async function getMyActivities(
 
 export async function getMyActivityReservationDashboard(
   activityId: number,
-  params: { year: string; month: string }
+  params: T.GetMyActivityReservationDashboardParams
 ): Promise<T.GetMyActivityReservationDashboardResponse[]> {
   const response = await instance.get<T.GetMyActivityReservationDashboardResponse[]>(
     `/my-activities/${activityId}/reservation-dashboard`,
