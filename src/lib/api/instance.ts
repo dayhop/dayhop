@@ -5,4 +5,19 @@ const instance = axios.create({
   timeout: 5000,
 });
 
+instance.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export default instance;
