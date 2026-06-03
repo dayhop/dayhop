@@ -47,6 +47,10 @@ export interface ReservedScheduleCount {
   pending: number;
 }
 
+export interface GetMyActivityReservedScheduleParams {
+  date: string;
+}
+
 export interface GetMyActivityReservedScheduleResponse {
   scheduleId: number;
   startTime: string;
