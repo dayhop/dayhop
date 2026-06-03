@@ -9,7 +9,7 @@ export const getMyReservations = async ({
   status,
 }: T.GetMyReservationsParams): Promise<T.GetMyReservationsResponse> => {
   const { data } = await instance.get<T.GetMyReservationsResponse>(`/${teamId}/my-reservations`, {
-    params: { cursorId, size, status },
+    params: { cursorId: cursorId ?? undefined, size, status },
   });
   return data;
 };
