@@ -26,7 +26,7 @@ export interface Reservation {
 
 export interface GetMyReservationsParams {
   teamId: string;
-  cursorId?: number;
+  cursorId?: number | null;
   size?: number;
   status?: ReservationStatus;
 }
