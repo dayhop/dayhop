@@ -10,7 +10,7 @@ export interface Notification {
 
 export interface GetMyNotificationsParams {
   teamId: string;
-  cursorId?: number;
+  cursorId?: number | null;
   size?: number;
 }
 
