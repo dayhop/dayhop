@@ -1,5 +1,5 @@
-import * as T from '@/types/api/my-activities';
-import instance from './instance';
+import * as T from './type';
+import instance from '../instance';
 
 export async function getMyActivities(
   params?: T.GetMyActivitiesParams
