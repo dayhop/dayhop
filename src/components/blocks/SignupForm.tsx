@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
 import Input from '../ui/Input';
 
+//=========== 삭제 필요 ==================
+import instance from '@/lib/api/instance';
+
 export function SignupForm() {
   const [formData, setFormData] = useState({
     email: '',
@@ -67,7 +70,6 @@ export function SignupForm() {
           ...prev,
           email: false,
         }));
-        console.log(isError);
       }
     }
 
@@ -93,7 +95,6 @@ export function SignupForm() {
           ...prev,
           password: true,
         }));
-        console.log(isError);
       } else {
         setIsError((prev) => ({
           ...prev,
@@ -121,6 +122,40 @@ export function SignupForm() {
       ...prev,
       [id]: errorMessage,
     }));
+  };
+
+  // ================= 삭제 필요 ==============
+
+  interface CreateSignUpRequest {
+    email: string;
+    nickname: string;
+    password: string;
+  }
+  interface User {
+    id: number;
+    email: string;
+    nickname: string;
+    profileImageUrl: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+  type CreateSignUpResponse = User;
+
+  const postSignUp = async (body: CreateSignUpRequest): Promise<CreateSignUpResponse> => {
+    const { data } = await instance.post<CreateSignUpResponse>('/users', body);
+    return data;
+  };
+
+  // =========================================
+
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const requestBody = {
+      email: formData.email,
+      nickname: formData.name,
+      password: formData.password,
+    };
+    postSignUp(requestBody);
   };
 
   return (
@@ -180,7 +215,9 @@ export function SignupForm() {
           onChange={handleChange}
         />
       </div>
-      <Button disabled={isDisabled}>회원가입하기</Button>
+      <Button disabled={isDisabled} onClick={handleButtonClick}>
+        회원가입하기
+      </Button>
     </div>
   );
 }
