@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Modal } from './Modal';
 
 const meta = {
-  title: 'UI/Modal',
+  title: 'Components/UI/Modal',
   component: Modal,
 } satisfies Meta<typeof Modal>;
 
@@ -14,6 +14,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    ariaLabel: '기본 모달',
     children: (
       <div>
         <h2 className="text-xl font-bold">모달 제목</h2>
@@ -33,7 +34,7 @@ const CloseOnOverlayClickExample = () => {
       </button>
 
       {isOpen && (
-        <Modal onClose={() => setIsOpen(false)} className="w-[400px]">
+        <Modal ariaLabel="닫기 예시 모달" onClose={() => setIsOpen(false)} className="w-[400px]">
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold">모달 제목</h2>
 
@@ -54,6 +55,7 @@ const CloseOnOverlayClickExample = () => {
 
 export const CloseOnOverlayClick: Story = {
   args: {
+    ariaLabel: '닫기 예시 모달',
     children: <></>,
   },
   render: () => <CloseOnOverlayClickExample />,
