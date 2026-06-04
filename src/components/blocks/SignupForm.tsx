@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
+import Input from '../ui/Input';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,13 @@ export function SignupForm() {
     passwordConfirm: '',
   });
 
+  const [isError, setIsError] = useState({
+    email: false,
+    name: false,
+    password: false,
+    passwordConfirm: false,
+  });
+
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     name: '',
@@ -17,7 +25,16 @@ export function SignupForm() {
     passwordConfirm: '',
   });
 
-  //에러 메세지가 모두 빈 문자열이면 버튼 disabled 풀기
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  useEffect(() => {
+    const hasNoErrors = Object.values(errorMessage).every((msg) => msg === '');
+    const isAllFilled = Object.values(formData).every((val) => val !== '');
+    const updateButtonState = () => {
+      setIsDisabled(!(hasNoErrors && isAllFilled));
+    };
+    updateButtonState();
+  }, [errorMessage, formData]);
 
   const handleFocusout = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -41,28 +58,65 @@ export function SignupForm() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
         errorMessage = '올바른 이메일 형식이 아닙니다.';
+        setIsError((prev) => ({
+          ...prev,
+          email: true,
+        }));
+      } else {
+        setIsError((prev) => ({
+          ...prev,
+          email: false,
+        }));
+        console.log(isError);
       }
     }
 
     if (id === 'name') {
-      if (id.length > 10) {
+      if (value.length > 10) {
         errorMessage = '열 자 이하로 작성해주세요.';
+        setIsError((prev) => ({
+          ...prev,
+          name: true,
+        }));
+      } else {
+        setIsError((prev) => ({
+          ...prev,
+          name: false,
+        }));
       }
     }
 
     if (id === 'password') {
       if (value.length < 8) {
         errorMessage = '비밀번호는 8자 이상이어야 합니다.';
+        setIsError((prev) => ({
+          ...prev,
+          password: true,
+        }));
+        console.log(isError);
+      } else {
+        setIsError((prev) => ({
+          ...prev,
+          password: false,
+        }));
       }
     }
 
     if (id === 'passwordConfirm') {
       if (value !== formData.password) {
         errorMessage = '비밀번호가 일치하지 않습니다.';
+        setIsError((prev) => ({
+          ...prev,
+          passwordConfirm: true,
+        }));
+      } else {
+        setIsError((prev) => ({
+          ...prev,
+          passwordConfirm: false,
+        }));
       }
     }
 
-    // 에러 상태 업데이트
     setErrorMessage((prev) => ({
       ...prev,
       [id]: errorMessage,
@@ -75,24 +129,25 @@ export function SignupForm() {
         <label htmlFor="email" className="text-sm font-semibold text-gray-700">
           이메일
         </label>
-        <input
+        <Input
           id="email"
-          type="email"
+          warningText={errorMessage.email}
+          isWarning={isError.email}
           placeholder="이메일을 입력해 주세요"
-          value={formData.email}
-          onChange={handleChange}
           onBlur={handleFocusout}
+          onChange={handleChange}
         />
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="name" className="text-sm font-semibold text-gray-700">
           닉네임
         </label>
-        <input
+        <Input
           id="name"
-          placeholder="이름을 입력해 주세요"
-          value={formData.name}
+          warningText={errorMessage.name}
           onBlur={handleFocusout}
+          isWarning={isError.name}
+          placeholder="닉네임을 입력해 주세요"
           onChange={handleChange}
         />
       </div>
@@ -101,11 +156,12 @@ export function SignupForm() {
         <label htmlFor="password" className="text-sm font-semibold text-gray-700">
           비밀번호
         </label>
-        <input
+        <Input
           id="password"
           type="password"
+          warningText={errorMessage.password}
+          isWarning={isError.password}
           placeholder="비밀번호를 입력해 주세요"
-          value={formData.password}
           onBlur={handleFocusout}
           onChange={handleChange}
         />
@@ -114,16 +170,17 @@ export function SignupForm() {
         <label htmlFor="passwordConfirm" className="text-sm font-semibold text-gray-700">
           비밀번호 확인
         </label>
-        <input
-          id="passwordConfirm"
+        <Input
           type="password"
+          id="passwordConfirm"
+          warningText={errorMessage.passwordConfirm}
+          isWarning={isError.passwordConfirm}
           placeholder="비밀번호를 한 번 더 입력해 주세요"
-          value={formData.passwordConfirm}
           onBlur={handleFocusout}
           onChange={handleChange}
         />
       </div>
-      <Button disabled={true}>회원가입하기</Button>
+      <Button disabled={isDisabled}>회원가입하기</Button>
     </div>
   );
 }
