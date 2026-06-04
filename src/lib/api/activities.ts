@@ -1,10 +1,9 @@
 import * as T from '@/types/api/activities-types';
 import instance from './instance';
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQ4NiwidGVhbUlkIjoiMjMtMiIsImlhdCI6MTc4MDI5ODE5MSwiZXhwIjoxNzgwMjk5OTkxLCJpc3MiOiJzcC1nbG9iYWxub21hZCJ9.5mxhcOctyXh-gGZcXCYi2JfVIfcEzLebDlc8EgMyk4I';
-
 //================================
+
+const token = process.env.NEXT_PUBLIC_API_TOKEN;
 
 export async function getActivities(
   params: T.GetActivitiesParams
