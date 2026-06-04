@@ -65,37 +65,9 @@ export type ActivityScheduleInput = {
   endTime: string;
 };
 
-export interface PostActivitiesResponse {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  address: string;
-  bannerImageUrl: string;
-  rating: number;
-  reviewCount: number;
-  createdAt: string;
-  updatedAt: string;
-  subImages: SubImages[];
-  schedules: ScheduleDate[];
-}
-
-export type SubImages = {
-  imageUrl: string;
-  id: number;
-};
-
-export type ScheduleTime = {
-  endTime: string;
-  startTime: string;
-  id: number;
-};
-
 export type ScheduleDate = {
-  times: ScheduleTime[];
   date: string;
+  times: Omit<Schedule, 'date'>[];
 };
 
 export interface GetActivityAvailableScheduleParams {
@@ -105,7 +77,7 @@ export interface GetActivityAvailableScheduleParams {
 
 export interface GetActivityAvailableScheduleResponse {
   date: string;
-  times: ScheduleTime[];
+  times: Omit<Schedule, 'date'>[];
 }
 
 export interface GetActivityReviewsResponses {

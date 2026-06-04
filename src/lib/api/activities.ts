@@ -12,10 +12,8 @@ export async function getActivities(
   return response.data;
 }
 
-export async function postActivities(
-  data: T.PostActivitiesData
-): Promise<T.PostActivitiesResponse> {
-  const response = await instance.post<T.PostActivitiesResponse>('/activities', data, {
+export async function postActivities(data: T.PostActivitiesData): Promise<T.ActivityResponse> {
+  const response = await instance.post<T.ActivityResponse>('/activities', data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
