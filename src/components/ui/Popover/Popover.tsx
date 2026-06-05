@@ -83,7 +83,7 @@ export const Popover: PopoverComponent = ({
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, close]);
 
   return (
     <PopoverContext.Provider value={{ isOpen, close }}>
