@@ -85,8 +85,10 @@ export const Popover: PopoverComponent = ({
     };
   }, [isOpen, close]);
 
+  const contextValue = useMemo(() => ({ isOpen, close }), [isOpen, close]);
+
   return (
-    <PopoverContext.Provider value={{ isOpen, close }}>
+    <PopoverContext.Provider value={contextValue}>
       <div ref={popoverRef} className={cn('relative inline-flex', className)}>
         <button
           type="button"
