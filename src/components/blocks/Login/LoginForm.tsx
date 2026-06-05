@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import Input from '../ui/Input';
+
 import { Button } from '@/components/ui/Button';
 import instance from '@/lib/api/instance';
+import Input from '@/components/ui/Input';
+import { saveToken } from '@/actions/auth';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm() {
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     password: '',
@@ -53,13 +57,18 @@ export function LoginForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    console.log(formData);
   };
 
   const handleClickButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const res = await postLogin(formData);
-    console.log(res);
+    try {
+      const res = await postLogin(formData);
+      saveToken(res.accessToken, res.refreshToken);
+      router.push('/');
+      console.log(res);
+    } catch (e) {
+      console.error(`로그인 실패${e}`);
+    }
   };
 
   // ============= 삭제해야할 부분 =====================
