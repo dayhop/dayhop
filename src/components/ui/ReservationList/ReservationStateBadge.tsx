@@ -1,5 +1,4 @@
 type ReservationState = 'confirmed' | 'cancelled' | 'rejected' | 'completed';
-type Color = 'red' | 'green' | 'blue' | 'gray';
 
 interface ReservationStateBadgeProps {
   reservationState: ReservationState;
