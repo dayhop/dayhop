@@ -1,11 +1,15 @@
+'use client';
+
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface ReservationCardProps {
   title: string;
   startTime: string;
   endTime: string;
+  date: string;
   totalPrice: number;
-  //TODO 타입 수정
+  //@TODO 타입 수정
   status: string;
   headCount: number;
   bannerImageUrl: string;
@@ -14,6 +18,7 @@ export function ReservationCard({
   title,
   startTime,
   endTime,
+  date,
   totalPrice,
   status,
   headCount,
@@ -23,6 +28,23 @@ export function ReservationCard({
     const price = totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return price + '원';
   };
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="flex h-37 items-stretch">
@@ -31,7 +53,9 @@ export function ReservationCard({
         <div className="flex flex-col gap-1">
           <div className="font-bold">{title}</div>
           <div className="text-[13px] text-gray-500">
-            {startTime} ~ {endTime}
+            {windowSize.width >= 1024
+              ? `${date} · ${startTime} ~ ${endTime}`
+              : `${startTime} ~ ${endTime}`}
           </div>
         </div>
         <div className="flex gap-1">
