@@ -119,7 +119,7 @@ export interface PostActivityReservationsResponse {
   updatedAt: string;
 }
 
-export type Status = 'pending' | 'confirmed' | 'cancelled';
+export type Status = 'pending' | 'confirmed' | 'declined' | 'canceled' | 'completed';
 
 export interface GetActivityReviews {
   page?: number;

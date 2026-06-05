@@ -10,8 +10,11 @@ const meta: Meta<typeof ReservationCard> = {
     startTime: { control: 'text' },
     endTime: { control: 'text' },
     date: { control: 'text' },
-    totalPrice: { control: 'text' },
-    status: { control: 'text' },
+    totalPrice: { control: 'number' },
+    status: {
+      control: 'select',
+      options: ['pending', 'confirmed', 'canceled', 'completed', 'declined'],
+    },
     headCount: { control: 'number' },
     bannerImageUrl: { control: 'text' },
   },
