@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/Button';
 import Input from '../ui/Input';
 
@@ -27,17 +27,6 @@ export function SignupForm() {
     password: '',
     passwordConfirm: '',
   });
-
-  const [isDisabled, setIsDisabled] = useState(true);
-
-  useEffect(() => {
-    const hasNoErrors = Object.values(errorMessage).every((msg) => msg === '');
-    const isAllFilled = Object.values(formData).every((val) => val !== '');
-    const updateButtonState = () => {
-      setIsDisabled(!(hasNoErrors && isAllFilled));
-    };
-    updateButtonState();
-  }, [errorMessage, formData]);
 
   const handleFocusout = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -215,7 +204,12 @@ export function SignupForm() {
           onChange={handleChange}
         />
       </div>
-      <Button disabled={isDisabled} onClick={handleButtonClick}>
+      <Button
+        disabled={
+          isError['email'] || isError['name'] || isError['password'] || isError['passwordConfirm']
+        }
+        onClick={handleButtonClick}
+      >
         회원가입하기
       </Button>
     </div>
