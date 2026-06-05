@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Button } from '../ui/Button';
-import Input from '../ui/Input';
+import { Button } from '../../ui/Button';
+import Input from '../../ui/Input';
 
 //=========== 삭제 필요 ==================
 import instance from '@/lib/api/instance';
@@ -137,14 +137,18 @@ export function SignupForm() {
 
   // =========================================
 
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const requestBody = {
       email: formData.email,
       nickname: formData.name,
       password: formData.password,
     };
-    postSignUp(requestBody);
+    const res = await postSignUp(requestBody);
+
+    // ======== 테스트 ========
+    console.log(res);
+    //=========================
   };
 
   return (
