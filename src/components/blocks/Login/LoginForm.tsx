@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/Button';
 import instance from '@/lib/api/instance';
 import Input from '@/components/ui/Input';
 import { saveToken } from '@/actions/auth';
-import { useRouter } from 'next/navigation';
 
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState({
@@ -58,11 +57,11 @@ export function LoginForm() {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const handleClickButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickButton = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await postLogin(formData);
-      saveToken(res.accessToken, res.refreshToken);
+      await saveToken(res.accessToken, res.refreshToken);
       console.log(res);
     } catch (e) {
       console.error(`로그인 실패${e}`);
@@ -95,7 +94,7 @@ export function LoginForm() {
   // =================================================
 
   return (
-    <div className="flex w-full max-w-140 flex-col gap-5">
+    <form className="flex w-full max-w-140 flex-col gap-5">
       <div className="flex flex-col gap-2">
         <label htmlFor="email" className="text-sm font-semibold text-gray-700">
           이메일
@@ -123,9 +122,12 @@ export function LoginForm() {
           onChange={handleChange}
         />
       </div>
-      <Button disabled={isError.email || isError.password} onClick={handleClickButton}>
+      <Button
+        disabled={isError.email || isError.password || !formData.email || !formData.password}
+        type="submit"
+      >
         로그인하기
       </Button>
-    </div>
+    </form>
   );
 }
