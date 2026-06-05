@@ -21,18 +21,24 @@ export const Confirmed: Story = {
 
 export const Cancelled: Story = {
   args: {
-    reservationState: 'cancelled',
+    reservationState: 'canceled',
   },
 };
 
-export const Rejected: Story = {
+export const Declined: Story = {
   args: {
-    reservationState: 'rejected',
+    reservationState: 'declined',
   },
 };
 
 export const Completed: Story = {
   args: {
     reservationState: 'completed',
+  },
+};
+
+export const Pending: Story = {
+  args: {
+    reservationState: 'pending',
   },
 };
