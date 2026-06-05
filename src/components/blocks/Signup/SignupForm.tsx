@@ -2,9 +2,7 @@
 import { useState } from 'react';
 import { Button } from '../../ui/Button';
 import Input from '../../ui/Input';
-
-//=========== 삭제 필요 ==================
-import instance from '@/lib/api/instance';
+import { postSignUp } from '@/lib/api/users';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -123,30 +121,6 @@ export function SignupForm() {
       [id]: errorMessage,
     }));
   };
-
-  // ================= 삭제 필요 ==============
-
-  interface CreateSignUpRequest {
-    email: string;
-    nickname: string;
-    password: string;
-  }
-  interface User {
-    id: number;
-    email: string;
-    nickname: string;
-    profileImageUrl: string;
-    createdAt: string;
-    updatedAt: string;
-  }
-  type CreateSignUpResponse = User;
-
-  const postSignUp = async (body: CreateSignUpRequest): Promise<CreateSignUpResponse> => {
-    const { data } = await instance.post<CreateSignUpResponse>('/users', body);
-    return data;
-  };
-
-  // =========================================
 
   const handleButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
