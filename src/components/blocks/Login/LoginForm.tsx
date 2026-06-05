@@ -3,9 +3,10 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import instance from '@/lib/api/instance';
 import Input from '@/components/ui/Input';
+
 import { saveToken } from '@/actions/auth';
+import { postLogin } from '@/lib/api/auth';
 
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState({
@@ -57,7 +58,7 @@ export function LoginForm() {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const handleClickButton = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await postLogin(formData);
@@ -68,33 +69,8 @@ export function LoginForm() {
     }
   };
 
-  // ============= 삭제해야할 부분 =====================
-  interface LoginRequest {
-    email: string;
-    password: string;
-  }
-  interface User {
-    id: number;
-    email: string;
-    nickname: string;
-    profileImageUrl: string | null;
-    createdAt: string;
-    updatedAt: string;
-  }
-  interface LoginResponse {
-    user: User;
-    refreshToken: string;
-    accessToken: string;
-  }
-  const postLogin = async (body: LoginRequest): Promise<LoginResponse> => {
-    const { data } = await instance.post<LoginResponse>('/auth/login', body);
-
-    return data;
-  };
-  // =================================================
-
   return (
-    <form className="flex w-full max-w-140 flex-col gap-5">
+    <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2">
         <label htmlFor="email" className="text-sm font-semibold text-gray-700">
           이메일
