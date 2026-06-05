@@ -9,7 +9,6 @@ import { saveToken } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
 
 export function LoginForm() {
-  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     password: '',
@@ -64,7 +63,6 @@ export function LoginForm() {
     try {
       const res = await postLogin(formData);
       saveToken(res.accessToken, res.refreshToken);
-      router.push('/');
       console.log(res);
     } catch (e) {
       console.error(`로그인 실패${e}`);
