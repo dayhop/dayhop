@@ -28,7 +28,7 @@ export function SignupForm() {
     passwordConfirm: '',
   });
 
-  const handleFocusout = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFocusout = (e: React.FocusEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
@@ -90,6 +90,17 @@ export function SignupForm() {
           password: false,
         }));
       }
+      if (formData.passwordConfirm) {
+        const isConfirmError = value !== formData.passwordConfirm;
+        setIsError((prev) => ({
+          ...prev,
+          passwordConfirm: isConfirmError,
+        }));
+        setErrorMessage((prev) => ({
+          ...prev,
+          passwordConfirm: isConfirmError ? '비밀번호가 일치하지 않습니다.' : '',
+        }));
+      }
     }
 
     if (id === 'passwordConfirm') {
@@ -144,11 +155,14 @@ export function SignupForm() {
       nickname: formData.name,
       password: formData.password,
     };
-    const res = await postSignUp(requestBody);
-
-    // ======== 테스트 ========
-    console.log(res);
-    //=========================
+    try {
+      const res = await postSignUp(requestBody);
+      // ======== 테스트 ========
+      console.log(res);
+      //=========================
+    } catch (error) {
+      console.error('회원가입 실패:', error);
+    }
   };
 
   return (
