@@ -25,8 +25,7 @@ export interface Reservation {
 }
 
 export interface GetMyReservationsParams {
-  teamId: string;
-  cursorId?: number | null;
+  cursorId?: number;
   size?: number;
   status?: ReservationStatus;
 }
@@ -38,7 +37,6 @@ export interface GetMyReservationsResponse {
 }
 
 export interface PatchMyReservationParams {
-  teamId: string;
   reservationId: number;
 }
 
@@ -56,7 +54,6 @@ export interface PatchMyReservationApplicationBody {
 export type PatchMyReservationApplicationResponse = Reservation;
 
 export interface PostMyReservationReviewParams {
-  teamId: string;
   reservationId: number;
 }
 
