@@ -9,9 +9,13 @@ export const postLogin = async (body: LoginRequest): Promise<LoginResponse> => {
 };
 
 export const postRefreshToken = async (): Promise<TokenResponse> => {
-  const { data } = await instance.post<TokenResponse>('/auth/tokens', {
-    withCredentials: true,
-  });
+  const { data } = await instance.post<TokenResponse>(
+    '/auth/tokens',
+    {},
+    {
+      withCredentials: true,
+    }
+  );
 
   return data;
 };
