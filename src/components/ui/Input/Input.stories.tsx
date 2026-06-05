@@ -4,7 +4,7 @@ import SearchIcon from '@/assets/icon/SettingIcon.svg';
 import EyeIcon from '@/assets/icon/UserIcon.svg';
 
 const meta: Meta<typeof Input> = {
-  title: 'Components/Input',
+  title: 'Components/UI/Input',
   component: Input,
   tags: ['autodocs'],
   argTypes: {
