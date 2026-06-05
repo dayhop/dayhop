@@ -1,42 +1,59 @@
+import { AxiosRequestConfig } from 'axios';
 import * as T from './type';
 import instance from '../instance';
 
 export async function getMyActivities(
-  params?: T.GetMyActivitiesParams
+  params?: T.GetMyActivitiesParams,
+  config?: AxiosRequestConfig
 ): Promise<T.GetMyActivitiesResponse> {
-  const response = await instance.get<T.GetMyActivitiesResponse>('/my-activities', { params });
+  const response = await instance.get<T.GetMyActivitiesResponse>('/my-activities', {
+    params,
+    ...config,
+  });
   return response.data;
 }
 
 export async function getMyActivityReservationDashboard(
   activityId: number,
-  params: T.GetMyActivityReservationDashboardParams
+  params: T.GetMyActivityReservationDashboardParams,
+  config?: AxiosRequestConfig
 ): Promise<T.GetMyActivityReservationDashboardResponse[]> {
   const response = await instance.get<T.GetMyActivityReservationDashboardResponse[]>(
     `/my-activities/${activityId}/reservation-dashboard`,
-    { params }
+    {
+      params,
+      ...config,
+    }
   );
   return response.data;
 }
 
 export async function getMyActivityReservedSchedule(
   activityId: number,
-  params: T.GetMyActivityReservedScheduleParams
+  params: T.GetMyActivityReservedScheduleParams,
+  config?: AxiosRequestConfig
 ): Promise<T.GetMyActivityReservedScheduleResponse[]> {
   const response = await instance.get<T.GetMyActivityReservedScheduleResponse[]>(
     `/my-activities/${activityId}/reserved-schedule`,
-    { params }
+    {
+      params,
+      ...config,
+    }
   );
   return response.data;
 }
 
 export async function getMyActivityReservations(
   activityId: number,
-  params: T.GetMyActivityReservationsParams
+  params: T.GetMyActivityReservationsParams,
+  config?: AxiosRequestConfig
 ): Promise<T.GetMyActivityReservationsResponse> {
   const response = await instance.get<T.GetMyActivityReservationsResponse>(
     `/my-activities/${activityId}/reservations`,
-    { params }
+    {
+      params,
+      ...config,
+    }
   );
   return response.data;
 }
@@ -44,26 +61,33 @@ export async function getMyActivityReservations(
 export async function patchMyActivityReservationStatus(
   activityId: number,
   reservationId: number,
-  body: T.PatchMyActivityReservationStatusRequest
+  body: T.PatchMyActivityReservationStatusRequest,
+  config?: AxiosRequestConfig
 ): Promise<T.PatchMyActivityReservationStatusResponse> {
   const response = await instance.patch<T.PatchMyActivityReservationStatusResponse>(
     `/my-activities/${activityId}/reservations/${reservationId}`,
-    body
+    body,
+    config
   );
   return response.data;
 }
 
-export async function deleteMyActivity(activityId: number): Promise<void> {
-  await instance.delete(`/my-activities/${activityId}`);
+export async function deleteMyActivity(
+  activityId: number,
+  config?: AxiosRequestConfig
+): Promise<void> {
+  await instance.delete(`/my-activities/${activityId}`, config);
 }
 
 export async function patchMyActivity(
   activityId: number,
-  body: T.PatchMyActivityRequest
+  body: T.PatchMyActivityRequest,
+  config?: AxiosRequestConfig
 ): Promise<T.PatchMyActivityResponse> {
   const response = await instance.patch<T.PatchMyActivityResponse>(
     `/my-activities/${activityId}`,
-    body
+    body,
+    config
   );
   return response.data;
 }
