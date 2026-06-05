@@ -51,6 +51,11 @@ export function ReservationCard({
   status,
   headCount,
 }: ReservationCardProps) {
+  const totalPriceToString = (totalPrice: number) => {
+    const price = totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return price + '원';
+  };
+
   return (
     <div className="flex h-37 w-fit flex-col justify-end gap-2 rounded-3xl p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
       <div>
@@ -63,7 +68,7 @@ export function ReservationCard({
         </div>
       </div>
       <div className="flex gap-1">
-        <div className="text-[16px] font-bold">{totalPrice}원</div>
+        <div className="text-[16px] font-bold">{totalPriceToString(totalPrice)}</div>
         <div className="text-gray-400">{headCount}명</div>
       </div>
     </div>
