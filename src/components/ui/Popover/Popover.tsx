@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -56,7 +57,7 @@ export const Popover: PopoverComponent = ({
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const close = () => setIsOpen(false);
+  const close = useCallback(() => setIsOpen(false), []);
 
   useEffect(() => {
     if (!isOpen) return;
