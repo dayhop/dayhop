@@ -19,9 +19,9 @@ const avatarSizeClassName = {
 };
 
 const avatarSizes = {
-  sm: '(max-width: 767px) 20px, 24px',
+  sm: '(min-width: 768px) 24px, 20px',
   md: '30px',
-  lg: '(max-width: 767px) 70px, 120px',
+  lg: '(min-width: 768px) 120px, 70px',
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
