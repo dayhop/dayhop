@@ -1,6 +1,9 @@
+'use client';
+
 import Image from 'next/image';
-import DefaultAvatar from '@/assets/images/avatar-default.svg';
+import { useState } from 'react';
 import { cn } from '@/utils/cn';
+import DefaultAvatar from '@/assets/images/avatar-default.svg';
 
 type AvatarProps = {
   src?: string;
@@ -22,14 +25,24 @@ const avatarSizes = {
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
+  const [imgError, setImgError] = useState(false);
+  const showDefault = !src || imgError;
+
   return (
     <div
       className={cn('relative overflow-hidden rounded-full', avatarSizeClassName[size], className)}
     >
-      {src ? (
-        <Image src={src} alt={alt} fill sizes={avatarSizes[size]} className="object-cover" />
-      ) : (
+      {showDefault ? (
         <DefaultAvatar className="h-full w-full" role="img" aria-label={alt} />
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes={avatarSizes[size]}
+          className="object-cover"
+          onError={() => setImgError(true)}
+        />
       )}
     </div>
   );
