@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { twMerge } from 'tailwind-merge';
 import DefaultAvatar from '@/assets/images/avatar-default.svg';
+import { cn } from '@/utils/cn';
 
 type AvatarProps = {
   src?: string;
@@ -24,11 +24,7 @@ const avatarSizes = {
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
   return (
     <div
-      className={twMerge(
-        'relative overflow-hidden rounded-full',
-        avatarSizeClassName[size],
-        className
-      )}
+      className={cn('relative overflow-hidden rounded-full', avatarSizeClassName[size], className)}
     >
       {src ? (
         <Image src={src} alt={alt} fill sizes={avatarSizes[size]} className="object-cover" />
