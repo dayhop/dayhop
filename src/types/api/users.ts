@@ -1,4 +1,4 @@
-export interface User {
+export interface UserProfile {
   id: number;
   email: string;
   nickname: string;
@@ -13,9 +13,9 @@ export interface CreateSignUpRequest {
   password: string;
 }
 
-export type CreateSignUpResponse = User;
+export type CreateSignUpResponse = UserProfile;
 
-export type GetMyUserResponse = User;
+export type GetMyUserResponse = UserProfile;
 
 export interface UpdateMyUserRequest {
   nickname?: string;
@@ -23,7 +23,7 @@ export interface UpdateMyUserRequest {
   newPassword?: string;
 }
 
-export type UpdateMyUserResponse = User;
+export type UpdateMyUserResponse = UserProfile;
 
 export interface CreateUserImageRequest {
   image: File;
