@@ -25,8 +25,14 @@ const avatarSizes = {
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
-  const [imgError, setImgError] = useState(false);
-  const showDefault = !src || imgError;
+  const [errorSrc, setErrorSrc] = useState<string | null>(null);
+  const showDefault = !src || errorSrc === src;
+
+  const handleImageError = () => {
+    if (src) {
+      setErrorSrc(src);
+    }
+  };
 
   return (
     <div
@@ -41,7 +47,7 @@ export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', classNam
           fill
           sizes={avatarSizes[size]}
           className="object-cover"
-          onError={() => setImgError(true)}
+          onError={handleImageError}
         />
       )}
     </div>
