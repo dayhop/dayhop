@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Avatar } from './Avatar';
+import DefaultAvatar from '@/assets/images/avatar-default.svg';
 
 const meta = {
   title: 'Components/UI/Avatar',
@@ -54,7 +55,7 @@ export const Default: Story = {
 //src 이미지가 있을 경우
 export const WithSrcImage: Story = {
   args: {
-    src: '@/assets/images/avatar-sample.jpg',
+    src: DefaultAvatar.src,
   },
 };
 
