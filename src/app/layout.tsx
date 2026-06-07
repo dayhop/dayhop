@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import localFont from 'next/font/local';
 import Toast from '@/components/ui/Toast';
+import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 
 const pretendard = localFont({
@@ -24,8 +25,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={pretendard.variable}>
-        {children}
-        <Toast />
+        <AuthProvider>
+          {children}
+          <Toast />
+        </AuthProvider>
       </body>
     </html>
   );
