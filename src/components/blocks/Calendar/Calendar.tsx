@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { cn } from '@/utils/cn';
+import ChevronLeft from '@/assets/icon/ChevronLeft.svg';
+import ChevronRight from '@/assets/icon/ChevronRight.svg';
 
-const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 type CalendarDateInfo = {
   date: Date;
@@ -22,6 +24,7 @@ type CalendarProps = {
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
   headerVariant?: CalendarHeaderVariant;
+  dayClassName?: string;
 };
 
 const getCalendarDates = (year: number, month: number) => {
@@ -68,14 +71,24 @@ const CalendarHeader = ({
   navigationClassName,
 }: CalendarHeaderProps) => {
   const prevButton = (
-    <button type="button" onClick={onPrevMonth} aria-label="이전 달">
-      ◀
+    <button
+      type="button"
+      onClick={onPrevMonth}
+      aria-label="이전 달"
+      className="h-5 w-5 cursor-pointer md:h-6 md:w-6"
+    >
+      <ChevronLeft />
     </button>
   );
 
   const nextButton = (
-    <button type="button" onClick={onNextMonth} aria-label="다음 달">
-      ▶
+    <button
+      type="button"
+      onClick={onNextMonth}
+      aria-label="다음 달"
+      className="h-5 w-5 cursor-pointer md:h-6 md:w-6"
+    >
+      <ChevronRight />
     </button>
   );
 
@@ -95,9 +108,13 @@ const CalendarHeader = ({
     );
   }
   return (
-    <div className={cn('flex items-center justify-center gap-6', className)}>
+    <div
+      className={cn('mb-5 flex items-center justify-center gap-2.5 md:mb-10 md:gap-7.5', className)}
+    >
       {prevButton}
-      <strong className={titleClassName}>
+      <strong
+        className={cn('text-base font-bold text-(--color-text-primary) md:text-xl', titleClassName)}
+      >
         {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
       </strong>
       {nextButton}
@@ -113,6 +130,7 @@ export const Calendar = ({
   holidays = [],
   renderDateCell,
   headerVariant = 'default',
+  dayClassName,
 }: CalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(defaultMonth);
 
@@ -144,8 +162,13 @@ export const Calendar = ({
       />
 
       <div className="grid grid-cols-7">
-        {DAYS.map((day) => (
-          <div key={day}>{day}</div>
+        {DAYS.map((day, index) => (
+          <div
+            key={index}
+            className={cn('flex min-h-10 items-center justify-center', dayClassName)}
+          >
+            {day}
+          </div>
         ))}
       </div>
 
