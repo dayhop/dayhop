@@ -24,7 +24,17 @@ type CalendarProps = {
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
   headerVariant?: CalendarHeaderVariant;
+  className?: string;
+  headerClassName?: string;
+  headerTitleClassName?: string;
+  headerLabelClassName?: string;
+  headerNavigationClassName?: string;
+  dayHeaderClassName?: string;
   dayClassName?: string;
+  dateClassName?: string;
+  todayClassName?: string;
+  selectedClassName?: string;
+  holidayClassName?: string;
 };
 
 const getCalendarDates = (year: number, month: number) => {
@@ -129,8 +139,18 @@ export const Calendar = ({
   onMonthChange,
   holidays = [],
   renderDateCell,
+  className,
   headerVariant = 'default',
+  headerClassName,
+  headerTitleClassName,
+  headerLabelClassName,
+  headerNavigationClassName,
+  dayHeaderClassName,
   dayClassName,
+  dateClassName,
+  todayClassName,
+  selectedClassName,
+  holidayClassName,
 }: CalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(defaultMonth);
 
@@ -153,26 +173,38 @@ export const Calendar = ({
   };
 
   return (
-    <div>
+    <div className={className}>
       <CalendarHeader
         currentMonth={currentMonth}
         variant={headerVariant}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
+        className={headerClassName}
+        titleClassName={headerTitleClassName}
+        labelClassName={headerLabelClassName}
+        navigationClassName={headerNavigationClassName}
       />
 
-      <div className="grid grid-cols-7">
+      <div
+        className={cn(
+          'mb-1 grid grid-cols-7 border-b border-b-(--color-bg-footer) md:mb-3',
+          dayHeaderClassName
+        )}
+      >
         {DAYS.map((day, index) => (
           <div
             key={index}
-            className={cn('flex min-h-10 items-center justify-center', dayClassName)}
+            className={cn(
+              'flex min-h-10 items-center justify-center text-[13px] font-bold text-(--color-calendar-secondary) md:min-h-10.75 md:text-base',
+              dayClassName
+            )}
           >
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7">
+      <div className="grid h-[520px] grid-cols-7 md:h-130">
         {dates.map((date) => {
           const dateInfo: CalendarDateInfo = {
             date,
@@ -188,9 +220,26 @@ export const Calendar = ({
               key={date.toISOString()}
               type="button"
               onClick={() => onSelectDate?.(date)}
-              className={cn(!dateInfo.isCurrentMonth && 'text-gray-300')}
+              className={cn(
+                'flex h-full w-full cursor-pointer justify-center pt-2.5 text-[12px] font-medium text-(--color-calendar-primary) md:pt-4.5 md:text-base',
+                !dateInfo.isCurrentMonth && 'text-gray-400',
+                dateClassName
+              )}
             >
-              {renderDateCell ? renderDateCell(dateInfo) : dateInfo.day}
+              {renderDateCell ? (
+                renderDateCell(dateInfo)
+              ) : (
+                <span
+                  className={cn(
+                    'flex h-7 w-7 items-center justify-center rounded-full',
+                    dateInfo.isToday && cn('bg-blue-500 text-white', todayClassName),
+                    dateInfo.isSelected && cn('bg-black text-white', selectedClassName),
+                    dateInfo.isHoliday && cn('text-red-500', holidayClassName)
+                  )}
+                >
+                  {dateInfo.day}
+                </span>
+              )}
             </button>
           );
         })}
