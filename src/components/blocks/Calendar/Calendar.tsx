@@ -231,7 +231,14 @@ export const Calendar = ({
             <button
               key={date.toISOString()}
               type="button"
-              onClick={() => onSelectDate?.(date)}
+              onClick={() => {
+                onSelectDate?.(date);
+                if (!dateInfo.isCurrentMonth) {
+                  const newMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+                  setCurrentMonth(newMonth);
+                  onMonthChange?.(newMonth);
+                }
+              }}
               aria-label={date.toLocaleDateString('ko-KR', {
                 year: 'numeric',
                 month: 'long',
