@@ -27,10 +27,6 @@ export function SignupForm() {
   });
 
   const handleFocusout = (e: React.FocusEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.id]: e.target.value,
-    }));
     validateField(e.target.id, e.target.value);
   };
 
@@ -122,7 +118,7 @@ export function SignupForm() {
     }));
   };
 
-  const handleButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleformSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const requestBody = {
       email: formData.email,
@@ -131,18 +127,16 @@ export function SignupForm() {
     };
     try {
       const res = await postSignUp(requestBody);
-      // ======== 테스트 ========
-      console.log(res);
-      //=========================
+      return res;
     } catch (error) {
       console.error('회원가입 실패:', error);
     }
   };
 
   return (
-    <div className="flex w-full max-w-140 flex-col gap-5">
+    <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleformSubmit}>
       <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-sm font-semibold text-gray-700">
+        <label htmlFor="email" className="text-secondary text-sm font-semibold">
           이메일
         </label>
         <Input
@@ -155,7 +149,7 @@ export function SignupForm() {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="text-sm font-semibold text-gray-700">
+        <label htmlFor="name" className="text-secondary text-sm font-semibold">
           닉네임
         </label>
         <Input
@@ -169,7 +163,7 @@ export function SignupForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="password" className="text-sm font-semibold text-gray-700">
+        <label htmlFor="password" className="text-secondary text-sm font-semibold">
           비밀번호
         </label>
         <Input
@@ -183,7 +177,7 @@ export function SignupForm() {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label htmlFor="passwordConfirm" className="text-sm font-semibold text-gray-700">
+        <label htmlFor="passwordConfirm" className="text-secondary text-sm font-semibold">
           비밀번호 확인
         </label>
         <Input
@@ -197,13 +191,20 @@ export function SignupForm() {
         />
       </div>
       <Button
+        type="submit"
         disabled={
-          isError['email'] || isError['name'] || isError['password'] || isError['passwordConfirm']
+          isError['email'] ||
+          isError['name'] ||
+          isError['password'] ||
+          isError['passwordConfirm'] ||
+          formData.email === '' ||
+          formData.name === '' ||
+          formData.password === '' ||
+          formData.passwordConfirm === ''
         }
-        onClick={handleButtonClick}
       >
         회원가입하기
       </Button>
-    </div>
+    </form>
   );
 }
