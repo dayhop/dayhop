@@ -152,22 +152,27 @@ export const Calendar = ({
   selectedClassName,
   holidayClassName,
 }: CalendarProps) => {
-  const [currentMonth, setCurrentMonth] = useState(defaultMonth);
+  const [currentMonth, setCurrentMonth] = useState(() =>
+    value ? new Date(value.getFullYear(), value.getMonth(), 1) : defaultMonth
+  );
   const [prevValueKey, setPrevValueKey] = useState<string | undefined>(
     value ? `${value.getFullYear()}-${value.getMonth()}` : undefined
   );
 
-  const valueKey = value ? `${value.getFullYear()}-${value.getMonth()}` : undefined;
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
 
-  if (valueKey !== prevValueKey) {
+  const valueKey = value ? `${value.getFullYear()}-${value.getMonth()}` : undefined;
+  const currentMonthKey = `${year}-${month}`;
+
+  if (valueKey !== prevValueKey && valueKey !== currentMonthKey) {
     setPrevValueKey(valueKey);
     if (value) {
       setCurrentMonth(new Date(value.getFullYear(), value.getMonth(), 1));
     }
+  } else if (valueKey !== prevValueKey) {
+    setPrevValueKey(valueKey);
   }
-
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
   const dates = getCalendarDates(year, month);
 
   const handlePrevMonth = () => {
