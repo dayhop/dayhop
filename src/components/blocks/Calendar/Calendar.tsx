@@ -37,6 +37,9 @@ type CalendarProps = {
   holidayClassName?: string;
 };
 
+const toLocalDateString = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
 const getCalendarDates = (year: number, month: number) => {
   const firstDate = new Date(year, month, 1);
   const lastDate = new Date(year, month + 1, 0);
@@ -229,7 +232,7 @@ export const Calendar = ({
             isCurrentMonth: date.getMonth() === month,
             isToday: date.toDateString() === new Date().toDateString(),
             isSelected: value?.toDateString() === date.toDateString(),
-            isHoliday: holidays.includes(date.toISOString().slice(0, 10)),
+            isHoliday: holidays.includes(toLocalDateString(date)),
           };
 
           return (
