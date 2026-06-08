@@ -15,8 +15,9 @@ export const Default: Story = {
     onSelectCategory: (category) => {
       console.log('선택된 카테고리:', category);
     },
-    defaultMessage: '카테고리를 선택해주세요',
+
     list: ['문화 · 예술', '식음료', '스포츠', '투어', '관광', '웰빙'],
+    selectOption: '웰빙',
   },
   decorators: [
     (Story) => (

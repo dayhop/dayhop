@@ -7,13 +7,19 @@ import ArrowDown from '@/assets/icon/ArrowDown.svg';
 
 interface SelectionFormProps {
   onSelectCategory: (option: string) => void;
-  defaultMessage: string;
+  defaultMessage?: string;
   list: string[];
+  selectOption?: string;
 }
 
-export function SelectionForm({ onSelectCategory, defaultMessage, list }: SelectionFormProps) {
+export function SelectionForm({
+  onSelectCategory,
+  defaultMessage,
+  list,
+  selectOption,
+}: SelectionFormProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [showMessage, setShowMessage] = useState<string>(defaultMessage);
+  const [showMessage, setShowMessage] = useState<string>(defaultMessage || selectOption || '');
 
   const handleClick = () => {
     setIsOpen(!isOpen);
