@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import { Button } from '../Button';
 
-const categoryList = ['문화 예술', '식음료', '스포츠', '투어', '관광'];
+import ArrowDown from '@/assets/icon/ArrowDown.svg';
 
 interface SelectionFormProps {
-  onSelectCategory: (category: string) => void;
+  onSelectCategory: (option: string) => void;
+  defaultMessage: string;
+  list: string[];
 }
 
-export function SelectionForm({ onSelectCategory }: SelectionFormProps) {
+export function SelectionForm({ onSelectCategory, defaultMessage, list }: SelectionFormProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [showMessage, setShowMessage] = useState<string>('카테고리를 선택해주세요');
+  const [showMessage, setShowMessage] = useState<string>(defaultMessage);
 
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -21,16 +23,18 @@ export function SelectionForm({ onSelectCategory }: SelectionFormProps) {
     <div className="relative flex flex-col gap-3">
       <div className="flex h-13 w-full items-center justify-between gap-3 rounded-2xl border bg-white px-4">
         <span
-          className={`${showMessage === '카테고리를 선택해주세요' ? 'text-gray-400' : 'text-black'}`}
+          className={`${showMessage === defaultMessage ? 'text-gray-400' : 'text-black'} cursor-default`}
         >
           {showMessage}
         </span>
-        <button onClick={handleClick}>V</button>
+        <button onClick={handleClick} className="cursor-pointer">
+          <ArrowDown />
+        </button>
       </div>
 
       {isOpen && (
         <div className="relative flex flex-col gap-2 rounded-2xl border border-[#E0E0E5] md:absolute md:top-full md:z-10 md:mt-2 md:w-full">
-          {categoryList.map((item) => {
+          {list.map((item) => {
             return (
               <Button
                 onClick={() => {
