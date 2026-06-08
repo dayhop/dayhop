@@ -7,11 +7,10 @@ import {
 
 // 알림 목록 조회
 export const getMyNotifications = async ({
-  teamId,
   cursorId,
   size,
 }: GetMyNotificationsParams): Promise<GetMyNotificationsResponse> => {
-  const { data } = await instance.get<GetMyNotificationsResponse>(`/${teamId}/my-notifications`, {
+  const { data } = await instance.get<GetMyNotificationsResponse>('/my-notifications', {
     params: { cursorId, size },
   });
   return data;
@@ -19,8 +18,7 @@ export const getMyNotifications = async ({
 
 // 알림 삭제
 export const deleteMyNotification = async ({
-  teamId,
   notificationId,
 }: DeleteMyNotificationParams): Promise<void> => {
-  await instance.delete<void>(`/${teamId}/my-notifications/${notificationId}`);
+  await instance.delete<void>(`/my-notifications/${notificationId}`);
 };

@@ -9,8 +9,7 @@ export interface Notification {
 }
 
 export interface GetMyNotificationsParams {
-  teamId: string;
-  cursorId?: number | null;
+  cursorId?: number;
   size?: number;
 }
 
@@ -21,6 +20,5 @@ export interface GetMyNotificationsResponse {
 }
 
 export interface DeleteMyNotificationParams {
-  teamId: string;
   notificationId: number;
 }
