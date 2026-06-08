@@ -161,6 +161,7 @@ export const Calendar = ({
   const [currentMonth, setCurrentMonth] = useState(() =>
     value ? new Date(value.getFullYear(), value.getMonth(), 1) : defaultMonth
   );
+
   const [prevValueKey, setPrevValueKey] = useState<string | undefined>(
     value ? `${value.getFullYear()}-${value.getMonth()}` : undefined
   );
@@ -173,13 +174,12 @@ export const Calendar = ({
   const valueKey = value ? `${value.getFullYear()}-${value.getMonth()}` : undefined;
   const currentMonthKey = `${year}-${month}`;
 
-  if (valueKey !== prevValueKey && valueKey !== currentMonthKey) {
+  if (valueKey !== prevValueKey) {
     setPrevValueKey(valueKey);
-    if (value) {
+
+    if (valueKey && valueKey !== currentMonthKey && value) {
       setCurrentMonth(new Date(value.getFullYear(), value.getMonth(), 1));
     }
-  } else if (valueKey !== prevValueKey) {
-    setPrevValueKey(valueKey);
   }
   const dates = getCalendarDates(year, month);
 
@@ -262,7 +262,7 @@ export const Calendar = ({
                 day: 'numeric',
               })}
               aria-pressed={dateInfo.isSelected}
-              aria-disabled={!dateInfo.isCurrentMonth}
+              aria-disabled={isDisabled}
               className={cn(
                 'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
                 isDisabled && 'cursor-not-allowed opacity-40',
