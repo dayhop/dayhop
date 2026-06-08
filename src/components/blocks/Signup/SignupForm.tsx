@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from '../../ui/Button';
 import { postSignUp } from '@/lib/api/users';
-import { AuthForm } from '../AuthForm/AuthForm';
+import { AuthForm } from '../AuthField/AuthField';
 import {
   validateEmail,
   validateName,
