@@ -14,6 +14,7 @@ type CalendarDateInfo = {
   isToday: boolean;
   isSelected: boolean;
   isHoliday: boolean;
+  isSunday: boolean;
 };
 
 type CalendarProps = {
@@ -23,6 +24,7 @@ type CalendarProps = {
   onMonthChange?: (date: Date) => void;
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
+  isDateDisabled?: (date: Date) => boolean;
   headerVariant?: CalendarHeaderVariant;
   className?: string;
   headerClassName?: string;
@@ -107,7 +109,7 @@ const CalendarHeader = ({
 
   if (variant === 'secondary') {
     return (
-      <div className={className}>
+      <div className={cn('mb-2', className)}>
         <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
         <div className="flex items-center justify-between">
           <strong className={cn('font-medium', titleClassName)}>
@@ -142,6 +144,7 @@ export const Calendar = ({
   onMonthChange,
   holidays = [],
   renderDateCell,
+  isDateDisabled,
   className,
   headerVariant = 'default',
   headerClassName,
@@ -234,14 +237,18 @@ export const Calendar = ({
             isCurrentMonth: date.getMonth() === month,
             isToday: date.toDateString() === new Date().toDateString(),
             isSelected: value?.toDateString() === date.toDateString(),
-            isHoliday: date.getDay() === 0 || holidaySet.has(toLocalDateString(date)),
+            isHoliday: holidaySet.has(toLocalDateString(date)),
+            isSunday: date.getDay() === 0,
           };
+          const isDisabled = isDateDisabled?.(date) ?? false;
 
           return (
             <button
               key={date.toISOString()}
               type="button"
+              disabled={isDisabled}
               onClick={() => {
+                if (isDisabled) return;
                 onSelectDate?.(date);
                 if (!dateInfo.isCurrentMonth) {
                   const newMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -258,7 +265,8 @@ export const Calendar = ({
               aria-disabled={!dateInfo.isCurrentMonth}
               className={cn(
                 'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
-                !dateInfo.isCurrentMonth && 'text-gray-400',
+                isDisabled && 'cursor-not-allowed opacity-40',
+                !dateInfo.isCurrentMonth && 'opacity-40',
                 dateClassName
               )}
             >
@@ -284,7 +292,7 @@ export const Calendar = ({
                     >
                       <span>{dateInfo.day}</span>
                     </span>
-                  ) : dateInfo.isHoliday ? (
+                  ) : dateInfo.isHoliday || dateInfo.isSunday ? (
                     <span
                       className={cn(
                         'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-red-500 md:mt-4.5',
