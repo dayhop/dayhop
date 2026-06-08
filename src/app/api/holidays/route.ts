@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { NextResponse } from 'next/server';
 
 type HolidayItem = {
@@ -24,8 +25,7 @@ export async function GET(request: Request) {
 
   const url = `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?serviceKey=${serviceKey}&solYear=${year}&solMonth=${month}&_type=json`;
 
-  const response = await fetch(url);
-  const data = await response.json();
+  const { data } = await axios.get(url);
 
   const item = data.response?.body?.items?.item;
 
