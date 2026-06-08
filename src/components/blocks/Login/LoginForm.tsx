@@ -3,10 +3,12 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import { AuthField } from '../AuthField/AuthField';
+
+import { postLogin } from '@/lib/api/auth';
+import { validateEmail, validatePassword } from '@/utils/vaildate';
 
 import { saveToken } from '@/actions/auth';
-import { postLogin } from '@/lib/api/auth';
 
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState({
@@ -26,28 +28,25 @@ export function LoginForm() {
 
   const validateField = (id: string, value: string) => {
     let errorMessage = '';
-    if (id === 'email') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        errorMessage = '올바른 이메일 형식이 아닙니다.';
-        setIsError((prev) => ({ ...prev, email: true }));
-      } else {
-        setIsError((prev) => ({ ...prev, email: false }));
-      }
-    }
-    if (id === 'password') {
-      if (value.length < 8) {
-        errorMessage = '비밀번호는 8자 이상이어야 합니다.';
-        setIsError((prev) => ({ ...prev, password: true }));
-      } else {
-        setIsError((prev) => ({ ...prev, password: false }));
-      }
+    switch (id) {
+      case 'email':
+        errorMessage = validateEmail(value);
+        break;
+      case 'password':
+        errorMessage = validatePassword(value);
+        break;
+      default:
+        break;
     }
     setErrorMessage((prev) => ({
       ...prev,
       [id]: errorMessage,
     }));
-    console.log(errorMessage);
+
+    setIsError((prev) => ({
+      ...prev,
+      [id]: errorMessage! == '',
+    }));
   };
 
   const handleFocusout = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -71,33 +70,25 @@ export function LoginForm() {
 
   return (
     <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-sm font-semibold text-gray-700">
-          이메일
-        </label>
-        <Input
-          id="email"
-          warningText={errorMessage.email}
-          isWarning={isError.email}
-          placeholder="이메일을 입력해 주세요."
-          onBlur={handleFocusout}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="password" className="text-sm font-semibold text-gray-700">
-          비밀번호
-        </label>
-        <Input
-          type="password"
-          id="password"
-          warningText={errorMessage.password}
-          onBlur={handleFocusout}
-          isWarning={isError.password}
-          placeholder="비밀번호를 입력해주세요."
-          onChange={handleChange}
-        />
-      </div>
+      <AuthField
+        title="이메일"
+        errorMessage={errorMessage.email}
+        isError={isError.email}
+        handleChange={handleChange}
+        handleFocusout={handleFocusout}
+        placeholder="이메일을 입력해 주세요"
+        label="email"
+      />
+      <AuthField
+        title="비밀번호"
+        errorMessage={errorMessage.password}
+        isError={isError.password}
+        handleChange={handleChange}
+        handleFocusout={handleFocusout}
+        placeholder="비밀번호를 입력해 주세요"
+        type="password"
+        label="password"
+      />
       <Button
         disabled={isError.email || isError.password || !formData.email || !formData.password}
         type="submit"
