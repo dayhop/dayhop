@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '../../ui/Button';
-import Input from '../../ui/Input';
 import { postSignUp } from '@/lib/api/users';
+import { AuthForm } from '../AuthForm/AuthForm';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -135,61 +135,44 @@ export function SignupForm() {
 
   return (
     <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleformSubmit}>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-secondary text-sm font-semibold">
-          이메일
-        </label>
-        <Input
-          id="email"
-          warningText={errorMessage.email}
-          isWarning={isError.email}
-          placeholder="이메일을 입력해 주세요"
-          onBlur={handleFocusout}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="text-secondary text-sm font-semibold">
-          닉네임
-        </label>
-        <Input
-          id="name"
-          warningText={errorMessage.name}
-          onBlur={handleFocusout}
-          isWarning={isError.name}
-          placeholder="닉네임을 입력해 주세요"
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="password" className="text-secondary text-sm font-semibold">
-          비밀번호
-        </label>
-        <Input
-          id="password"
-          type="password"
-          warningText={errorMessage.password}
-          isWarning={isError.password}
-          placeholder="비밀번호를 입력해 주세요"
-          onBlur={handleFocusout}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="passwordConfirm" className="text-secondary text-sm font-semibold">
-          비밀번호 확인
-        </label>
-        <Input
-          type="password"
-          id="passwordConfirm"
-          warningText={errorMessage.passwordConfirm}
-          isWarning={isError.passwordConfirm}
-          placeholder="비밀번호를 한 번 더 입력해 주세요"
-          onBlur={handleFocusout}
-          onChange={handleChange}
-        />
-      </div>
+      <AuthForm
+        title="이메일"
+        errorMessage={errorMessage.email}
+        isError={isError.email}
+        handleChange={handleChange}
+        handleFocusout={handleFocusout}
+        placeholder="이메일을 입력해 주세요"
+        label="email"
+      />
+      <AuthForm
+        title="닉네임"
+        errorMessage={errorMessage.name}
+        isError={isError.name}
+        handleChange={handleChange}
+        handleFocusout={handleFocusout}
+        placeholder="닉네임을 입력해 주세요"
+        label="name"
+      />
+      <AuthForm
+        title="비밀번호 확인"
+        type="password"
+        errorMessage={errorMessage.password}
+        isError={isError.password}
+        handleChange={handleChange}
+        handleFocusout={handleFocusout}
+        placeholder="8자 이상 입력해 주세요"
+        label="password"
+      />
+      <AuthForm
+        title="비밀번호 확인"
+        type="passwordConfirm"
+        errorMessage={errorMessage.passwordConfirm}
+        isError={isError.passwordConfirm}
+        handleChange={handleChange}
+        handleFocusout={handleFocusout}
+        placeholder="비밀번호를 한 번 더 입력해 주세요"
+        label="passwordConfirm"
+      />
       <Button
         type="submit"
         disabled={
