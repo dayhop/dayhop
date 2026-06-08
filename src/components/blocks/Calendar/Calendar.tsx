@@ -232,6 +232,13 @@ export const Calendar = ({
               key={date.toISOString()}
               type="button"
               onClick={() => onSelectDate?.(date)}
+              aria-label={date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+              aria-selected={dateInfo.isSelected}
+              aria-disabled={!dateInfo.isCurrentMonth}
               className={cn(
                 'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
                 !dateInfo.isCurrentMonth && 'text-gray-400',
