@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 
 import localFont from 'next/font/local';
 import Toast from '@/components/ui/Toast';
-import { FooterWrapper } from '@/components/layout';
 import './globals.css';
 
 const pretendard = localFont({
@@ -25,10 +24,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={pretendard.variable}>
-        <div className="flex min-h-screen flex-col">
-          <main className="flex-grow">{children}</main>
-          <FooterWrapper />
-        </div>
+        {children}
         <Toast />
       </body>
     </html>
