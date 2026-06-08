@@ -45,7 +45,7 @@ export function LoginForm() {
 
     setIsError((prev) => ({
       ...prev,
-      [id]: errorMessage! == '',
+      [id]: errorMessage !== '',
     }));
   };
 
