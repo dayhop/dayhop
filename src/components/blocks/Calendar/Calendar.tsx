@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/utils/cn';
 import ChevronLeft from '@/assets/icon/ChevronLeft.svg';
 import ChevronRight from '@/assets/icon/ChevronRight.svg';
@@ -165,6 +165,8 @@ export const Calendar = ({
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
+  const holidaySet = useMemo(() => new Set(holidays), [holidays]);
+
   const valueKey = value ? `${value.getFullYear()}-${value.getMonth()}` : undefined;
   const currentMonthKey = `${year}-${month}`;
 
@@ -232,7 +234,7 @@ export const Calendar = ({
             isCurrentMonth: date.getMonth() === month,
             isToday: date.toDateString() === new Date().toDateString(),
             isSelected: value?.toDateString() === date.toDateString(),
-            isHoliday: holidays.includes(toLocalDateString(date)),
+            isHoliday: date.getDay() === 0 || holidaySet.has(toLocalDateString(date)),
           };
 
           return (
@@ -283,7 +285,12 @@ export const Calendar = ({
                       <span>{dateInfo.day}</span>
                     </span>
                   ) : dateInfo.isHoliday ? (
-                    <span className={cn('text-red-500', holidayClassName)}>
+                    <span
+                      className={cn(
+                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-red-500 md:mt-4.5',
+                        holidayClassName
+                      )}
+                    >
                       <span>{dateInfo.day}</span>
                     </span>
                   ) : (
