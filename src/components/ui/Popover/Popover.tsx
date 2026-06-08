@@ -22,7 +22,7 @@ interface PopoverContextValue {
 
 const PopoverContext = createContext<PopoverContextValue | null>(null);
 
-export interface PopoverProps {
+interface PopoverProps {
   trigger?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -30,7 +30,7 @@ export interface PopoverProps {
   ariaLabel?: string;
 }
 
-export interface PopoverContentProps {
+interface PopoverContentProps {
   children: ReactNode;
   className?: string;
 }
