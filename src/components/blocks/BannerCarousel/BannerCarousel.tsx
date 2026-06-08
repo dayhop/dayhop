@@ -27,7 +27,7 @@ export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
 
   if (!activities.length) return null;
 
-  const currentActivity = activities[currentIndex];
+  const currentActivity = activities[currentIndex] || activities[0];
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? activities.length - 1 : prev - 1));
