@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { NavigationButton } from './NavigationButton';
 
 const meta: Meta<typeof NavigationButton> = {
-  title: 'UI/components/NavigationButton',
+  title: 'components/UI/NavigationButton',
   component: NavigationButton,
   tags: ['autodocs'],
 };
