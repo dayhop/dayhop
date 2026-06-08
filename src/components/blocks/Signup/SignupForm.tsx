@@ -3,6 +3,12 @@ import { useState } from 'react';
 import { Button } from '../../ui/Button';
 import { postSignUp } from '@/lib/api/users';
 import { AuthForm } from '../AuthForm/AuthForm';
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+  validatePasswordConfirm,
+} from '@/utils/vaildate';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -40,82 +46,34 @@ export function SignupForm() {
   const validateField = (id: string, value: string) => {
     let errorMessage = '';
 
-    if (id === 'email') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        errorMessage = '올바른 이메일 형식이 아닙니다.';
-        setIsError((prev) => ({
-          ...prev,
-          email: true,
-        }));
-      } else {
-        setIsError((prev) => ({
-          ...prev,
-          email: false,
-        }));
-      }
-    }
-
-    if (id === 'name') {
-      if (value.length > 10) {
-        errorMessage = '열 자 이하로 작성해주세요.';
-        setIsError((prev) => ({
-          ...prev,
-          name: true,
-        }));
-      } else {
-        setIsError((prev) => ({
-          ...prev,
-          name: false,
-        }));
-      }
-    }
-
-    if (id === 'password') {
-      if (value.length < 8) {
-        errorMessage = '비밀번호는 8자 이상이어야 합니다.';
-        setIsError((prev) => ({
-          ...prev,
-          password: true,
-        }));
-      } else {
-        setIsError((prev) => ({
-          ...prev,
-          password: false,
-        }));
-      }
-      if (formData.passwordConfirm) {
-        const isConfirmError = value !== formData.passwordConfirm;
-        setIsError((prev) => ({
-          ...prev,
-          passwordConfirm: isConfirmError,
-        }));
-        setErrorMessage((prev) => ({
-          ...prev,
-          passwordConfirm: isConfirmError ? '비밀번호가 일치하지 않습니다.' : '',
-        }));
-      }
-    }
-
-    if (id === 'passwordConfirm') {
-      if (value !== formData.password) {
-        errorMessage = '비밀번호가 일치하지 않습니다.';
-        setIsError((prev) => ({
-          ...prev,
-          passwordConfirm: true,
-        }));
-      } else {
-        setIsError((prev) => ({
-          ...prev,
-          passwordConfirm: false,
-        }));
-      }
+    switch (id) {
+      case 'email':
+        errorMessage = validateEmail(value);
+        break;
+      case 'name':
+        errorMessage = validateName(value);
+        break;
+      case 'password':
+        errorMessage = validatePassword(value);
+        if (formData.passwordConfirm) {
+          const confirmErrorMsg = validatePasswordConfirm(value, formData.passwordConfirm);
+          setIsError((prev) => ({ ...prev, passwordConfirm: !!confirmErrorMsg }));
+          setErrorMessage((prev) => ({ ...prev, passwordConfirm: confirmErrorMsg }));
+        }
+        break;
+      case 'passwordConfirm':
+        errorMessage = validatePasswordConfirm(value, formData.password);
+        break;
+      default:
+        break;
     }
 
     setErrorMessage((prev) => ({
       ...prev,
       [id]: errorMessage,
     }));
+
+    setIsError((prev) => ({ ...prev, [id]: errorMessage !== '' }));
   };
 
   const handleformSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
