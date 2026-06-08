@@ -153,6 +153,18 @@ export const Calendar = ({
   holidayClassName,
 }: CalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState(defaultMonth);
+  const [prevValueKey, setPrevValueKey] = useState<string | undefined>(
+    value ? `${value.getFullYear()}-${value.getMonth()}` : undefined
+  );
+
+  const valueKey = value ? `${value.getFullYear()}-${value.getMonth()}` : undefined;
+
+  if (valueKey !== prevValueKey) {
+    setPrevValueKey(valueKey);
+    if (value) {
+      setCurrentMonth(new Date(value.getFullYear(), value.getMonth(), 1));
+    }
+  }
 
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -187,7 +199,7 @@ export const Calendar = ({
 
       <div
         className={cn(
-          'mb-1 grid grid-cols-7 border-b border-b-(--color-bg-footer) md:mb-3',
+          'grid grid-cols-7 border-b border-b-(--color-bg-footer) pb-1 md:pb-3',
           dayHeaderClassName
         )}
       >
@@ -204,7 +216,7 @@ export const Calendar = ({
         ))}
       </div>
 
-      <div className="grid h-[520px] grid-cols-7 md:h-130">
+      <div className="grid h-130 auto-rows-fr grid-cols-7 md:h-155">
         {dates.map((date) => {
           const dateInfo: CalendarDateInfo = {
             date,
@@ -221,7 +233,7 @@ export const Calendar = ({
               type="button"
               onClick={() => onSelectDate?.(date)}
               className={cn(
-                'flex h-full w-full cursor-pointer justify-center pt-2.5 text-[12px] font-medium text-(--color-calendar-primary) md:pt-4.5 md:text-base',
+                'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
                 !dateInfo.isCurrentMonth && 'text-gray-400',
                 dateClassName
               )}
@@ -229,15 +241,34 @@ export const Calendar = ({
               {renderDateCell ? (
                 renderDateCell(dateInfo)
               ) : (
-                <span
-                  className={cn(
-                    'flex h-7 w-7 items-center justify-center rounded-full',
-                    dateInfo.isToday && cn('bg-blue-500 text-white', todayClassName),
-                    dateInfo.isSelected && cn('bg-black text-white', selectedClassName),
-                    dateInfo.isHoliday && cn('text-red-500', holidayClassName)
+                <span className="flex h-full w-full justify-center font-medium">
+                  {dateInfo.isSelected ? (
+                    <span
+                      className={cn(
+                        'bg-primary mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-(--color-white) md:mt-4.5',
+                        selectedClassName
+                      )}
+                    >
+                      <span>{dateInfo.day}</span>
+                    </span>
+                  ) : dateInfo.isToday ? (
+                    <span
+                      className={cn(
+                        'bg-primary-100 text-primary-500 mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
+                        todayClassName
+                      )}
+                    >
+                      <span>{dateInfo.day}</span>
+                    </span>
+                  ) : dateInfo.isHoliday ? (
+                    <span className={cn('text-red-500', holidayClassName)}>
+                      <span>{dateInfo.day}</span>
+                    </span>
+                  ) : (
+                    <span className="mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5">
+                      <span>{dateInfo.day}</span>
+                    </span>
                   )}
-                >
-                  {dateInfo.day}
                 </span>
               )}
             </button>
