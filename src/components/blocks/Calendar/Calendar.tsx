@@ -179,6 +179,8 @@ export const Calendar = ({
     }
   }
   const dates = getCalendarDates(year, month);
+  const todayString = new Date().toDateString();
+  const valueString = value?.toDateString();
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(year, month - 1, 1);
@@ -232,8 +234,8 @@ export const Calendar = ({
             date,
             day: date.getDate(),
             isCurrentMonth: date.getMonth() === month,
-            isToday: date.toDateString() === new Date().toDateString(),
-            isSelected: value?.toDateString() === date.toDateString(),
+            isToday: date.toDateString() === todayString,
+            isSelected: valueString === date.toDateString(),
             isHoliday: holidaySet.has(toLocalDateString(date)),
             isSunday: date.getDay() === 0,
           };
