@@ -237,7 +237,7 @@ export const Calendar = ({
                 month: 'long',
                 day: 'numeric',
               })}
-              aria-selected={dateInfo.isSelected}
+              aria-pressed={dateInfo.isSelected}
               aria-disabled={!dateInfo.isCurrentMonth}
               className={cn(
                 'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
