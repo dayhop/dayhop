@@ -9,7 +9,7 @@ interface AuthFormProps {
   type?: string;
   label: string;
 }
-export function AuthForm({
+export function AuthField({
   title,
   errorMessage,
   isError,

@@ -2,13 +2,14 @@
 import { useState } from 'react';
 import { Button } from '../../ui/Button';
 import { postSignUp } from '@/lib/api/users';
-import { AuthForm } from '../AuthField/AuthField';
+
 import {
   validateEmail,
   validateName,
   validatePassword,
   validatePasswordConfirm,
 } from '@/utils/vaildate';
+import { AuthField } from '../AuthField/AuthField';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -94,7 +95,7 @@ export function SignupForm() {
 
   return (
     <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleformSubmit}>
-      <AuthForm
+      <AuthField
         title="이메일"
         errorMessage={errorMessage.email}
         isError={isError.email}
@@ -103,7 +104,7 @@ export function SignupForm() {
         placeholder="이메일을 입력해 주세요"
         label="email"
       />
-      <AuthForm
+      <AuthField
         title="닉네임"
         errorMessage={errorMessage.name}
         isError={isError.name}
@@ -112,7 +113,7 @@ export function SignupForm() {
         placeholder="닉네임을 입력해 주세요"
         label="name"
       />
-      <AuthForm
+      <AuthField
         title="비밀번호 확인"
         type="password"
         errorMessage={errorMessage.password}
@@ -122,7 +123,7 @@ export function SignupForm() {
         placeholder="8자 이상 입력해 주세요"
         label="password"
       />
-      <AuthForm
+      <AuthField
         title="비밀번호 확인"
         type="password"
         errorMessage={errorMessage.passwordConfirm}
