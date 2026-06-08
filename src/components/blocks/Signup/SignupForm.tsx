@@ -85,6 +85,7 @@ export function SignupForm() {
     };
     try {
       const res = await postSignUp(requestBody);
+
       return res;
     } catch (error) {
       console.error('회원가입 실패:', error);
@@ -123,7 +124,7 @@ export function SignupForm() {
       />
       <AuthForm
         title="비밀번호 확인"
-        type="passwordConfirm"
+        type="password"
         errorMessage={errorMessage.passwordConfirm}
         isError={isError.passwordConfirm}
         handleChange={handleChange}
