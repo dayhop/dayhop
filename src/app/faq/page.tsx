@@ -82,32 +82,32 @@ export default function FAQPage() {
   }, [activeCategory, searchQuery]);
 
   return (
-    <main className="bg-gray-25 min-h-screen py-12 md:py-20">
-      <div className="mx-auto max-w-[800px] px-6">
+    <main className="min-h-screen bg-white py-16 md:py-24">
+      <div className="mx-auto max-w-[640px] px-6">
         {/* Header */}
-        <div className="mb-10 text-center">
-          <h1 className="text-text-primary mb-2 text-2xl font-bold tracking-tight md:text-3xl">
+        <div className="mb-12">
+          <h1 className="text-text-primary mb-3 text-3xl font-semibold tracking-tight">
             자주 묻는 질문
           </h1>
-          <p className="text-text-tertiary text-sm md:text-base">
+          <p className="text-text-tertiary text-sm">
             DayHOP 서비스 이용에 관해 궁금한 점들을 모아보았습니다.
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="relative mb-8 shadow-sm">
+        <div className="relative mb-10">
           <input
             type="text"
             placeholder="궁금한 질문을 입력해주세요."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setOpenId(null); // Clear open accordion on search
+              setOpenId(null);
             }}
-            className="text-text-primary placeholder-text-placeholder focus:ring-primary-500 h-12 w-full rounded-xl border border-gray-100 bg-white pr-4 pl-12 text-sm transition-all focus:border-transparent focus:ring-2 focus:outline-none"
+            className="text-text-primary placeholder-text-placeholder h-11 w-full rounded-full border border-transparent bg-gray-50 pr-4 pl-11 text-sm transition-all focus:border-gray-200 focus:bg-white focus:ring-0 focus:outline-none"
           />
           <div className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -118,72 +118,70 @@ export default function FAQPage() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="mb-8 flex scrollbar-none overflow-x-auto border-b border-gray-100">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              type="button"
-              onClick={() => {
-                setActiveCategory(cat.key);
-                setOpenId(null); // Clear open accordion on category change
-              }}
-              className={`-mb-[2px] flex-shrink-0 cursor-pointer border-b-2 px-6 py-3 text-sm font-medium transition-all ${
-                activeCategory === cat.key
-                  ? 'border-primary-500 text-primary-500'
-                  : 'text-text-tertiary hover:text-text-secondary border-transparent'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+        {/* Categories (Pill Style) */}
+        <div className="mb-10 flex scrollbar-none gap-2 overflow-x-auto pb-1">
+          {CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat.key;
+            return (
+              <button
+                key={cat.key}
+                type="button"
+                onClick={() => {
+                  setActiveCategory(cat.key);
+                  setOpenId(null);
+                }}
+                className={`flex-shrink-0 cursor-pointer rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-text-primary text-white'
+                    : 'text-text-secondary hover:text-text-primary bg-gray-50 hover:bg-gray-100'
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Accordions */}
-        <div className="space-y-3">
+        {/* Q&A Accordion List (Borderless Style) */}
+        <div className="divide-y divide-gray-100 border-t border-b border-gray-100">
           {filteredFAQ.length > 0 ? (
             filteredFAQ.map((item) => {
               const isOpen = openId === item.id;
               return (
-                <div
-                  key={item.id}
-                  className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-[0px_2px_8px_0px_rgba(0,0,0,0.02)] transition-all"
-                >
+                <div key={item.id} className="py-2">
                   <button
                     type="button"
                     onClick={() => handleToggle(item.id)}
-                    className="text-text-primary hover:bg-gray-25/50 flex w-full cursor-pointer items-center justify-between px-6 py-5 text-left font-medium transition-all"
+                    className="group flex w-full cursor-pointer items-center justify-between py-4 text-left font-medium transition-all"
                   >
-                    <span className="pr-4 text-sm leading-snug md:text-base">{item.question}</span>
+                    <span className="text-text-primary group-hover:text-primary pr-4 text-sm leading-snug transition-colors md:text-[15px]">
+                      {item.question}
+                    </span>
                     <span
                       className={`text-gray-400 transition-transform duration-300 ${
                         isOpen ? 'rotate-180' : ''
                       }`}
                     >
                       <svg
-                        className="h-5 w-5"
+                        className="h-4 w-4"
                         fill="none"
                         stroke="currentColor"
+                        strokeWidth="2"
                         viewBox="0 0 24 24"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                       </svg>
                     </span>
                   </button>
 
                   <div
-                    className={`transition-all duration-300 ease-in-out ${
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
                       isOpen
-                        ? 'max-h-[300px] border-t border-gray-50 opacity-100'
+                        ? 'max-h-[300px] pb-4 opacity-100'
                         : 'pointer-events-none max-h-0 opacity-0'
                     }`}
                   >
-                    <div className="text-text-secondary bg-gray-50/50 px-6 py-5 text-sm leading-relaxed md:text-base">
+                    <div className="text-text-secondary pr-6 text-[14px] leading-relaxed whitespace-pre-line">
                       {item.answer}
                     </div>
                   </div>
@@ -191,7 +189,9 @@ export default function FAQPage() {
               );
             })
           ) : (
-            <EmptyState message="검색 결과가 없습니다." />
+            <div className="border-none py-10">
+              <EmptyState message="검색 결과가 없습니다." />
+            </div>
           )}
         </div>
       </div>
