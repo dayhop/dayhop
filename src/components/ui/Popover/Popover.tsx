@@ -37,7 +37,7 @@ interface PopoverContentProps {
 
 const PopoverContent = ({ children, className }: PopoverContentProps) => {
   return (
-    <div role="dialog" className={cn('absolute z-50 bg-white', className)}>
+    <div role="dialog" className={cn('bg-bg absolute z-50', className)}>
       {children}
     </div>
   );
