@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ReservationStateBadge } from './ReservationStateBadge';
 
 const meta = {
-  title: 'components/UI/ReservationStateBadge',
+  title: 'Components/UI/ReservationStateBadge',
   component: ReservationStateBadge,
   parameters: {
     layout: 'centered',
