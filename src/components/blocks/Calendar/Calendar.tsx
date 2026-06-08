@@ -108,12 +108,12 @@ const CalendarHeader = ({
   if (variant === 'secondary') {
     return (
       <div className={className}>
-        <em className={cn('mb-3 block text-sm font-bold', labelClassName)}> 날짜 </em>
+        <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
         <div className="flex items-center justify-between">
-          <strong className={titleClassName}>
+          <strong className={cn('font-medium', titleClassName)}>
             {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
           </strong>
-          <div className={cn('flex items-center gap-4', navigationClassName)}>
+          <div className={cn('flex items-center gap-3', navigationClassName)}>
             {prevButton} {nextButton}
           </div>
         </div>
