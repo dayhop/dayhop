@@ -25,18 +25,32 @@ export async function GET(request: Request) {
 
   const url = `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?serviceKey=${serviceKey}&solYear=${year}&solMonth=${month}&_type=json`;
 
-  const { data } = await axios.get(url);
+  try {
+    const { data } = await axios.get(url);
 
-  const item = data.response?.body?.items?.item;
+    if (typeof data !== 'object' || data === null || !data.response) {
+      return NextResponse.json(
+        { message: '공휴일 API 응답이 올바르지 않습니다.' },
+        { status: 502 }
+      );
+    }
 
-  const holidays: HolidayItem[] = Array.isArray(item) ? item : item ? [item] : [];
+    const item = data.response?.body?.items?.item;
 
-  return NextResponse.json(
-    holidays
-      .filter((holiday) => holiday.isHoliday === 'Y')
-      .map((holiday) => ({
-        name: holiday.dateName,
-        date: String(holiday.locdate).replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'),
-      }))
-  );
+    const holidays: HolidayItem[] = Array.isArray(item) ? item : item ? [item] : [];
+
+    return NextResponse.json(
+      holidays
+        .filter((holiday) => holiday.isHoliday === 'Y')
+        .map((holiday) => ({
+          name: holiday.dateName,
+          date: String(holiday.locdate).replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'),
+        }))
+    );
+  } catch {
+    return NextResponse.json(
+      { message: '공휴일 정보를 불러오는데 실패했습니다.' },
+      { status: 502 }
+    );
+  }
 }
