@@ -3,7 +3,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface User {
+export interface AuthUser {
   id: number;
   email: string;
   nickname: string;
@@ -13,7 +13,7 @@ export interface User {
 }
 
 export interface LoginResponse {
-  user: User;
+  user: AuthUser;
   refreshToken: string;
   accessToken: string;
 }

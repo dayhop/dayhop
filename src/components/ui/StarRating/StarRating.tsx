@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import IconStar from '@/assets/icons/icon-star.svg';
+import IconStar from '@/assets/icon/icon-star.svg';
 
 interface BaseStarRatingProps {
   rating?: number;

@@ -1,69 +1,80 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Popover, PopoverItem } from './Popover';
-import EditIcon from '@/assets/icon/EditIcon.svg';
-import DeleteIcon from '@/assets/icon/DeleteIcon.svg';
+import { Popover, usePopover } from './Popover';
 import EditIcon2 from '@/assets/icon/EditIcon2.svg';
 
 const meta = {
   title: 'Components/UI/Popover',
   component: Popover,
   tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+  },
+  decorators: [
+    (Story) => (
+      <div className="flex h-40 w-60 items-start justify-end">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof Popover>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+// 1. 기본 사용 — 기본 케밥 아이콘 트리거
 export const Default: Story = {
-  args: {
-    children: null,
-  },
-  render: (args) => (
-    <div className="ml-50 h-30">
-      <Popover {...args}>
-        <PopoverItem onClick={() => alert('수정')}>수정하기</PopoverItem>
-        <PopoverItem variant="delete" onClick={() => alert('삭제')}>
-          삭제하기
-        </PopoverItem>
-      </Popover>
-    </div>
+  args: { children: null },
+  render: () => (
+    <Popover>
+      <Popover.Content className="top-full right-0 w-55 rounded-xl bg-white p-6 shadow-lg">
+        <p className="text-text-secondary text-sm">어떤 내용이든 자유롭게 들어갈 수 있습니다.</p>
+      </Popover.Content>
+    </Popover>
   ),
 };
 
-export const WithIcon: Story = {
-  args: {
-    children: null,
-  },
-  render: (args) => (
-    <div className="ml-50 h-30">
-      <Popover {...args}>
-        <PopoverItem icon={<EditIcon />} onClick={() => alert('수정')}>
-          수정하기
-        </PopoverItem>
-        <PopoverItem icon={<DeleteIcon />} variant="delete" onClick={() => alert('삭제')}>
-          삭제하기
-        </PopoverItem>
-      </Popover>
-    </div>
-  ),
-};
-
+// 2. 커스텀 Trigger & 스타일링
 export const CustomTrigger: Story = {
-  args: {
-    trigger: <EditIcon2 />,
-    menuClassName: 'right-auto left-[calc(100%+10px)] top-auto bottom-0',
-    children: null,
-  },
-  render: (args) => (
-    <div className="mt-20 ml-50">
-      <Popover {...args}>
-        <PopoverItem icon={<EditIcon />} onClick={() => alert('수정')}>
+  args: { children: null },
+  render: () => (
+    <Popover trigger={<EditIcon2 />} ariaLabel="옵션 메뉴 열기">
+      <Popover.Content className="top-full right-0 mt-2 w-30 rounded-xl border border-gray-200 bg-white p-2 shadow-md">
+        <button type="button" className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
           수정하기
-        </PopoverItem>
-        <PopoverItem icon={<DeleteIcon />} variant="delete" onClick={() => alert('삭제')}>
+        </button>
+        <button type="button" className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
           삭제하기
-        </PopoverItem>
-      </Popover>
-    </div>
+        </button>
+      </Popover.Content>
+    </Popover>
+  ),
+};
+
+// 3. usePopover — 내부 컨텍스트로 닫기 제어
+const CloseButton = () => {
+  const { close } = usePopover();
+  return (
+    <button
+      type="button"
+      onClick={close}
+      className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-gray-50"
+    >
+      닫기
+    </button>
+  );
+};
+
+export const WithUsePopover: Story = {
+  args: { children: null },
+  render: () => (
+    <Popover>
+      <Popover.Content className="top-full right-0 mt-2 w-35 rounded-xl border border-gray-200 bg-white p-2 shadow-md">
+        <button type="button" className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+          수정하기
+        </button>
+        <CloseButton />
+      </Popover.Content>
+    </Popover>
   ),
 };
