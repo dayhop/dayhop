@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Avatar } from './Avatar';
+import SampleAvatar from '@/assets/images/avatar-sample.jpg';
 
 const meta = {
   title: 'Components/UI/Avatar',
@@ -54,7 +55,8 @@ export const Default: Story = {
 //src 이미지가 있을 경우
 export const WithSrcImage: Story = {
   args: {
-    src: '@/assets/images/avatar-sample.jpg',
+    // SVG 컴포넌트는 .src 속성이 없으므로 이미지 src 테스트를 위해 jpg 파일 사용
+    src: SampleAvatar.src,
   },
 };
 
