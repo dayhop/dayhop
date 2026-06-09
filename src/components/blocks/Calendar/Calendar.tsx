@@ -2,142 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { cn } from '@/utils/cn';
-import ChevronLeft from '@/assets/icon/ChevronLeft.svg';
-import ChevronRight from '@/assets/icon/ChevronRight.svg';
+
+import { CalendarHeader } from './CalendarHeader';
+import type { CalendarDateInfo, CalendarProps } from './types';
+import { getCalendarDates, toLocalDateString } from './utils';
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-type CalendarHeaderVariant = 'default' | 'secondary';
-
-type CalendarDateInfo = {
-  date: Date;
-  dateNumber: number;
-  isCurrentMonth: boolean;
-  isToday: boolean;
-  isSelected: boolean;
-  isHoliday: boolean;
-  isSunday: boolean;
-};
-
-type CalendarProps = {
-  value?: Date;
-  defaultValue?: Date;
-  defaultMonth?: Date;
-  onSelectDate?: (date: Date) => void;
-  onMonthChange?: (date: Date) => void;
-  holidays?: string[];
-  renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
-  isDateDisabled?: (date: Date) => boolean;
-  headerVariant?: CalendarHeaderVariant;
-  className?: string;
-  headerClassName?: string;
-  headerContentClassName?: string;
-  headerTitleClassName?: string;
-  headerLabelClassName?: string;
-  headerNavigationClassName?: string;
-  dayHeaderClassName?: string;
-  dayClassName?: string;
-  dateClassName?: string;
-  dateCellClassName?: string;
-  todayClassName?: string;
-  selectedClassName?: string;
-  holidayClassName?: string;
-};
-
-const toLocalDateString = (date: Date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-
-const getCalendarDates = (year: number, month: number) => {
-  const firstDate = new Date(year, month, 1);
-  const lastDate = new Date(year, month + 1, 0);
-
-  const firstDay = firstDate.getDay();
-  const lastDay = lastDate.getDay();
-
-  const startDate = new Date(year, month, 1 - firstDay);
-  const totalDays = firstDay + lastDate.getDate() + (6 - lastDay);
-
-  return Array.from({ length: totalDays }, (_, index) => {
-    const date = new Date(startDate);
-    date.setDate(startDate.getDate() + index);
-    return date;
-  });
-};
-
-type CalendarHeaderProps = {
-  currentMonth: Date;
-  variant?: CalendarHeaderVariant;
-  onPrevMonth: () => void;
-  onNextMonth: () => void;
-  className?: string;
-  contentClassName?: string;
-  titleClassName?: string;
-  labelClassName?: string;
-  navigationClassName?: string;
-};
-
-const CalendarHeader = ({
-  currentMonth,
-  variant = 'default',
-  onPrevMonth,
-  onNextMonth,
-  className,
-  contentClassName,
-  titleClassName,
-  labelClassName,
-  navigationClassName,
-}: CalendarHeaderProps) => {
-  const prevButton = (
-    <button
-      type="button"
-      onClick={onPrevMonth}
-      aria-label="이전 달"
-      className="h-5 w-5 cursor-pointer md:h-6 md:w-6"
-    >
-      <ChevronLeft />
-    </button>
-  );
-
-  const nextButton = (
-    <button
-      type="button"
-      onClick={onNextMonth}
-      aria-label="다음 달"
-      className="h-5 w-5 cursor-pointer md:h-6 md:w-6"
-    >
-      <ChevronRight />
-    </button>
-  );
-
-  if (variant === 'secondary') {
-    return (
-      <div className={cn('mb-2', className)}>
-        <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
-        <div className={cn('flex items-center justify-between', contentClassName)}>
-          <strong className={cn('font-medium', titleClassName)}>
-            {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-          </strong>
-          <div className={cn('flex items-center gap-3', navigationClassName)}>
-            {prevButton} {nextButton}
-          </div>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div
-      className={cn('mb-5 flex items-center justify-center gap-2.5 md:mb-10 md:gap-7.5', className)}
-    >
-      {prevButton}
-      <strong
-        className={cn('text-base font-bold text-(--color-text-primary) md:text-xl', titleClassName)}
-      >
-        {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
-      </strong>
-      {nextButton}
-    </div>
-  );
-};
 
 export const Calendar = ({
   value,
@@ -193,20 +63,19 @@ export const Calendar = ({
       setCurrentMonth(new Date(value.getFullYear(), value.getMonth(), 1));
     }
   }
+
   const dates = getCalendarDates(year, month);
   const todayString = new Date().toDateString();
   const valueString = resolvedValue?.toDateString();
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(year, month - 1, 1);
-
     setCurrentMonth(prevMonth);
     onMonthChange?.(prevMonth);
   };
 
   const handleNextMonth = () => {
     const nextMonth = new Date(year, month + 1, 1);
-
     setCurrentMonth(nextMonth);
     onMonthChange?.(nextMonth);
   };
