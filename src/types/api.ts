@@ -27,3 +27,12 @@ export type ActivityScheduleInput = {
 };
 
 export type ReservationStatus = 'pending' | 'confirmed' | 'declined' | 'canceled' | 'completed';
+
+export interface User {
+  id: number;
+  email: string;
+  nickname: string;
+  profileImageUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}

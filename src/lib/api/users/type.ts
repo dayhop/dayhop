@@ -1,11 +1,5 @@
-export interface User {
-  id: number;
-  email: string;
-  nickname: string;
-  profileImageUrl: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { User } from '@/types/api';
+export type { User };
 
 export interface CreateSignUpRequest {
   email: string;
