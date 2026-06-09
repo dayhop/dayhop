@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const item = data.response?.body?.items?.item;
+    const item = data.response.body?.items?.item;
 
     const holidays: HolidayItem[] = Array.isArray(item) ? item : item ? [item] : [];
 
