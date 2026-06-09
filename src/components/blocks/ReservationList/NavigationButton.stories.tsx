@@ -4,7 +4,7 @@ import { NavigationButton, ReservationFilterButton } from './NavigationButton';
 import { useState } from 'react';
 
 const meta: Meta<typeof NavigationButton> = {
-  title: 'Components/UI/NavigationButton',
+  title: 'Components/Blocks/NavigationButton',
   component: NavigationButton,
   tags: ['autodocs'],
   argTypes: {},
