@@ -37,6 +37,7 @@ type CalendarProps = {
   dayHeaderClassName?: string;
   dayClassName?: string;
   dateClassName?: string;
+  dateCellClassName?: string;
   todayClassName?: string;
   selectedClassName?: string;
   holidayClassName?: string;
@@ -155,6 +156,7 @@ export const Calendar = ({
   dayHeaderClassName,
   dayClassName,
   dateClassName,
+  dateCellClassName,
   todayClassName,
   selectedClassName,
   holidayClassName,
@@ -277,7 +279,9 @@ export const Calendar = ({
               {renderDateCell ? (
                 renderDateCell(dateInfo)
               ) : (
-                <span className="flex h-full w-full justify-center font-medium">
+                <span
+                  className={cn('flex h-full w-full justify-center font-medium', dateCellClassName)}
+                >
                   {dateInfo.isSelected ? (
                     <span
                       className={cn(
