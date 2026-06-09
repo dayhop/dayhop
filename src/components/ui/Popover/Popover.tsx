@@ -1,101 +1,121 @@
 'use client';
 
-import { useEffect, useRef, useState, createContext, useContext } from 'react';
-import { cn } from '@/utils/cn';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
+
 import KebabIcon from '@/assets/icon/KebabIcon.svg';
+import { cn } from '@/utils/cn';
 
-interface PopoverContextType {
+interface PopoverContextValue {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  close: () => void;
 }
 
-const PopoverContext = createContext<PopoverContextType | null>(null);
+const PopoverContext = createContext<PopoverContextValue | null>(null);
 
-export interface PopoverProps {
-  trigger?: React.ReactNode;
-  children: React.ReactNode;
-  menuClassName?: string;
+interface PopoverProps {
+  trigger?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  triggerClassName?: string;
+  ariaLabel?: string;
 }
 
-export const Popover = ({ trigger, children, menuClassName }: PopoverProps) => {
+interface PopoverContentProps {
+  children: ReactNode;
+  className?: string;
+}
+
+const PopoverContent = ({ children, className }: PopoverContentProps) => {
+  return (
+    <div role="dialog" className={cn('bg-bg absolute z-50', className)}>
+      {children}
+    </div>
+  );
+};
+
+type PopoverComponent = {
+  (props: PopoverProps): ReactElement;
+  Content: typeof PopoverContent;
+};
+
+export const Popover: PopoverComponent = ({
+  trigger,
+  children,
+  className,
+  triggerClassName,
+  ariaLabel = '메뉴 열기',
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+
+  const close = useCallback(() => setIsOpen(false), []);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (!popoverRef.current) return;
 
-      if (!popoverRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      if (!popoverRef.current.contains(e.target as Node)) {
+        close();
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        close();
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, close]);
+
+  const contextValue = useMemo(() => ({ isOpen, close }), [isOpen, close]);
 
   return (
-    <PopoverContext.Provider value={{ isOpen, setIsOpen }}>
-      <div ref={popoverRef} className="relative inline-flex">
+    <PopoverContext.Provider value={contextValue}>
+      <div ref={popoverRef} className={cn('relative inline-flex', className)}>
         <button
           type="button"
-          aria-label="메뉴 열기"
-          aria-haspopup="menu"
+          aria-label={ariaLabel}
+          aria-haspopup="dialog"
           aria-expanded={isOpen}
-          className="cursor-pointer"
+          className={cn('cursor-pointer', triggerClassName)}
           onClick={() => setIsOpen((prev) => !prev)}
         >
           {trigger ?? <KebabIcon aria-hidden="true" />}
         </button>
 
-        {isOpen && (
-          <div
-            role="menu"
-            className={cn(
-              'absolute top-0 right-full flex flex-col rounded-lg border border-[#DFDFDF] bg-white px-2.5 py-3 text-center whitespace-nowrap',
-              menuClassName
-            )}
-          >
-            {children}
-          </div>
-        )}
+        {isOpen && children}
       </div>
     </PopoverContext.Provider>
   );
 };
 
-interface PopoverItemProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  icon?: React.ReactNode;
-  variant?: 'default' | 'delete';
-}
+Popover.Content = PopoverContent;
 
-export const PopoverItem = ({ children, onClick, icon, variant = 'default' }: PopoverItemProps) => {
+export const usePopover = () => {
   const context = useContext(PopoverContext);
 
-  return (
-    <button
-      type="button"
-      role="menuitem"
-      className={cn(
-        'relative flex cursor-pointer items-center gap-2.25 rounded-md px-3 py-2.5 text-base font-medium transition-colors',
-        variant === 'delete'
-          ? 'text-[#E5484D] hover:bg-[rgba(229,72,77,0.1)]'
-          : 'text-gray-700 hover:bg-[rgba(237,238,242,0.5)]'
-      )}
-      onClick={() => {
-        onClick?.();
-        context?.setIsOpen(false);
-      }}
-    >
-      {icon}
-      {children}
-    </button>
-  );
+  if (!context) {
+    throw new Error('usePopover는 Popover 내부에서만 사용할 수 있습니다.');
+  }
+
+  return context;
 };
