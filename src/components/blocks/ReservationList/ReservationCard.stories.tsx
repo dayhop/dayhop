@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ReservationCard } from './ReservationCard';
 
 const meta: Meta<typeof ReservationCard> = {
-  title: 'Components/blocks/ReservationCard',
+  title: 'Components/Blocks/ReservationCard',
   component: ReservationCard,
   tags: ['autodocs'],
   argTypes: {
