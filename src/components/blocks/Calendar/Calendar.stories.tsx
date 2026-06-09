@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Calendar } from './Calendar';
 
 const meta = {
-  title: 'Components/Block/Calendar',
+  title: 'Components/Blocks/Calendar',
   component: Calendar,
   tags: ['autodocs'],
   parameters: {
