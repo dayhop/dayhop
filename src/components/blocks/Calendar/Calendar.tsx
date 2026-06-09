@@ -7,6 +7,8 @@ import ChevronRight from '@/assets/icon/ChevronRight.svg';
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
+type CalendarHeaderVariant = 'default' | 'secondary';
+
 type CalendarDateInfo = {
   date: Date;
   day: number;
@@ -59,8 +61,6 @@ const getCalendarDates = (year: number, month: number) => {
     return date;
   });
 };
-
-type CalendarHeaderVariant = 'default' | 'secondary';
 
 type CalendarHeaderProps = {
   currentMonth: Date;
