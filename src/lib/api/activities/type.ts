@@ -1,4 +1,5 @@
-export type ActivityCategory = '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+import type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput } from '@/types/api';
+export type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput };
 
 export interface GetActivitiesParams {
   method: 'cursor' | 'offset';
@@ -8,26 +9,6 @@ export interface GetActivitiesParams {
   sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest';
   page?: number;
   size?: number;
-}
-
-export interface ActivityItem {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  category: ActivityCategory;
-  price: number;
-  address: string;
-  bannerImageUrl: string;
-  rating: number;
-  reviewCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SubImage {
-  id: number;
-  imageUrl: string;
 }
 
 export interface Schedule {
@@ -58,12 +39,6 @@ export interface PostActivitiesData {
   bannerImageUrl: string;
   subImageUrls: string[];
 }
-
-export type ActivityScheduleInput = {
-  date: string;
-  startTime: string;
-  endTime: string;
-};
 
 export type ScheduleDate = {
   date: string;
