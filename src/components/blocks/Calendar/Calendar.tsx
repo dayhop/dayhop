@@ -28,6 +28,7 @@ type CalendarProps = {
   headerVariant?: CalendarHeaderVariant;
   className?: string;
   headerClassName?: string;
+  headerContentClassName?: string;
   headerTitleClassName?: string;
   headerLabelClassName?: string;
   headerNavigationClassName?: string;
@@ -67,6 +68,7 @@ type CalendarHeaderProps = {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   className?: string;
+  contentClassName?: string;
   titleClassName?: string;
   labelClassName?: string;
   navigationClassName?: string;
@@ -78,6 +80,7 @@ const CalendarHeader = ({
   onPrevMonth,
   onNextMonth,
   className,
+  contentClassName,
   titleClassName,
   labelClassName,
   navigationClassName,
@@ -108,7 +111,7 @@ const CalendarHeader = ({
     return (
       <div className={cn('mb-2', className)}>
         <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
-        <div className="flex items-center justify-between">
+        <div className={cn('flex items-center justify-between', contentClassName)}>
           <strong className={cn('font-medium', titleClassName)}>
             {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
           </strong>
@@ -145,6 +148,7 @@ export const Calendar = ({
   className,
   headerVariant = 'default',
   headerClassName,
+  headerContentClassName,
   headerTitleClassName,
   headerLabelClassName,
   headerNavigationClassName,
@@ -204,6 +208,7 @@ export const Calendar = ({
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
         className={headerClassName}
+        contentClassName={headerContentClassName}
         titleClassName={headerTitleClassName}
         labelClassName={headerLabelClassName}
         navigationClassName={headerNavigationClassName}
