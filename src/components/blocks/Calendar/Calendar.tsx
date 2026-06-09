@@ -11,7 +11,7 @@ type CalendarHeaderVariant = 'default' | 'secondary';
 
 type CalendarDateInfo = {
   date: Date;
-  day: number;
+  dateNumber: number;
   isCurrentMonth: boolean;
   isToday: boolean;
   isSelected: boolean;
@@ -237,7 +237,7 @@ export const Calendar = ({
         {dates.map((date) => {
           const dateInfo: CalendarDateInfo = {
             date,
-            day: date.getDate(),
+            dateNumber: date.getDate(),
             isCurrentMonth: date.getMonth() === month,
             isToday: date.toDateString() === todayString,
             isSelected: valueString === date.toDateString(),
@@ -285,7 +285,7 @@ export const Calendar = ({
                         selectedClassName
                       )}
                     >
-                      <span>{dateInfo.day}</span>
+                      <span>{dateInfo.dateNumber}</span>
                     </span>
                   ) : dateInfo.isToday ? (
                     <span
@@ -294,7 +294,7 @@ export const Calendar = ({
                         todayClassName
                       )}
                     >
-                      <span>{dateInfo.day}</span>
+                      <span>{dateInfo.dateNumber}</span>
                     </span>
                   ) : dateInfo.isHoliday || dateInfo.isSunday ? (
                     <span
@@ -303,11 +303,11 @@ export const Calendar = ({
                         holidayClassName
                       )}
                     >
-                      <span>{dateInfo.day}</span>
+                      <span>{dateInfo.dateNumber}</span>
                     </span>
                   ) : (
                     <span className="mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5">
-                      <span>{dateInfo.day}</span>
+                      <span>{dateInfo.dateNumber}</span>
                     </span>
                   )}
                 </span>
