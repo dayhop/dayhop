@@ -27,15 +27,53 @@ function extractServerMessage(error: unknown): string | null {
   return null;
 }
 
+// 쿠키 관리를 위한 헬퍼 함수
+function getCookie(name: string): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift();
+  return undefined;
+}
+
+function setCookie(name: string, value: string, maxAgeSeconds: number) {
+  if (typeof window === 'undefined') return;
+  document.cookie = `${name}=${value}; path=/; max-age=${maxAgeSeconds}; secure; samesite=lax`;
+}
+
+function deleteCookie(name: string) {
+  if (typeof window === 'undefined') return;
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; secure; samesite=lax`;
+}
+
 const instance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 5000,
 });
 
+// 토큰 갱신 대기열을 위한 타입 및 상태 변수
+interface FailedRequest {
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}
+let isRefreshing = false;
+let failedQueue: FailedRequest[] = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (token) {
+      prom.resolve(token);
+    } else {
+      prom.reject(error);
+    }
+  });
+  failedQueue = [];
+};
+
 instance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const accessToken = localStorage.getItem('accessToken');
+      const accessToken = getCookie('accessToken');
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
@@ -49,7 +87,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => response,
-  (error: unknown) => {
+  async (error: unknown) => {
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     }
@@ -69,19 +107,62 @@ instance.interceptors.response.use(
     }
 
     const { status } = error.response;
+    const originalRequest = error.config;
 
-    if (status === 401) {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-          localStorage.removeItem('accessToken');
+    // 401 Unauthorized 에러 대응 (Access Token 만료 시)
+    if (status === 401 && originalRequest) {
+      // 리프레쉬 토큰 요청 자체에서 401이 나면 즉시 로그아웃 처리
+      if (originalRequest.url?.includes('/auth/tokens')) {
+        if (typeof window !== 'undefined') {
+          deleteCookie('accessToken');
+          showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+          window.location.href = '/login';
         }
+        return Promise.reject(error);
       }
-      showToast.error('로그인이 필요해요.');
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(instance(originalRequest));
+            },
+            reject: (err: unknown) => {
+              reject(err);
+            },
+          });
+        });
       }
-      return Promise.reject(error);
+
+      isRefreshing = true;
+
+      try {
+        const response = await axios.post<{ accessToken: string; refreshToken: string }>(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/tokens`,
+          {},
+          {
+            withCredentials: true,
+          }
+        );
+        const { accessToken } = response.data;
+        setCookie('accessToken', accessToken, 60 * 15);
+        processQueue(null, accessToken);
+
+        // 현재 실패했던 원래 요청 재전송
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return instance(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        if (typeof window !== 'undefined') {
+          deleteCookie('accessToken');
+          showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
 
     const serverMessage = extractServerMessage(error);
