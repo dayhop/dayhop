@@ -1,11 +1,10 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { SelectionForm } from './SelectionForm';
+import { SelectField } from './SelectField';
 import { useState } from 'react';
-import { ActivityCategory } from '@/types/api/activities-types';
 
-const meta: Meta<typeof SelectionForm> = {
-  title: 'Components/UI/ReservationAdd/SelectionForm',
-  component: SelectionForm,
+const meta: Meta<typeof SelectField> = {
+  title: 'Components/UI/ReservationAdd/SelectField',
+  component: SelectField,
   tags: ['autodocs'],
 };
 
@@ -24,7 +23,7 @@ export const Default: Story = {
       setCurrentOption(option);
     };
     return (
-      <SelectionForm {...args} onSelectOption={handleSelectOption} selectedOption={currentOption} />
+      <SelectField {...args} onSelectOption={handleSelectOption} selectedOption={currentOption} />
     );
   },
 };
@@ -61,7 +60,7 @@ export const StartTime: Story = {
       setCurrentOption(option);
     };
     return (
-      <SelectionForm {...args} onSelectOption={handleSelectOption} selectedOption={currentOption} />
+      <SelectField {...args} onSelectOption={handleSelectOption} selectedOption={currentOption} />
     );
   },
 };

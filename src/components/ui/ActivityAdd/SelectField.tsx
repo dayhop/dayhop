@@ -5,7 +5,7 @@ import { Button } from '../Button';
 
 import ArrowDown from '@/assets/icon/ArrowDown.svg';
 
-interface SelectionFormProps {
+interface SelectFieldProps {
   label?: string;
   onSelectOption: (option: string) => void;
   defaultMessage?: string;
@@ -13,13 +13,13 @@ interface SelectionFormProps {
   selectedOption?: string;
 }
 
-export function SelectionForm({
+export function SelectField({
   label,
   onSelectOption,
   defaultMessage,
   list,
   selectedOption,
-}: SelectionFormProps) {
+}: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const displayedMessage = selectedOption || defaultMessage;
   const dropDownRef = useRef<HTMLDivElement>(null);
