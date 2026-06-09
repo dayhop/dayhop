@@ -1,69 +1,21 @@
 'use client';
 
-import { useState, forwardRef } from 'react';
-import DatePicker from 'react-datepicker';
-import CalendarIcon from '@/assets/icon/CalendarIcon.svg';
-import 'react-datepicker/dist/react-datepicker.css';
+import { useState } from 'react';
 
 export function DateField() {
-  const [date, setDate] = useState<Date | null>(new Date());
-
+  const [inputType, setInputType] = useState('text');
   return (
-    <DatePicker
-      selected={date}
-      customInput={<CustomDateInput />}
-      shouldCloseOnSelect
-      disabledKeyboardNavigation
-      onChange={(date: Date | null) => setDate(date)}
-      dateFormat="yy-MM-dd"
-    />
+    <div className="flex flex-col gap-2.5">
+      <label className="font-bold" id="aactivityDate">
+        날짜
+      </label>
+      <input
+        id="activityDate"
+        type={inputType}
+        placeholder="yy/mm/dd"
+        onFocus={() => setInputType('date')}
+        className="box-border w-full min-w-81 rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-800 transition-all outline-none focus:bg-white [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100"
+      />
+    </div>
   );
 }
-
-interface CustomDateInputProps {
-  value?: string;
-  onClick?: () => void;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-export const CustomDateInput = forwardRef<HTMLInputElement, CustomDateInputProps>(
-  ({ value, onClick, onChange }, ref) => {
-    // 3. 숫자만 추출해서 yy-MM-dd 형태로 하이픈을 자동 삽입하는 로직
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let rawValue = e.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
-      if (rawValue.length > 6) rawValue = rawValue.slice(0, 6); // 최대 6자리(yyMMdd)로 제한
-
-      let formattedValue = rawValue;
-      if (rawValue.length >= 5) {
-        formattedValue = `${rawValue.slice(0, 2)}-${rawValue.slice(2, 4)}-${rawValue.slice(4)}`;
-      } else if (rawValue.length >= 3) {
-        formattedValue = `${rawValue.slice(0, 2)}-${rawValue.slice(2)}`;
-      }
-
-      e.target.value = formattedValue;
-      if (onChange) {
-        onChange(e);
-      }
-    };
-
-    return (
-      <>
-        <div className="relative flex h-13 w-full min-w-80 items-center">
-          <input
-            type="text"
-            value={value}
-            onClick={onClick}
-            onChange={handleInputChange}
-            ref={ref}
-            placeholder="yy-mm-dd"
-            className="h-full w-full rounded-2xl border border-gray-400 px-3 py-4 pr-12 text-black focus:border-black focus:outline-none"
-          />
-
-          <CalendarIcon className="pointer-events-none absolute right-4 cursor-pointer text-black" />
-        </div>
-      </>
-    );
-  }
-);
-
-CustomDateInput.displayName = 'CustomDateInput';
