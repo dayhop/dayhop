@@ -1,11 +1,10 @@
-import instance from '@/lib/api/instance';
-import {
+import instance from '../instance';
+import type {
   DeleteMyNotificationParams,
   GetMyNotificationsParams,
   GetMyNotificationsResponse,
-} from '@/types/api/mynotifications-types';
+} from './type';
 
-// 알림 목록 조회
 export const getMyNotifications = async ({
   cursorId,
   size,
@@ -16,7 +15,6 @@ export const getMyNotifications = async ({
   return data;
 };
 
-// 알림 삭제
 export const deleteMyNotification = async ({
   notificationId,
 }: DeleteMyNotificationParams): Promise<void> => {

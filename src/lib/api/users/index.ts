@@ -1,5 +1,5 @@
-import instance from '@/lib/api/instance';
-import {
+import instance from '../instance';
+import type {
   CreateSignUpRequest,
   CreateSignUpResponse,
   GetMyUserResponse,
@@ -7,7 +7,7 @@ import {
   UpdateMyUserResponse,
   CreateUserImageRequest,
   CreateUserImageResponse,
-} from '@/types/api/users';
+} from './type';
 
 export const postSignUp = async (body: CreateSignUpRequest): Promise<CreateSignUpResponse> => {
   const { data } = await instance.post<CreateSignUpResponse>('/users', body);

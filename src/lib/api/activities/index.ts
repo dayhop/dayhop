@@ -1,7 +1,5 @@
-import * as T from '@/types/api/activities-types';
-import instance from './instance';
-
-//================================
+import * as T from './type';
+import instance from '../instance';
 
 const token = process.env.NEXT_PUBLIC_API_TOKEN;
 
