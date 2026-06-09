@@ -174,14 +174,14 @@ export const Calendar = ({
       : defaultMonth;
   });
 
-  const [prevValueKey, setPrevValueKey] = useState<string | undefined>(
-    value ? `${value.getFullYear()}-${value.getMonth()}` : undefined
-  );
-
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
   const holidaySet = useMemo(() => new Set(holidays), [holidays]);
+
+  const [prevValueKey, setPrevValueKey] = useState<string | undefined>(
+    value ? `${value.getFullYear()}-${value.getMonth()}` : undefined
+  );
 
   const valueKey = value ? `${value.getFullYear()}-${value.getMonth()}` : undefined;
   const currentMonthKey = `${year}-${month}`;
