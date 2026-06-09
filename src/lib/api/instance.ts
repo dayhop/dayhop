@@ -112,7 +112,8 @@ instance.interceptors.response.use(
     // 401 Unauthorized 에러 대응 (Access Token 만료 시)
     if (status === 401 && originalRequest) {
       // 리프레쉬 토큰 요청 자체에서 401이 나면 즉시 로그아웃 처리
-      if (originalRequest.url?.includes('/auth/tokens')) {
+      // 리프레쉬 토큰 요청 자체에서 401이 나거나 이미 재시도한 요청인 경우 즉시 로그아웃 처리
+      if (originalRequest._retry || originalRequest.url?.includes('/auth/tokens')) {
         if (typeof window !== 'undefined') {
           deleteCookie('accessToken');
           showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
