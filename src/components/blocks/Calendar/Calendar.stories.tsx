@@ -54,21 +54,16 @@ export const DisabledPastDates: Story = {
   },
 };
 
-export const SelectedDate: Story = {
-  render: () => {
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date(2026, 5, 15));
-
-    return (
-      <Calendar
-        value={selectedDate}
-        defaultMonth={new Date(2026, 5, 1)}
-        holidays={holidays}
-        onSelectDate={setSelectedDate}
-      />
-    );
+// 비제어 모드 — defaultValue로 초기 선택값 지정, 부모 useState 불필요
+export const WithDefaultValue: Story = {
+  args: {
+    defaultValue: new Date(2026, 5, 15),
+    defaultMonth: new Date(2026, 5, 1),
+    holidays,
   },
 };
 
+// 제어 모드 — 부모가 value를 들고 있어 선택된 날짜를 외부에서 활용 가능
 export const Interactive: Story = {
   render: () => {
     const [selectedDate, setSelectedDate] = useState<Date>();
