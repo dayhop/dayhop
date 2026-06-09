@@ -9,6 +9,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import { getMyUser } from '@/lib/api/users';
 import { User } from '@/types/api/users';
 
@@ -17,7 +18,7 @@ interface AuthContextType {
   isLoading: boolean;
   isLoggedIn: boolean;
   login: (accessToken: string) => Promise<void>;
-  logout: () => void;
+  logout: (options?: { redirect?: boolean }) => void;
   refreshUser: () => Promise<void>;
 }
 
@@ -28,13 +29,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const logout = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-    }
-    setUser(null);
-    router.push('/');
-  }, [router]);
+  const logout = useCallback(
+    (options?: { redirect?: boolean }) => {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('accessToken');
+      }
+      setUser(null);
+      if (options?.redirect !== false) {
+        router.push('/');
+      }
+    },
+    [router]
+  );
 
   const fetchUser = useCallback(async () => {
     try {
@@ -42,7 +48,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(userData);
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
-      logout();
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        logout({ redirect: false });
+      }
     }
   }, [logout]);
 

@@ -11,7 +11,7 @@ export const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 드롭다운 외부 클릭 시 닫기
+  // 드롭다운 외부 클릭 및 ESC 키 입력 시 닫기
   useEffect(() => {
     if (!isDropdownOpen) return;
 
@@ -21,9 +21,17 @@ export const Header = () => {
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isDropdownOpen]);
 
@@ -70,7 +78,7 @@ export const Header = () => {
                     <Link
                       href="/mypage"
                       onClick={() => setIsDropdownOpen(false)}
-                      className="text-text-secondary flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-[rgba(237,238,242,0.5)]"
+                      className="text-text-secondary hover:bg-bg-surface/50 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium transition-colors"
                       role="menuitem"
                     >
                       마이 페이지
@@ -78,7 +86,7 @@ export const Header = () => {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium text-[#E5484D] transition-colors hover:bg-[rgba(229,72,77,0.1)]"
+                      className="text-status-danger hover:bg-status-danger/10 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors"
                       role="menuitem"
                     >
                       로그아웃

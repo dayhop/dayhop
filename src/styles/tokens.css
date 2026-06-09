@@ -40,6 +40,8 @@
   --color-status-approved-bg: #ddf9f9;
   --color-status-approved-text: #1790a0;
 
+  --color-status-danger: #e5484d;
+
   /* 시멘틱 */
 
   --color-bg: var(--color-white);
