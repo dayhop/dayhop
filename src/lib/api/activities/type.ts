@@ -63,7 +63,7 @@ export interface GetActivityReviewsResponses {
 
 export interface Reviews {
   id: number;
-  user: User;
+  user: ReviewUser;
   activityId: number;
   rating: number;
   content: string;
@@ -71,7 +71,7 @@ export interface Reviews {
   updatedAt: string;
 }
 
-export type User = {
+export type ReviewUser = {
   profileImageUrl: string;
   nickname: string;
   id: number;
