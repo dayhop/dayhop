@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import { NavigationButton, ReservationStatus } from './NavigationButton';
+import { NavigationButton, ReservationFilterButton } from './NavigationButton';
 import { useState } from 'react';
 
 const meta: Meta<typeof NavigationButton> = {
-  title: 'components/UI/NavigationButton',
+  title: 'Components/UI/NavigationButton',
   component: NavigationButton,
   tags: ['autodocs'],
   argTypes: {},
@@ -14,12 +14,8 @@ export default meta;
 type Story = StoryObj<typeof NavigationButton>;
 
 export const Default: Story = {
-  args: {
-    activeStatus: '전체 조회',
-  },
-
   render: (args) => {
-    const [activeStatus, setActiveStatus] = useState<ReservationStatus>(args.activeStatus);
+    const [activeStatus, setActiveStatus] = useState<ReservationFilterButton>('all');
 
     return (
       <NavigationButton
@@ -27,6 +23,7 @@ export const Default: Story = {
         activeStatus={activeStatus}
         onClickButton={(button) => {
           setActiveStatus(button);
+          console.log(button);
 
           if (args.onClickButton) {
             args.onClickButton(button);
