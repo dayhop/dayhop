@@ -56,8 +56,7 @@ export async function postActivitiesImage(image: File): Promise<T.PostActivities
   formData.append('image', image);
   const response = await instance.post<T.PostActivitiesImageResponse>(
     `/activities/image`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
+    formData
   );
   return response.data;
 }
