@@ -11,6 +11,16 @@ type WebpackRule = {
 };
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'image.utoimage.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   reactCompiler: true,
 
   webpack(config) {
