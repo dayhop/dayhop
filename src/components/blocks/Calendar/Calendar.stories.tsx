@@ -75,7 +75,6 @@ export const Interactive: Story = {
           defaultMonth={new Date(2026, 5, 1)}
           holidays={holidays}
           onSelectDate={(date) => {
-            console.log('선택한 날짜:', date);
             setSelectedDate(date);
           }}
         />
