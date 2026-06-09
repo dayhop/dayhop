@@ -1,15 +1,11 @@
 import instance from '../instance';
-import type {
-  DeleteMyNotificationParams,
-  GetMyNotificationsParams,
-  GetMyNotificationsResponse,
-} from './type';
+import * as T from './type';
 
 export const getMyNotifications = async ({
   cursorId,
   size,
-}: GetMyNotificationsParams): Promise<GetMyNotificationsResponse> => {
-  const { data } = await instance.get<GetMyNotificationsResponse>('/my-notifications', {
+}: T.GetMyNotificationsParams): Promise<T.GetMyNotificationsResponse> => {
+  const { data } = await instance.get<T.GetMyNotificationsResponse>('/my-notifications', {
     params: { cursorId, size },
   });
   return data;
@@ -17,6 +13,6 @@ export const getMyNotifications = async ({
 
 export const deleteMyNotification = async ({
   notificationId,
-}: DeleteMyNotificationParams): Promise<void> => {
+}: T.DeleteMyNotificationParams): Promise<void> => {
   await instance.delete<void>(`/my-notifications/${notificationId}`);
 };
