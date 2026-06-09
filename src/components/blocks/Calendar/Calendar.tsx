@@ -21,6 +21,7 @@ type CalendarDateInfo = {
 
 type CalendarProps = {
   value?: Date;
+  defaultValue?: Date;
   defaultMonth?: Date;
   onSelectDate?: (date: Date) => void;
   onMonthChange?: (date: Date) => void;
@@ -140,6 +141,7 @@ const CalendarHeader = ({
 
 export const Calendar = ({
   value,
+  defaultValue,
   defaultMonth = new Date(),
   onSelectDate,
   onMonthChange,
@@ -161,9 +163,16 @@ export const Calendar = ({
   selectedClassName,
   holidayClassName,
 }: CalendarProps) => {
-  const [currentMonth, setCurrentMonth] = useState(() =>
-    value ? new Date(value.getFullYear(), value.getMonth(), 1) : defaultMonth
-  );
+  const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
+
+  const resolvedValue = value ?? internalSelectedDate;
+
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const initialDate = value ?? defaultValue;
+    return initialDate
+      ? new Date(initialDate.getFullYear(), initialDate.getMonth(), 1)
+      : defaultMonth;
+  });
 
   const [prevValueKey, setPrevValueKey] = useState<string | undefined>(
     value ? `${value.getFullYear()}-${value.getMonth()}` : undefined
@@ -186,7 +195,7 @@ export const Calendar = ({
   }
   const dates = getCalendarDates(year, month);
   const todayString = new Date().toDateString();
-  const valueString = value?.toDateString();
+  const valueString = resolvedValue?.toDateString();
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(year, month - 1, 1);
@@ -250,6 +259,7 @@ export const Calendar = ({
               disabled={isDisabled}
               onClick={() => {
                 if (isDisabled) return;
+                setInternalSelectedDate(date);
                 onSelectDate?.(date);
                 if (!dateInfo.isCurrentMonth) {
                   const newMonth = new Date(date.getFullYear(), date.getMonth(), 1);
