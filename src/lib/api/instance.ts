@@ -4,9 +4,11 @@ import { showToast } from '@/utils/toast';
 declare module 'axios' {
   interface InternalAxiosRequestConfig {
     _skipErrorToast?: boolean;
+    _retry?: boolean;
   }
   interface AxiosRequestConfig {
     _skipErrorToast?: boolean;
+    _retry?: boolean;
   }
 }
 
@@ -32,13 +34,16 @@ function getCookie(name: string): string | undefined {
   if (typeof window === 'undefined') return undefined;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift();
+  if (parts.length >= 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue ? decodeURIComponent(cookieValue) : undefined;
+  }
   return undefined;
 }
 
 function setCookie(name: string, value: string, maxAgeSeconds: number) {
   if (typeof window === 'undefined') return;
-  document.cookie = `${name}=${value}; path=/; max-age=${maxAgeSeconds}; secure; samesite=lax`;
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}; secure; samesite=lax`;
 }
 
 function deleteCookie(name: string) {
@@ -126,6 +131,8 @@ instance.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token: string) => {
+              originalRequest._retry = true;
+              originalRequest.headers = originalRequest.headers || {};
               originalRequest.headers.Authorization = `Bearer ${token}`;
               resolve(instance(originalRequest));
             },
@@ -151,6 +158,8 @@ instance.interceptors.response.use(
         processQueue(null, accessToken);
 
         // 현재 실패했던 원래 요청 재전송
+        originalRequest._retry = true;
+        originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return instance(originalRequest);
       } catch (refreshError) {
