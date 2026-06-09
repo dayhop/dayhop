@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
 import { StarRating } from '@/components/ui/StarRating';
