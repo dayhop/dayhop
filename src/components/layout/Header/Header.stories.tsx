@@ -43,7 +43,7 @@ export const LoggedIn: Story = {
         user: {
           id: 1,
           email: 'user@example.com',
-          nickname: '김노마드',
+          nickname: '테스트유저',
           profileImageUrl: '',
           createdAt: '2026-06-08T00:00:00Z',
           updatedAt: '2026-06-08T00:00:00Z',
@@ -67,8 +67,8 @@ export const LoggedInWithProfileImage: Story = {
       value={{
         user: {
           id: 2,
-          email: 'another@example.com',
-          nickname: '이지원',
+          email: 'test@example.com',
+          nickname: '테스트팀',
           profileImageUrl:
             'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256',
           createdAt: '2026-06-08T00:00:00Z',
