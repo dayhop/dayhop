@@ -258,7 +258,6 @@ export const Calendar = ({
               type="button"
               disabled={isDisabled}
               onClick={() => {
-                if (isDisabled) return;
                 setInternalSelectedDate(date);
                 onSelectDate?.(date);
                 if (!dateInfo.isCurrentMonth) {
