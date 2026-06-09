@@ -216,12 +216,7 @@ export const Calendar = ({
         navigationClassName={headerNavigationClassName}
       />
 
-      <div
-        className={cn(
-          'grid grid-cols-7 border-b border-b-(--color-bg-footer) pb-1 md:pb-3',
-          dayHeaderClassName
-        )}
-      >
+      <div className={cn('grid grid-cols-7 pb-1 md:pb-3', dayHeaderClassName)}>
         {DAYS.map((day, index) => (
           <div
             key={index}
