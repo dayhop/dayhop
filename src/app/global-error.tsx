@@ -1,15 +1,8 @@
 'use client';
 
-import localFont from 'next/font/local';
 import { ServerError } from '@/components/blocks/ErrorPage';
+import { pretendard } from '@/lib/fonts';
 import './globals.css';
-
-const pretendard = localFont({
-  src: '../../public/fonts/PretendardVariable.woff2',
-  variable: '--font-pretendard',
-  weight: '100 900',
-  display: 'swap',
-});
 
 export default function GlobalError({
   reset,
