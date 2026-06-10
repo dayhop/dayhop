@@ -10,11 +10,14 @@ export function NotFoundError() {
   const router = useRouter();
 
   const handleBack = () => {
-    if (window.history.length <= 1) {
-      router.push('/');
-      return;
+    if (document.referrer) {
+      const referrerUrl = new URL(document.referrer);
+      if (referrerUrl.origin === window.location.origin) {
+        router.back();
+        return;
+      }
     }
-    router.back();
+    router.push('/');
   };
 
   return (
