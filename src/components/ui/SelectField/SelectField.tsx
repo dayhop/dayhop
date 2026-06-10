@@ -48,39 +48,41 @@ export function SelectField({
   }, [isOpen]);
 
   return (
-    <div ref={dropDownRef} className="flex flex-col gap-2.5 font-bold">
+    <div ref={dropDownRef} className="relatve flex w-full flex-col gap-2.5 font-bold">
       <div className={isLabelShow ? 'block' : 'hidden'}>{label}</div>
-      <button onClick={handleClickDropdown} type="button" className="cursor-pointer">
-        <div className="relative flex flex-col gap-3">
-          <div className="border-border-default flex h-13 w-full items-center justify-between gap-3 rounded-2xl border bg-white px-5">
-            <span
-              className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} cursor-default font-medium`}
-            >
-              {displayedMessage}
-            </span>
-            <ArrowDown />
+      <div className="relative w-full">
+        <button
+          onClick={handleClickDropdown}
+          type="button"
+          className="border-border-default flex h-13 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5"
+        >
+          <span
+            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} cursor-default font-medium`}
+          >
+            {displayedMessage}
+          </span>
+          <ArrowDown />
+        </button>
+        {isOpen && (
+          <div className="border-border-default absolute z-50 mt-2 flex h-64 w-full flex-col gap-1 overflow-y-scroll rounded-2xl border bg-white p-3">
+            {list.map((item) => {
+              return (
+                <Button
+                  onClick={() => {
+                    onSelectOption(item);
+                    setIsOpen(false);
+                  }}
+                  key={item}
+                  variant="text"
+                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${displayedMessage === item && 'bg-[#f2f9ff]'}`}
+                >
+                  {item}
+                </Button>
+              );
+            })}
           </div>
-        </div>
-      </button>
-      {isOpen && (
-        <div className="border-border-default relative flex h-64 flex-col gap-1 overflow-y-scroll rounded-2xl border bg-white p-3">
-          {list.map((item) => {
-            return (
-              <Button
-                onClick={() => {
-                  onSelectOption(item);
-                  setIsOpen(false);
-                }}
-                key={item}
-                variant="text"
-                className={`text-text-primary h-12 shrink-0 rounded-xl px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${displayedMessage === item && 'bg-[#f2f9ff]'}`}
-              >
-                {item}
-              </Button>
-            );
-          })}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
