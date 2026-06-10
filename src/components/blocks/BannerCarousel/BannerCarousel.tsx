@@ -23,7 +23,7 @@ export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [activities.length, currentIndex]);
+  }, [activities.length]);
 
   if (!activities.length) return null;
 
