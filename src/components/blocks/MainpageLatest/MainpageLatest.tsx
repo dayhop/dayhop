@@ -24,7 +24,7 @@ const CATEGORIES = ['전체', '문화 · 예술', '식음료', '스포츠', '투
 
 const ITEMS_PER_PAGE = 8;
 
-export default function MainpageLatest({ items }: MainpageLatestProps) {
+export default function MainpageLatest({ items = [] }: MainpageLatestProps) {
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [currentPage, setCurrentPage] = useState(1);
 
