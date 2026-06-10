@@ -44,14 +44,14 @@
   --color-status-canceled-text: #707177;
 
   /* 캘린더 상태 배지 */
-  --color-status-completed-bg: var(--color-gray-50);
-  --color-status-completed-text: var(--color-gray-500);
+  --color-calendar-status-completed-bg: var(--color-gray-50);
+  --color-calendar-status-completed-text: var(--color-gray-500);
 
-  --color-status-pending-bg: var(--color-primary-100);
-  --color-status-pending-text: var(--color-primary-500);
+  --color-calendar-status-pending-bg: var(--color-primary-100);
+  --color-calendar-status-pending-text: var(--color-primary-500);
 
-  --color-status-confirmed-bg: #fff8dd;
-  --color-status-confirmed-text: #ffb051;
+  --color-calendar-status-confirmed-bg: #fff8dd;
+  --color-calendar-status-confirmed-text: #ffb051;
 
   /* 시멘틱 */
 
