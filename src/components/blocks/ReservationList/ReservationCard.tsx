@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/Button';
-import { Status } from '@/types/api/activities-types';
+import { ReservationStatus } from '@/types/api';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
 
@@ -9,7 +9,7 @@ interface ReservationCardProps {
   endTime: string;
   date: string;
   totalPrice: number;
-  status: Status;
+  status: ReservationStatus;
   headCount: number;
   bannerImageUrl: string;
 }

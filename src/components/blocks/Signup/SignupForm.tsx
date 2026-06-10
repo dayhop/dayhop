@@ -8,7 +8,7 @@ import {
   validateName,
   validatePassword,
   validatePasswordConfirm,
-} from '@/utils/vaildate';
+} from '@/utils/validate';
 import { AuthField } from '../AuthField/AuthField';
 
 export function SignupForm() {

@@ -1,11 +1,5 @@
-export interface UserProfile {
-  id: number;
-  email: string;
-  nickname: string;
-  profileImageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { User } from '@/types/api';
+export type { User };
 
 export interface CreateSignUpRequest {
   email: string;
@@ -13,9 +7,9 @@ export interface CreateSignUpRequest {
   password: string;
 }
 
-export type CreateSignUpResponse = UserProfile;
+export type CreateSignUpResponse = User;
 
-export type GetMyUserResponse = UserProfile;
+export type GetMyUserResponse = User;
 
 export interface UpdateMyUserRequest {
   nickname?: string;
@@ -23,7 +17,7 @@ export interface UpdateMyUserRequest {
   newPassword?: string;
 }
 
-export type UpdateMyUserResponse = UserProfile;
+export type UpdateMyUserResponse = User;
 
 export interface CreateUserImageRequest {
   image: File;

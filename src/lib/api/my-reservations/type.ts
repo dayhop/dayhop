@@ -1,4 +1,5 @@
-export type ReservationStatus = 'pending' | 'confirmed' | 'declined' | 'canceled' | 'completed';
+import type { ReservationStatus } from '@/types/api';
+export type { ReservationStatus };
 
 export interface Activity {
   id: number;
