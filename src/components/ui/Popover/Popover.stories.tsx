@@ -27,7 +27,7 @@ export const Default: Story = {
   args: { children: null },
   render: () => (
     <Popover>
-      <Popover.Content className="top-full right-0 w-[220px] rounded-xl bg-white p-6 shadow-lg">
+      <Popover.Content className="top-full right-0 w-55 rounded-xl bg-white p-6 shadow-lg">
         <p className="text-text-secondary text-sm">어떤 내용이든 자유롭게 들어갈 수 있습니다.</p>
       </Popover.Content>
     </Popover>

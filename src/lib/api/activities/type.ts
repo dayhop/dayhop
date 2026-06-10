@@ -1,5 +1,11 @@
-import type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput } from '@/types/api';
-export type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput };
+import type {
+  ActivityCategory,
+  ActivityItem,
+  SubImage,
+  ActivityScheduleInput,
+  ReservationStatus,
+} from '@/types/api';
+export type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput, ReservationStatus };
 
 export interface GetActivitiesParams {
   method: 'cursor' | 'offset';
@@ -83,7 +89,7 @@ export interface PostActivityReservationsResponse {
   userId: number;
   activityId: number;
   scheduleId: number;
-  status: Status;
+  status: ReservationStatus;
   reviewSubmitted: boolean;
   totalPrice: number;
   headCount: number;
@@ -93,8 +99,6 @@ export interface PostActivityReservationsResponse {
   createdAt: string;
   updatedAt: string;
 }
-
-export type Status = 'pending' | 'confirmed' | 'cancelled';
 
 export interface GetActivityReviews {
   page?: number;
