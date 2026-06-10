@@ -2,14 +2,10 @@
 
 import { ServerError } from '@/components/blocks/ErrorPage';
 import { pretendard } from '@/lib/fonts';
+import type { ErrorPageProps } from '@/types/error';
 import './globals.css';
 
-export default function GlobalError({
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function GlobalError({ reset }: ErrorPageProps) {
   return (
     <html lang="ko">
       <body className={pretendard.variable}>
