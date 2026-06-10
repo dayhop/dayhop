@@ -1,9 +1,5 @@
-import * as T from '@/types/api/activities-types';
-import instance from './instance';
-
-//================================
-
-const token = process.env.NEXT_PUBLIC_API_TOKEN;
+import * as T from './type';
+import instance from '../instance';
 
 export async function getActivities(
   params: T.GetActivitiesParams
@@ -13,11 +9,7 @@ export async function getActivities(
 }
 
 export async function postActivities(data: T.PostActivitiesData): Promise<T.ActivityResponse> {
-  const response = await instance.post<T.ActivityResponse>('/activities', data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await instance.post<T.ActivityResponse>('/activities', data);
   return response.data;
 }
 
@@ -54,12 +46,7 @@ export async function postActivityReservations(
 ): Promise<T.PostActivityReservationsResponse> {
   const response = await instance.post<T.PostActivityReservationsResponse>(
     `/activities/${activityId}/reservations`,
-    data,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    data
   );
   return response.data;
 }
@@ -69,13 +56,7 @@ export async function postActivitiesImage(image: File): Promise<T.PostActivities
   formData.append('image', image);
   const response = await instance.post<T.PostActivitiesImageResponse>(
     `/activities/image`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    }
+    formData
   );
   return response.data;
 }
