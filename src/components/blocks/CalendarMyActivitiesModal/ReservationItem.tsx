@@ -20,7 +20,7 @@ export const ReservationItem = ({
   onDecline,
 }: ReservationItemProps) => {
   return (
-    <li className="flex items-center justify-between rounded-2xl border border-gray-100 px-4 py-3.5 lg:min-w-73">
+    <li className="flex items-center justify-between rounded-2xl border border-gray-100 px-4 py-3.5">
       <ul className="flex flex-col gap-2.5 text-sm lg:text-base">
         <li className="flex gap-2">
           <span className="min-w-9 font-bold text-gray-500 lg:min-w-10.25">닉네임</span>

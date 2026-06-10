@@ -6,10 +6,15 @@ import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { cn } from '@/utils/cn';
 import { ReservationItem } from './ReservationItem';
 import { SelectField } from '@/components/ui/SelectField';
-import { getMyActivityReservedSchedule } from '@/lib/api/my-activities';
+import {
+  getMyActivityReservedSchedule,
+  getMyActivityReservations,
+  patchMyActivityReservationStatus,
+} from '@/lib/api/my-activities';
 import type {
   GetMyActivityReservationsParams,
   GetMyActivityReservedScheduleResponse,
+  MyActivityReservation,
 } from '@/lib/api/my-activities/type';
 
 interface CalendarMyActivitiesModalProps {
@@ -47,11 +52,13 @@ export const CalendarMyActivitiesModal = ({
   const [activeTab, setActiveTab] = useState<TabStatus>('pending');
   const [schedules, setSchedules] = useState<GetMyActivityReservedScheduleResponse[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>('');
+  const [reservations, setReservations] = useState<MyActivityReservation[]>([]);
 
   useEffect(() => {
     async function loadSchedules() {
       setSchedules([]);
       setSelectedTime('');
+      setReservations([]);
       const data = await getMyActivityReservedSchedule(activityId, { date });
       setSchedules(data);
       if (data.length > 0) setSelectedTime(formatTimeOption(data[0]));
@@ -60,6 +67,22 @@ export const CalendarMyActivitiesModal = ({
   }, [activityId, date]);
 
   const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
+
+  useEffect(() => {
+    async function loadReservations() {
+      if (!selectedSchedule) {
+        setReservations([]);
+        return;
+      }
+      const { scheduleId } = selectedSchedule;
+      const data = await getMyActivityReservations(activityId, {
+        scheduleId,
+        status: activeTab,
+      });
+      setReservations(data.reservations);
+    }
+    loadReservations();
+  }, [activityId, selectedSchedule, activeTab]);
 
   return (
     <Modal
@@ -100,7 +123,7 @@ export const CalendarMyActivitiesModal = ({
           })}
         </div>
 
-        <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:flex-col">
+        <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col">
           {/* 예약 시간 */}
           <div className="flex flex-col gap-3 md:flex-1">
             <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 시간</h3>
@@ -118,14 +141,39 @@ export const CalendarMyActivitiesModal = ({
           {/* 예약 내역 */}
           <div className="flex flex-col gap-3 md:flex-1">
             <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 내역</h3>
-            <ul className="flex flex-col gap-3.5">
-              <ReservationItem
-                nickname="정만철"
-                headCount={10}
-                activeTab={activeTab}
-                onApprove={() => console.log('승인')}
-                onDecline={() => console.log('거절')}
-              />
+            <ul className="flex min-h-20 flex-col gap-3.5">
+              {reservations.length === 0 ? (
+                <p className="text-text-tertiary py-4 text-center text-sm">예약 내역이 없습니다</p>
+              ) : (
+                reservations.map((reservation) => (
+                  <ReservationItem
+                    key={reservation.id}
+                    nickname={reservation.nickname}
+                    headCount={reservation.headCount}
+                    activeTab={activeTab}
+                    onApprove={async () => {
+                      await patchMyActivityReservationStatus(activityId, reservation.id, {
+                        status: 'confirmed',
+                      });
+                      const data = await getMyActivityReservations(activityId, {
+                        scheduleId: selectedSchedule!.scheduleId,
+                        status: activeTab,
+                      });
+                      setReservations(data.reservations);
+                    }}
+                    onDecline={async () => {
+                      await patchMyActivityReservationStatus(activityId, reservation.id, {
+                        status: 'declined',
+                      });
+                      const data = await getMyActivityReservations(activityId, {
+                        scheduleId: selectedSchedule!.scheduleId,
+                        status: activeTab,
+                      });
+                      setReservations(data.reservations);
+                    }}
+                  />
+                ))
+              )}
             </ul>
           </div>
         </div>
