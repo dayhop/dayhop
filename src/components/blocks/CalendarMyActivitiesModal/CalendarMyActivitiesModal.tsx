@@ -1,12 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { cn } from '@/utils/cn';
 import { ReservationItem } from './ReservationItem';
 import { SelectField } from '@/components/ui/SelectField';
-import type { GetMyActivityReservationsParams } from '@/lib/api/my-activities/type';
+import { getMyActivityReservedSchedule } from '@/lib/api/my-activities';
+import type {
+  GetMyActivityReservationsParams,
+  GetMyActivityReservedScheduleResponse,
+} from '@/lib/api/my-activities/type';
 
 interface CalendarMyActivitiesModalProps {
   activityId: number;
@@ -29,14 +33,31 @@ function formatDate(date: string) {
   return `${String(year).slice(2)}년 ${Number(month)}월 ${Number(day)}일`;
 }
 
+function formatTimeOption(schedule: GetMyActivityReservedScheduleResponse) {
+  return `${schedule.startTime} - ${schedule.endTime}`;
+}
+
 export const CalendarMyActivitiesModal = ({
+  activityId,
   date,
   onClose,
   className,
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
   const [activeTab, setActiveTab] = useState<TabStatus>('pending');
+  const [schedules, setSchedules] = useState<GetMyActivityReservedScheduleResponse[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>('');
+
+  useEffect(() => {
+    async function loadSchedules() {
+      const data = await getMyActivityReservedSchedule(activityId, { date });
+      setSchedules(data);
+      if (data.length > 0) setSelectedTime(formatTimeOption(data[0]));
+    }
+    loadSchedules();
+  }, [activityId, date]);
+
+  const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
 
   return (
     <Modal
@@ -71,7 +92,7 @@ export const CalendarMyActivitiesModal = ({
                     "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-0.5 before:w-full before:content-['']"
                 )}
               >
-                <span>{label}</span> <span>0</span>
+                <span>{label}</span> <span>{selectedSchedule?.count[status] ?? 0}</span>
               </button>
             );
           })}
@@ -82,19 +103,13 @@ export const CalendarMyActivitiesModal = ({
           <div className="flex flex-col gap-3 md:flex-1">
             <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 시간</h3>
             <SelectField
-              list={[
-                '14:00 - 15:00',
-                '15:00 - 16:00',
-                '16:00 - 17:00',
-                '17:00 - 18:00',
-                '18:00 - 19:00',
-                '19:00 - 20:00',
-                '20:00 - 21:00',
-                '21:00 - 22:00',
-              ]}
+              list={schedules.map(formatTimeOption)}
               onSelectOption={setSelectedTime}
               selectedOption={selectedTime}
-              defaultMessage="시간대를 선택해 주세요"
+              defaultMessage={
+                schedules.length === 0 ? '예약된 시간대가 없습니다' : '시간대를 선택해 주세요'
+              }
+              disabled={schedules.length === 0}
             />
           </div>
 
