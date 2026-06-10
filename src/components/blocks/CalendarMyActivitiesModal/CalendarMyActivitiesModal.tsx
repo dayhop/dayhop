@@ -24,7 +24,13 @@ const TABS: { status: TabStatus; label: string }[] = [
   { status: 'declined', label: '거절' },
 ];
 
+function formatDate(date: string) {
+  const [year, month, day] = date.split('-');
+  return `${String(year).slice(2)}년 ${Number(month)}월 ${Number(day)}일`;
+}
+
 export const CalendarMyActivitiesModal = ({
+  date,
   onClose,
   className,
   overlayClassName,
@@ -41,7 +47,9 @@ export const CalendarMyActivitiesModal = ({
     >
       {/* 헤더 */}
       <div className="mb-3 flex items-center justify-between px-6">
-        <span className="text-text-primary text-lg font-bold lg:text-[20px]">26년 6월 10일</span>
+        <span className="text-text-primary text-lg font-bold lg:text-[20px]">
+          {formatDate(date)}
+        </span>
         <button onClick={onClose} className="hidden cursor-pointer lg:block">
           <CloseIcon />
         </button>
