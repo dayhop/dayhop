@@ -50,6 +50,8 @@ export const CalendarMyActivitiesModal = ({
 
   useEffect(() => {
     async function loadSchedules() {
+      setSchedules([]);
+      setSelectedTime('');
       const data = await getMyActivityReservedSchedule(activityId, { date });
       setSchedules(data);
       if (data.length > 0) setSelectedTime(formatTimeOption(data[0]));
