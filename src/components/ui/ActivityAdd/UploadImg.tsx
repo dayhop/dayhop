@@ -1,16 +1,20 @@
 import ImgAddIcon from '@/assets/icon/ImgAddIcon.svg';
+import { ChangeEvent } from 'react';
 
 interface UploadImgProp {
-  onClickImgUpload: () => void;
+  onFileSelect: (file: File) => void;
 }
 
-export function UploadImg({ onClickImgUpload }: UploadImgProp) {
+export function UploadImg({ onFileSelect }: UploadImgProp) {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onFileSelect(file);
+    }
+  };
   return (
-    <label
-      className="border-bg-footer flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border md:h-32 md:w-32"
-      onClick={onClickImgUpload}
-    >
-      <input type="file" className="hidden" />
+    <label className="border-bg-footer flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border md:h-32 md:w-32">
+      <input type="file" className="hidden" onChange={handleFileChange} />
       <ImgAddIcon />
       <div className="text-text-tertiary hidden text-sm md:flex">file Upload</div>
     </label>

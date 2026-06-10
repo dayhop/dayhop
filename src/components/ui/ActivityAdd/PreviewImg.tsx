@@ -12,7 +12,7 @@ export function PreviewImg({
   return (
     <div className="relative h-20 w-20 md:h-32 md:w-32">
       <Image src={imgUrl} alt="이미지 미리보기" fill className="rounded-2xl object-cover" />
-      <div className="md:-righ-2 absolute -top-1 -right-1 md:-top-2">
+      <div className="absolute -top-1 -right-1 md:-top-2 md:-right-2">
         <DeleteImgButton onClickDeleteButton={onClickDeleteButton} />
       </div>
     </div>
