@@ -3,6 +3,7 @@
 import { Modal } from '@/components/ui/Modal';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { cn } from '@/utils/cn';
+import { ReservationItem } from './ReservationItem';
 
 interface CalendarMyActivitiesModalProps {
   activityId: number;
@@ -80,26 +81,13 @@ export const CalendarMyActivitiesModal = ({
           <div className="flex flex-col gap-3 md:flex-1">
             <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 내역</h3>
             <ul className="flex flex-col gap-3.5">
-              <li className="flex items-center justify-between rounded-2xl border border-gray-100 px-4 py-3.5 lg:min-w-73">
-                <ul className="flex flex-col gap-2.5 text-sm lg:text-base">
-                  <li className="flex gap-2">
-                    <span className="min-w-9 font-bold text-gray-500 lg:min-w-10.25">닉네임</span>
-                    <span className="text-text-primary font-medium">정만철</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="min-w-9 font-bold text-gray-500 lg:min-w-10.25">인원</span>
-                    <span className="text-text-primary font-medium">10명</span>
-                  </li>
-                </ul>
-                <div className="flex flex-col gap-2">
-                  <button className="bg-bg h-7.5 cursor-pointer rounded-lg border border-gray-50 px-2.5 text-sm font-medium text-gray-600">
-                    승인하기
-                  </button>
-                  <button className="bg-bg h-7.5 cursor-pointer rounded-lg border border-gray-50 px-2.5 text-sm font-medium text-gray-600">
-                    거절하기
-                  </button>
-                </div>
-              </li>
+              <ReservationItem
+                nickname="정만철"
+                headCount={10}
+                activeTab="pending"
+                onApprove={() => console.log('승인')}
+                onDecline={() => console.log('거절')}
+              />
             </ul>
           </div>
         </div>
