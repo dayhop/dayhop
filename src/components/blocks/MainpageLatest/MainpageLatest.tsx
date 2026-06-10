@@ -41,7 +41,7 @@ export default function MainpageLatest({ items }: MainpageLatestProps) {
   );
 
   return (
-    <section className="mx-auto w-[347px] min-[744px]:w-[696px] min-[1200px]:w-[848px]">
+    <section className="mx-auto w-full max-w-[347px] px-4 min-[744px]:w-[696px] min-[744px]:max-w-none min-[744px]:px-0 min-[1200px]:w-[848px]">
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-xl font-bold min-[744px]:text-2xl">🔥 최신 게시물</h2>
 
