@@ -1,8 +1,12 @@
 'use client';
 
 import { Modal } from '@/components/ui/Modal';
+import CloseIcon from '@/assets/icon/CloseIcon.svg';
+import { cn } from '@/utils/cn';
 
 interface CalendarMyActivitiesModalProps {
+  activityId: number;
+  date: string; // YYYY-MM-DD
   onClose: () => void;
   className?: string;
   overlayClassName?: string;
@@ -20,7 +24,86 @@ export const CalendarMyActivitiesModal = ({
       className={className}
       overlayClassName={overlayClassName}
     >
-      모달
+      {/* 헤더 */}
+      <div className="mb-3 flex items-center justify-between px-6">
+        <span className="text-text-primary text-lg font-bold lg:text-[20px]">26년 6월 10일</span>
+        <button onClick={onClose} className="hidden cursor-pointer lg:block">
+          <CloseIcon />
+        </button>
+      </div>
+
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* 탭 */}
+        <div className="before:bg-border-default relative mx-6 flex gap-2 before:absolute before:right-0 before:bottom-0 before:left-0 before:h-px before:content-[''] lg:text-base">
+          <button
+            type="button"
+            className={cn(
+              'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium'
+              // isActive &&
+              //   "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:content-['']"
+            )}
+          >
+            <span>신청</span> <span>2</span>
+          </button>
+          <button
+            type="button"
+            className={cn(
+              'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium'
+              // isActive &&
+              //   "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:content-['']"
+            )}
+          >
+            <span>승인</span> <span>0</span>
+          </button>
+          <button
+            type="button"
+            className={cn(
+              'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium'
+              // isActive &&
+              //   "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:content-['']"
+            )}
+          >
+            <span>거절</span> <span>0</span>
+          </button>
+        </div>
+
+        <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:flex-col">
+          {/* 예약 시간 */}
+          <div className="flex flex-col gap-3 md:flex-1">
+            <h3 className="text-text-primary text-base font-bold lg:text-lg">
+              예약 시간 셀렉트박스
+            </h3>
+            <div className="h-12 rounded-2xl border border-gray-100 bg-white shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]"></div>
+          </div>
+
+          {/* 예약 내역 */}
+          <div className="flex flex-col gap-3 md:flex-1">
+            <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 내역</h3>
+            <ul className="flex flex-col gap-3.5">
+              <li className="flex items-center justify-between rounded-2xl border border-gray-100 px-4 py-3.5 lg:min-w-73">
+                <ul className="flex flex-col gap-2.5 text-sm lg:text-base">
+                  <li className="flex gap-2">
+                    <span className="min-w-9 font-bold text-gray-500 lg:min-w-10.25">닉네임</span>
+                    <span className="text-text-primary font-medium">정만철</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="min-w-9 font-bold text-gray-500 lg:min-w-10.25">인원</span>
+                    <span className="text-text-primary font-medium">10명</span>
+                  </li>
+                </ul>
+                <div className="flex flex-col gap-2">
+                  <button className="bg-bg h-7.5 cursor-pointer rounded-lg border border-gray-50 px-2.5 text-sm font-medium text-gray-600">
+                    승인하기
+                  </button>
+                  <button className="bg-bg h-7.5 cursor-pointer rounded-lg border border-gray-50 px-2.5 text-sm font-medium text-gray-600">
+                    거절하기
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </Modal>
   );
 };
