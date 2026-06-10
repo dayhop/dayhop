@@ -9,16 +9,19 @@ import Error404 from '@/assets/icon/Error404.svg';
 export function NotFoundError() {
   const router = useRouter();
 
+  const handleBack = () => {
+    if (window.history.length <= 1) {
+      router.push('/');
+      return;
+    }
+    router.back();
+  };
+
   return (
     <div className="flex w-[320px] max-w-[calc(100vw-32px)] flex-col items-center gap-7 md:w-[400px]">
       <ErrorState Illustration={Error404} message="페이지를 찾을 수 없어요." />
       <div className="grid w-full grid-cols-2 gap-3">
-        <Button
-          variant="secondary"
-          size="md"
-          className="min-w-0 px-4 md:px-8"
-          onClick={() => router.back()}
-        >
+        <Button variant="secondary" size="md" className="min-w-0 px-4 md:px-8" onClick={handleBack}>
           뒤로가기
         </Button>
         <Link href="/" className="min-w-0">
