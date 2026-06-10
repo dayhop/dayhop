@@ -7,7 +7,7 @@ import { CalendarHeader } from './CalendarHeader';
 import type { CalendarDateInfo, CalendarProps } from './types';
 import { getCalendarDates, toLocalDateString } from './utils';
 
-const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const Calendar = ({
   value,
