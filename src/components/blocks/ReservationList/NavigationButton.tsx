@@ -16,7 +16,7 @@ const buttonList: ReservationFilterButton[] = [
 ];
 
 const BUTTON_MATCH = {
-  all: '전체 조회',
+  all: '전체',
   pending: '예약 완료',
   canceled: '예약 취소',
   confirmed: '예약 승인',
