@@ -35,6 +35,6 @@ export const NotFound: Story = {
 export const ServerError: Story = {
   args: {
     Illustration: WarningIcon,
-    message: '문제가 발생했어요. 잠시 후 다시 시도해주세요.',
+    message: '문제가 발생했어요.\n잠시 후 다시 시도해주세요.',
   },
 };

@@ -10,6 +10,21 @@ type WebpackRule = {
   [key: string]: unknown;
 };
 
+const svgrOptions = {
+  svgoConfig: {
+    plugins: [
+      {
+        name: 'preset-default',
+        params: {
+          overrides: {
+            removeViewBox: false,
+          },
+        },
+      },
+    ],
+  },
+};
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
@@ -35,7 +50,7 @@ const nextConfig: NextConfig = {
         resourceQuery: {
           not: [...((fileLoaderRule.resourceQuery as { not?: RegExp[] })?.not ?? []), /url/],
         },
-        use: ['@svgr/webpack'],
+        use: [{ loader: '@svgr/webpack', options: svgrOptions }],
       }
     );
 
@@ -47,7 +62,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       '*.svg': {
-        loaders: ['@svgr/webpack'],
+        loaders: [{ loader: '@svgr/webpack', options: svgrOptions }],
         as: '*.js',
       },
     },

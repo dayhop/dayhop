@@ -11,7 +11,9 @@ export const ErrorState = ({ Illustration, message }: ErrorStateProps) => {
       <div className="flex h-[160px] w-[200px] items-center justify-center md:h-[200px] md:w-[240px]">
         <Illustration className="h-full w-full" aria-hidden="true" />
       </div>
-      <h1 className="text-text-primary text-lg font-bold md:text-xl">{message}</h1>
+      <h1 className="text-text-primary text-lg font-bold whitespace-pre-line md:text-xl">
+        {message}
+      </h1>
     </div>
   );
 };
