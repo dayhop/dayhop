@@ -1,4 +1,11 @@
-export type ActivityCategory = '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+import type {
+  ActivityCategory,
+  ActivityItem,
+  SubImage,
+  ActivityScheduleInput,
+  ReservationStatus,
+} from '@/types/api';
+export type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput, ReservationStatus };
 
 export interface GetActivitiesParams {
   method: 'cursor' | 'offset';
@@ -8,26 +15,6 @@ export interface GetActivitiesParams {
   sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest';
   page?: number;
   size?: number;
-}
-
-export interface ActivityItem {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  category: ActivityCategory;
-  price: number;
-  address: string;
-  bannerImageUrl: string;
-  rating: number;
-  reviewCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SubImage {
-  id: number;
-  imageUrl: string;
 }
 
 export interface Schedule {
@@ -59,12 +46,6 @@ export interface PostActivitiesData {
   subImageUrls: string[];
 }
 
-export type ActivityScheduleInput = {
-  date: string;
-  startTime: string;
-  endTime: string;
-};
-
 export type ScheduleDate = {
   date: string;
   times: Omit<Schedule, 'date'>[];
@@ -88,7 +69,7 @@ export interface GetActivityReviewsResponses {
 
 export interface Reviews {
   id: number;
-  user: User;
+  user: ReviewUser;
   activityId: number;
   rating: number;
   content: string;
@@ -96,7 +77,7 @@ export interface Reviews {
   updatedAt: string;
 }
 
-export type User = {
+export type ReviewUser = {
   profileImageUrl: string;
   nickname: string;
   id: number;
@@ -108,7 +89,7 @@ export interface PostActivityReservationsResponse {
   userId: number;
   activityId: number;
   scheduleId: number;
-  status: Status;
+  status: ReservationStatus;
   reviewSubmitted: boolean;
   totalPrice: number;
   headCount: number;
@@ -118,8 +99,6 @@ export interface PostActivityReservationsResponse {
   createdAt: string;
   updatedAt: string;
 }
-
-export type Status = 'pending' | 'confirmed' | 'declined' | 'canceled' | 'completed';
 
 export interface GetActivityReviews {
   page?: number;

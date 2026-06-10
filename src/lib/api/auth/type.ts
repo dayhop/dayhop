@@ -1,19 +1,13 @@
+import type { User } from '@/types/api';
+export type { User };
+
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-export interface AuthUser {
-  id: number;
-  email: string;
-  nickname: string;
-  profileImageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface LoginResponse {
-  user: AuthUser;
+  user: User;
   refreshToken: string;
   accessToken: string;
 }
