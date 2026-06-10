@@ -33,12 +33,12 @@ const TIME_LIST = [
 
 export function DateForm() {
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col items-center justify-center md:flex-row">
       <DateField />
       <div className="flex w-full justify-between gap-4">
         <div className="flex flex-1 items-center justify-center gap-2">
           <div className="flex-1">
-            <SelectField list={TIME_LIST} defaultMessage="0:00" />
+            <SelectField list={TIME_LIST} defaultMessage="0:00" isLabelShow={false} />
           </div>
           <div>
             {' '}
