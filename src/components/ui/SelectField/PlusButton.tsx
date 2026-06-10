@@ -9,7 +9,7 @@ export function PlusButton({ onClick }: ButtonProps) {
     <button
       type="button"
       onClick={onClick}
-      className="bg-primary active:bg-primary-500 cursor-pointer rounded-full p-2.5"
+      className="bg-primary active:bg-primary-500 h-fit w-fit cursor-pointer rounded-full p-2.5"
     >
       <PlusIcon />
     </button>
