@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import CarouselLeft from '@/assets/icon/arrow-left.svg';
 import CarouselRight from '@/assets/icon/arrow-right.svg';
-import type { ActivityItem } from '@/types/api/activities-types';
+import type { ActivityItem } from '../../../types/api/activities-types';
 
 interface BannerCarouselProps {
   activities: ActivityItem[];
