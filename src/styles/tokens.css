@@ -28,17 +28,20 @@
   --color-yellow: #ffcb02;
 
   /* 예약내역 배지 */
-  --color-status-confirmed-bg: #e9fbe4;
-  --color-status-confirmed-text: #2ba90d;
+  --color-status-pending-bg: #e9fbe4;
+  --color-status-pending-text: #2ba90d;
 
-  --color-status-rejected-bg: #fcecea;
-  --color-status-rejected-text: #f96767;
+  --color-status-declined-bg: #fcecea;
+  --color-status-declined-text: #f96767;
 
   --color-status-completed-bg: #daf0ff;
   --color-status-completed-text: #0d6cd1;
 
-  --color-status-approved-bg: #ddf9f9;
-  --color-status-approved-text: #1790a0;
+  --color-status-confirmed-bg: #ddf9f9;
+  --color-status-confirmed-text: #1790a0;
+
+  --color-status-canceled-bg: #e0e0e5;
+  --color-status-canceled-text: #707177;
 
   /* 캘린더 상태 배지 */
   --color-status-completed-bg: var(--color-gray-50);

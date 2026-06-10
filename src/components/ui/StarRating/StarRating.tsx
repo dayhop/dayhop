@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import IconStar from '@/assets/icon/icon-star.svg';
 
