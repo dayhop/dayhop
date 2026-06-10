@@ -1,11 +1,17 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { SelectField } from './SelectField';
+
 import { useState } from 'react';
+import { SelectField } from './SelectField';
 
 const meta: Meta<typeof SelectField> = {
   title: 'Components/UI/ReservationAdd/SelectField',
   component: SelectField,
   tags: ['autodocs'],
+  argTypes: {
+    label: { control: 'text' },
+    list: { control: 'text' },
+    defaultMessage: { control: 'text' },
+  },
 };
 
 export default meta;
@@ -61,6 +67,28 @@ export const StartTime: Story = {
     };
     return (
       <SelectField {...args} onSelectOption={handleSelectOption} selectedOption={currentOption} />
+    );
+  },
+};
+
+export const NoLabel: Story = {
+  args: {
+    label: '카테고리',
+    list: ['문화 · 예술', '식음료', '스포츠', '투어', '관광', '웰빙'],
+    defaultMessage: '카테고리를 선택해주세요',
+  },
+  render: (args) => {
+    const [currentOption, setCurrentOption] = useState('');
+    const handleSelectOption = (option: string) => {
+      setCurrentOption(option);
+    };
+    return (
+      <SelectField
+        {...args}
+        isLabelShow={false}
+        onSelectOption={handleSelectOption}
+        selectedOption={currentOption}
+      />
     );
   },
 };
