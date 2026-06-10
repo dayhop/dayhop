@@ -1,5 +1,8 @@
+'use client';
+
 import Image from 'next/image';
-import { twMerge } from 'tailwind-merge';
+import { useState } from 'react';
+import { cn } from '@/utils/cn';
 import DefaultAvatar from '@/assets/images/avatar-default.svg';
 
 type AvatarProps = {
@@ -16,24 +19,36 @@ const avatarSizeClassName = {
 };
 
 const avatarSizes = {
-  sm: '(max-width: 767px) 20px, 24px',
+  sm: '(min-width: 768px) 24px, 20px',
   md: '30px',
-  lg: '(max-width: 767px) 70px, 120px',
+  lg: '(min-width: 768px) 120px, 70px',
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
+  const [errorSrc, setErrorSrc] = useState<string | null>(null);
+  const showDefault = !src || errorSrc === src;
+
+  const handleImageError = () => {
+    if (src) {
+      setErrorSrc(src);
+    }
+  };
+
   return (
     <div
-      className={twMerge(
-        'relative overflow-hidden rounded-full',
-        avatarSizeClassName[size],
-        className
-      )}
+      className={cn('relative overflow-hidden rounded-full', avatarSizeClassName[size], className)}
     >
-      {src ? (
-        <Image src={src} alt={alt} fill sizes={avatarSizes[size]} className="object-cover" />
-      ) : (
+      {showDefault ? (
         <DefaultAvatar className="h-full w-full" role="img" aria-label={alt} />
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes={avatarSizes[size]}
+          className="object-cover"
+          onError={handleImageError}
+        />
       )}
     </div>
   );

@@ -1,7 +1,6 @@
-import instance from '@/lib/api/instance';
-import * as T from '@/types/api/myreservations-types';
+import instance from '../instance';
+import * as T from './type';
 
-// 예약 목록 조회
 export const getMyReservations = async ({
   cursorId,
   size,
@@ -13,7 +12,6 @@ export const getMyReservations = async ({
   return data;
 };
 
-// 예약 상태 변경 (취소 등)
 export const patchMyReservation = async (
   { reservationId }: T.PatchMyReservationParams,
   body: T.PatchMyReservationBody
@@ -25,7 +23,6 @@ export const patchMyReservation = async (
   return data;
 };
 
-// 예약 신청 수정
 export const patchMyReservationApplication = async (
   { reservationId }: T.PatchMyReservationParams,
   body: T.PatchMyReservationApplicationBody
@@ -37,7 +34,6 @@ export const patchMyReservationApplication = async (
   return data;
 };
 
-// 리뷰 작성
 export const postMyReservationReview = async (
   { reservationId }: T.PostMyReservationReviewParams,
   body: T.PostMyReservationReviewBody
