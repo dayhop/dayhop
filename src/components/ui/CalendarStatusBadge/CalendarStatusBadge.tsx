@@ -11,15 +11,15 @@ interface CalendarStatusBadgeProps {
 const STATUS_CONFIG = {
   completed: {
     label: '완료',
-    className: 'bg-status-completed-bg text-status-completed-text',
+    className: 'bg-calendar-status-completed-bg text-calendar-status-completed-text',
   },
   pending: {
     label: '예약',
-    className: 'bg-status-pending-bg text-status-pending-text',
+    className: 'bg-calendar-status-pending-bg text-calendar-status-pending-text',
   },
   confirmed: {
     label: '승인',
-    className: 'bg-status-confirmed-bg text-status-confirmed-text',
+    className: 'bg-calendar-status-confirmed-bg text-calendar-status-confirmed-text',
   },
 } as const;
 
