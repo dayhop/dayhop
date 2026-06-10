@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import { BannerCarousel } from './BannerCarousel';
+import { BannerCarousel } from '.';
 
 const meta = {
-  title: 'UI/BannerCarousel',
+  title: 'Components/Blocks/BannerCarousel',
   component: BannerCarousel,
 } satisfies Meta<typeof BannerCarousel>;
 

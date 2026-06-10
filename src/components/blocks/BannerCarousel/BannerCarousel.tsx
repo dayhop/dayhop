@@ -103,40 +103,46 @@ export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
           </div>
         </Link>
 
-        <button
-          type="button"
-          onClick={handlePrev}
-          aria-label="이전 체험"
-          className="absolute top-1/2 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
-        >
-          <CarouselLeft className="h-12 w-12" />
-        </button>
+        {activities.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={handlePrev}
+              aria-label="이전 체험"
+              className="absolute top-1/2 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
+            >
+              <CarouselLeft className="h-12 w-12" />
+            </button>
 
-        <button
-          type="button"
-          onClick={handleNext}
-          aria-label="다음 체험"
-          className="absolute top-1/2 right-0 z-10 translate-x-1/2 -translate-y-1/2"
-        >
-          <CarouselRight className="h-12 w-12" />
-        </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              aria-label="다음 체험"
+              className="absolute top-1/2 right-0 z-10 translate-x-1/2 -translate-y-1/2"
+            >
+              <CarouselRight className="h-12 w-12" />
+            </button>
+          </>
+        )}
       </div>
 
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-        {activities.map((_, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => setCurrentIndex(index)}
-            aria-label={`${index + 1}번째 배너 보기`}
-            className={
-              currentIndex === index
-                ? 'h-2 w-6 rounded-full bg-white'
-                : 'h-2 w-2 rounded-full bg-white/50'
-            }
-          />
-        ))}
-      </div>
+      {activities.length > 1 && (
+        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+          {activities.map((activity, index) => (
+            <button
+              key={activity.id}
+              type="button"
+              onClick={() => setCurrentIndex(index)}
+              aria-label={`${index + 1}번째 배너 보기`}
+              className={
+                currentIndex === index
+                  ? 'h-2 w-6 rounded-full bg-white'
+                  : 'h-2 w-2 rounded-full bg-white/50'
+              }
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
