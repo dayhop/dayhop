@@ -5,6 +5,7 @@ import { Modal } from '@/components/ui/Modal';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { cn } from '@/utils/cn';
 import { ReservationItem } from './ReservationItem';
+import { SelectField } from '@/components/ui/SelectField';
 import type { GetMyActivityReservationsParams } from '@/lib/api/my-activities/type';
 
 interface CalendarMyActivitiesModalProps {
@@ -29,6 +30,7 @@ export const CalendarMyActivitiesModal = ({
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
   const [activeTab, setActiveTab] = useState<TabStatus>('pending');
+  const [selectedTime, setSelectedTime] = useState<string>('');
 
   return (
     <Modal
@@ -70,10 +72,22 @@ export const CalendarMyActivitiesModal = ({
         <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:flex-col">
           {/* 예약 시간 */}
           <div className="flex flex-col gap-3 md:flex-1">
-            <h3 className="text-text-primary text-base font-bold lg:text-lg">
-              예약 시간 셀렉트박스
-            </h3>
-            <div className="h-12 rounded-2xl border border-gray-100 bg-white shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]"></div>
+            <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 시간</h3>
+            <SelectField
+              list={[
+                '14:00 - 15:00',
+                '15:00 - 16:00',
+                '16:00 - 17:00',
+                '17:00 - 18:00',
+                '18:00 - 19:00',
+                '19:00 - 20:00',
+                '20:00 - 21:00',
+                '21:00 - 22:00',
+              ]}
+              onSelectOption={setSelectedTime}
+              selectedOption={selectedTime}
+              defaultMessage="시간대를 선택해 주세요"
+            />
           </div>
 
           {/* 예약 내역 */}
