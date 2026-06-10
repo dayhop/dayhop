@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { cn } from '@/utils/cn';
 import { ReservationItem } from './ReservationItem';
+import type { GetMyActivityReservationsParams } from '@/lib/api/my-activities/type';
 
 interface CalendarMyActivitiesModalProps {
   activityId: number;
@@ -13,11 +15,21 @@ interface CalendarMyActivitiesModalProps {
   overlayClassName?: string;
 }
 
+type TabStatus = GetMyActivityReservationsParams['status'];
+
+const TABS: { status: TabStatus; label: string }[] = [
+  { status: 'pending', label: '신청' },
+  { status: 'confirmed', label: '승인' },
+  { status: 'declined', label: '거절' },
+];
+
 export const CalendarMyActivitiesModal = ({
   onClose,
   className,
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
+  const [activeTab, setActiveTab] = useState<TabStatus>('pending');
+
   return (
     <Modal
       onClose={onClose}
@@ -36,36 +48,23 @@ export const CalendarMyActivitiesModal = ({
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* 탭 */}
         <div className="before:bg-border-default relative mx-6 flex gap-2 before:absolute before:right-0 before:bottom-0 before:left-0 before:h-px before:content-[''] lg:text-base">
-          <button
-            type="button"
-            className={cn(
-              'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium'
-              // isActive &&
-              //   "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:content-['']"
-            )}
-          >
-            <span>신청</span> <span>2</span>
-          </button>
-          <button
-            type="button"
-            className={cn(
-              'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium'
-              // isActive &&
-              //   "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:content-['']"
-            )}
-          >
-            <span>승인</span> <span>0</span>
-          </button>
-          <button
-            type="button"
-            className={cn(
-              'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium'
-              // isActive &&
-              //   "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:content-['']"
-            )}
-          >
-            <span>거절</span> <span>0</span>
-          </button>
+          {TABS.map(({ status, label }) => {
+            const isActive = activeTab === status;
+            return (
+              <button
+                key={status}
+                type="button"
+                onClick={() => setActiveTab(status)}
+                className={cn(
+                  'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium',
+                  isActive &&
+                    "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-0.5 before:w-full before:content-['']"
+                )}
+              >
+                <span>{label}</span> <span>0</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:flex-col">
@@ -84,7 +83,7 @@ export const CalendarMyActivitiesModal = ({
               <ReservationItem
                 nickname="정만철"
                 headCount={10}
-                activeTab="pending"
+                activeTab={activeTab}
                 onApprove={() => console.log('승인')}
                 onDecline={() => console.log('거절')}
               />
