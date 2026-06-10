@@ -1,4 +1,6 @@
-type BadgeStatus = 'confirmed' | 'declined';
+import type { ReservationStatus } from '@/lib/api/my-activities/type';
+
+type BadgeStatus = Extract<ReservationStatus, 'confirmed' | 'declined'>;
 
 interface ReservationResultBadgeProps {
   status: BadgeStatus;
