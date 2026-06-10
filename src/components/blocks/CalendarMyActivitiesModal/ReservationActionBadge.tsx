@@ -4,7 +4,7 @@ type ActionStatus = PatchMyActivityReservationStatusRequest['status'];
 
 interface ReservationActionBadgeProps {
   action: ActionStatus;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const ACTION_CONFIG: Record<ActionStatus, { label: string; className: string }> = {
