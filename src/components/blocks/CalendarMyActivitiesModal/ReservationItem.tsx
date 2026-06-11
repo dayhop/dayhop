@@ -1,6 +1,6 @@
 import type { GetMyActivityReservationsParams } from '@/lib/api/my-activities/type';
 import { ReservationActionBadge } from './ReservationActionBadge';
-import { ReservationResultBadge } from './ReservationResultBadge';
+import { ReservationStateBadge } from '@/components/ui/ReservationList';
 
 type TabStatus = GetMyActivityReservationsParams['status'];
 
@@ -39,8 +39,8 @@ export const ReservationItem = ({
         </div>
       )}
 
-      {activeTab === 'confirmed' && <ReservationResultBadge status="confirmed" />}
-      {activeTab === 'declined' && <ReservationResultBadge status="declined" />}
+      {activeTab === 'confirmed' && <ReservationStateBadge reservationState="confirmed" />}
+      {activeTab === 'declined' && <ReservationStateBadge reservationState="declined" />}
     </li>
   );
 };
