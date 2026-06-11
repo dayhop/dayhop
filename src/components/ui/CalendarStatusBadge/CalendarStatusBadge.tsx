@@ -1,6 +1,7 @@
 import { cn } from '@/utils/cn';
+import type { ReservationStatus } from '@/types/api';
 
-type CalendarStatus = 'completed' | 'pending' | 'confirmed';
+type CalendarStatus = Extract<ReservationStatus, 'completed' | 'pending' | 'confirmed'>;
 
 interface CalendarStatusBadgeProps {
   status: CalendarStatus;
