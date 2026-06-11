@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
-import CloseIcon from '@/assets/icon/CloseIcon.svg';
+import { SelectField } from '@/components/ui/SelectField';
 import { cn } from '@/utils/cn';
 import { ReservationItem } from './ReservationItem';
-import { SelectField } from '@/components/ui/SelectField';
 import {
   getMyActivityReservedSchedule,
   getMyActivityReservations,
@@ -104,20 +104,6 @@ export const CalendarMyActivitiesModal = ({
 
   return (
     <>
-      <ConfirmModal
-        isOpen={pendingAction !== null}
-        onClose={() => setPendingAction(null)}
-        onConfirm={async () => {
-          await pendingAction?.execute();
-          setPendingAction(null);
-        }}
-        message={
-          pendingAction?.type === 'confirmed'
-            ? '예약을 승인하시겠습니까?'
-            : '예약을 거절하시겠습니까?'
-        }
-        confirmText={pendingAction?.type === 'confirmed' ? '승인' : '거절'}
-      />
       <Modal
         onClose={onClose}
         ariaLabel="예약 현황 모달"
@@ -229,6 +215,20 @@ export const CalendarMyActivitiesModal = ({
           </div>
         </div>
       </Modal>
+      <ConfirmModal
+        isOpen={pendingAction !== null}
+        onClose={() => setPendingAction(null)}
+        onConfirm={async () => {
+          await pendingAction?.execute();
+          setPendingAction(null);
+        }}
+        message={
+          pendingAction?.type === 'confirmed'
+            ? '예약을 승인하시겠습니까?'
+            : '예약을 거절하시겠습니까?'
+        }
+        confirmText={pendingAction?.type === 'confirmed' ? '승인' : '거절'}
+      />
     </>
   );
 };
