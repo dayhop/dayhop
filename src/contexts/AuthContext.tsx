@@ -11,7 +11,7 @@ import React, {
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getMyUser } from '@/lib/api/users';
-import { User } from '@/types/api/users';
+import { User } from '@/types/api';
 
 interface AuthContextType {
   user: User | null;
