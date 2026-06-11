@@ -29,6 +29,7 @@ export function SelectField({
   const dropDownRef = useRef<HTMLDivElement>(null);
 
   const handleClickDropdown = () => {
+    if (disabled) return;
     setIsOpen(!isOpen);
   };
 
@@ -49,17 +50,15 @@ export function SelectField({
     };
   }, [isOpen]);
 
-  if (disabled) return;
-
   return (
     <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
-      <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>
+      {label && <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>}
       <div className="relative w-full">
         <button
           onClick={handleClickDropdown}
           type="button"
           disabled={disabled}
-          className={`border-border-default flex h-13 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+          className={`border-border-default flex h-13 w-full min-w-29 cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <span
             className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} cursor-default font-medium`}
