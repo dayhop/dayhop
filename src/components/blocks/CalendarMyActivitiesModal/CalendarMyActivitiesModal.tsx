@@ -65,9 +65,13 @@ export const CalendarMyActivitiesModal = ({
       setSchedules([]);
       setSelectedTime('');
       setReservations([]);
-      const data = await getMyActivityReservedSchedule(activityId, { date });
-      setSchedules(data);
-      if (data.length > 0) setSelectedTime(formatTimeOption(data[0]));
+      try {
+        const data = await getMyActivityReservedSchedule(activityId, { date });
+        setSchedules(data);
+        if (data.length > 0) setSelectedTime(formatTimeOption(data[0]));
+      } catch {
+        // 글로벌 인터셉터에서 토스트 처리, 상태는 초기화된 상태 유지
+      }
     }
     loadSchedules();
   }, [activityId, date]);
@@ -81,11 +85,15 @@ export const CalendarMyActivitiesModal = ({
         setReservations([]);
         return;
       }
-      const data = await getMyActivityReservations(activityId, {
-        scheduleId: selectedScheduleId,
-        status: activeTab,
-      });
-      setReservations(data.reservations);
+      try {
+        const data = await getMyActivityReservations(activityId, {
+          scheduleId: selectedScheduleId,
+          status: activeTab,
+        });
+        setReservations(data.reservations);
+      } catch {
+        setReservations([]);
+      }
     }
     loadReservations();
   }, [activityId, selectedScheduleId, activeTab]);
@@ -101,6 +109,7 @@ export const CalendarMyActivitiesModal = ({
     ]);
     setSchedules(updatedSchedules);
     setReservations(updatedReservations.reservations);
+    // 에러 시 onConfirm의 try/catch에서 처리
   };
 
   return (
