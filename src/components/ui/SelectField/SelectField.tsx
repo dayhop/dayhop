@@ -53,7 +53,7 @@ export function SelectField({
   return (
     <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
       {label && <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>}
-      <div className="relative w-full">
+      <div className="relative w-full shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]">
         <button
           onClick={handleClickDropdown}
           type="button"
@@ -68,7 +68,7 @@ export function SelectField({
           <ArrowDown />
         </button>
         {isOpen && (
-          <div className="border-border-default absolute z-50 mt-2 flex max-h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3">
+          <div className="border-border-default absolute z-50 mt-2 flex max-h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]">
             {list.map((item) => {
               return (
                 <Button
