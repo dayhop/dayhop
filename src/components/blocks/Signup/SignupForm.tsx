@@ -88,9 +88,7 @@ export function SignupForm() {
       const res = await postSignUp(requestBody);
 
       return res;
-    } catch (error) {
-      console.error('회원가입 실패:', error);
-    }
+    } catch {}
   };
 
   return (

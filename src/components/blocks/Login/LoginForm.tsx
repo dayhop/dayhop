@@ -62,9 +62,7 @@ export function LoginForm() {
     try {
       const res = await postLogin(formData);
       await saveToken(res.accessToken, res.refreshToken);
-    } catch (e) {
-      console.error(`로그인 실패${e}`);
-    }
+    } catch {}
   };
 
   return (
