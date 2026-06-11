@@ -85,7 +85,7 @@ export const NoLabel: Story = {
     return (
       <SelectField
         {...args}
-        isLabelShow={false}
+        isLabelReaction={false}
         onSelectOption={handleSelectOption}
         selectedOption={currentOption}
       />
