@@ -1,7 +1,9 @@
+import { DateForm } from '@/components/blocks/ActivityAdd/DateForm';
+
 export default function Home() {
   return (
     <main>
-      <h1>dayhop</h1>
+      <DateForm />
     </main>
   );
 }

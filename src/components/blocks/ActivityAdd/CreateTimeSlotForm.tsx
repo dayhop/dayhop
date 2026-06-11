@@ -1,48 +1,21 @@
 'use client';
 
 import { SelectField } from '@/components/ui/SelectField';
-import { DateField } from '@/components/ui/SelectField/DateField';
-import { PlusButton } from '@/components/ui/SelectField/PlusButton';
+import { DateField } from '@/components/ui/AvailableSchedule/DateField';
+import { PlusButton } from '@/components/ui/AvailableSchedule/PlusButton';
 
 import MinusIcon from '@/assets/icon/MinusIcon.svg';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ActivityScheduleInput } from '@/types/api';
-
-//타임 형식...
-const TIME_LIST: string[] = [
-  '00:00',
-  '01:00',
-  '02:00',
-  '03:00',
-  '04:00',
-  '05:00',
-  '06:00',
-  '07:00',
-  '08:00',
-  '09:00',
-  '10:00',
-  '11:00',
-  '12:00',
-  '13:00',
-  '14:00',
-  '15:00',
-  '16:00',
-  '17:00',
-  '18:00',
-  '19:00',
-  '20:00',
-  '21:00',
-  '22:00',
-  '23:00',
-];
+import { TIME_LIST } from '@/constants/ReservationTimes';
+import { showToast } from '@/utils/toast';
 
 interface CreateTimeSlotFormProps {
   setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
-  setIsData: Dispatch<SetStateAction<boolean>>;
 }
 
 //prop으로 넘겨줄때는 schedules만 넘겨주면 안에 데이터만
-export function CreateTimeSlotForm({ setDateFormData, setIsData }: CreateTimeSlotFormProps) {
+export function CreateTimeSlotForm({ setDateFormData }: CreateTimeSlotFormProps) {
   const [scheduleFormData, setScheduleFormData] = useState<ActivityScheduleInput>({
     date: '',
     startTime: '',
@@ -59,12 +32,10 @@ export function CreateTimeSlotForm({ setDateFormData, setIsData }: CreateTimeSlo
 
   const handleClickAdd = () => {
     if (!scheduleFormData.date || !scheduleFormData.startTime || !scheduleFormData.endTime) {
-      //TODO 토스트메세지
-      alert('등록할 날짜와 시간을 모두 선택해주세요');
+      showToast.error('모든 항목을 입력해주세요');
       return;
     }
     setDateFormData((prev) => [...prev, scheduleFormData]);
-    setIsData(true);
     setScheduleFormData({ date: '', startTime: '', endTime: '' });
     console.log(scheduleFormData);
   };

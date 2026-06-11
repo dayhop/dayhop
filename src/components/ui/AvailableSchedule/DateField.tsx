@@ -1,7 +1,7 @@
 'use client';
 
 import { ActivityScheduleInput } from '@/types/api';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useId, useState } from 'react';
 
 interface DateFieldProp {
   data: string;
@@ -10,13 +10,14 @@ interface DateFieldProp {
 }
 export function DateField({ data, setFormData, isLabel = true }: DateFieldProp) {
   const [inputType, setInputType] = useState<'text' | 'date'>('text');
+  const uniqueId = useId();
   return (
     <div className="flex w-full flex-col gap-2.5">
-      <label className={`${isLabel ? '' : 'hidden'} font-bold`} htmlFor="activityDate">
+      <label className={`${isLabel ? '' : 'hidden'} font-bold`} htmlFor={uniqueId}>
         날짜
       </label>
       <input
-        id="activityDate"
+        id={uniqueId}
         value={data}
         type={data ? 'date' : inputType}
         placeholder="yyyy/mm/dd"
