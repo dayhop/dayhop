@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { UserCustomCard } from './UserCustomCard';
 
 const meta: Meta<typeof UserCustomCard> = {
-  title: 'Components/UI/UserCustomCard',
+  title: 'Components/Blocks/Main/UserCustomCard',
   component: UserCustomCard,
   tags: ['autodocs'],
 };
