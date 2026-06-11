@@ -136,7 +136,7 @@ export const CalendarMyActivitiesModal = ({
 
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* 탭 */}
-          <div className="before:bg-border-default relative mx-6 flex gap-2 before:absolute before:right-0 before:bottom-0 before:left-0 before:h-px before:content-[''] lg:text-base">
+          <div className="before:bg-border-default relative mx-6 flex before:absolute before:right-0 before:bottom-0 before:left-0 before:h-px before:content-[''] lg:text-base">
             {TABS.map(({ status, label }) => {
               const isActive = activeTab === status;
               return (
@@ -146,14 +146,19 @@ export const CalendarMyActivitiesModal = ({
                   onClick={() => setActiveTab(status)}
                   className={cn(
                     'text-text-tertiary relative flex h-10 flex-1 cursor-pointer items-center justify-center gap-1 text-base font-medium',
-                    isActive &&
-                      "text-primary-500 before:bg-primary-500 font-bold before:absolute before:bottom-0 before:left-0 before:h-0.5 before:w-full before:content-['']"
+                    isActive && 'text-primary-500 font-bold'
                   )}
                 >
                   <span>{label}</span> <span>{selectedSchedule?.count[status] ?? 0}</span>
                 </button>
               );
             })}
+            <div
+              className="bg-primary-500 absolute bottom-0 h-0.5 w-1/3 transition-transform duration-200 ease-in-out"
+              style={{
+                transform: `translateX(${TABS.findIndex((t) => t.status === activeTab) * 100}%)`,
+              }}
+            />
           </div>
 
           <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col">
@@ -178,44 +183,48 @@ export const CalendarMyActivitiesModal = ({
               <h3 className="text-text-primary text-base leading-[1.15] font-bold lg:text-lg">
                 예약 내역
               </h3>
-              <ul className="flex min-h-20 flex-col gap-3.5">
-                {reservations.length === 0 ? (
-                  <p className="text-text-tertiary py-4 text-center text-sm">
+              {reservations.length === 0 ? (
+                <div className="flex min-h-25 flex-col">
+                  <p className="text-text-tertiary py-10 text-center text-sm md:p-0 md:pt-5">
                     예약 내역이 없습니다
                   </p>
-                ) : (
-                  reservations.map((reservation) => (
-                    <ReservationItem
-                      key={reservation.id}
-                      nickname={reservation.nickname}
-                      headCount={reservation.headCount}
-                      activeTab={activeTab}
-                      onApprove={() =>
-                        setPendingAction({
-                          type: 'confirmed',
-                          execute: async () => {
-                            await patchMyActivityReservationStatus(activityId, reservation.id, {
-                              status: 'confirmed',
-                            });
-                            await refreshAfterAction();
-                          },
-                        })
-                      }
-                      onDecline={() =>
-                        setPendingAction({
-                          type: 'declined',
-                          execute: async () => {
-                            await patchMyActivityReservationStatus(activityId, reservation.id, {
-                              status: 'declined',
-                            });
-                            await refreshAfterAction();
-                          },
-                        })
-                      }
-                    />
-                  ))
-                )}
-              </ul>
+                </div>
+              ) : (
+                <div className="flex min-h-25 flex-col">
+                  <ul className="flex flex-col gap-3.5">
+                    {reservations.map((reservation) => (
+                      <ReservationItem
+                        key={reservation.id}
+                        nickname={reservation.nickname}
+                        headCount={reservation.headCount}
+                        activeTab={activeTab}
+                        onApprove={() =>
+                          setPendingAction({
+                            type: 'confirmed',
+                            execute: async () => {
+                              await patchMyActivityReservationStatus(activityId, reservation.id, {
+                                status: 'confirmed',
+                              });
+                              await refreshAfterAction();
+                            },
+                          })
+                        }
+                        onDecline={() =>
+                          setPendingAction({
+                            type: 'declined',
+                            execute: async () => {
+                              await patchMyActivityReservationStatus(activityId, reservation.id, {
+                                status: 'declined',
+                              });
+                              await refreshAfterAction();
+                            },
+                          })
+                        }
+                      />
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
