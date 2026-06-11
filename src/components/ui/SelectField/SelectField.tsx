@@ -78,7 +78,7 @@ export function SelectField({
                   }}
                   key={item}
                   variant="text"
-                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${displayedMessage === item ? 'bg-[#f2f9ff]' : ''}`}
+                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${displayedMessage === item && 'bg-[#f2f9ff]'}`}
                 >
                   {item}
                 </Button>

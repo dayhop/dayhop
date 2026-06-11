@@ -1,0 +1,1 @@
+export { MainpageReview } from './MainpageReview';
