@@ -53,6 +53,8 @@
   --color-text-secondary: var(--color-gray-700);
   --color-text-tertiary: var(--color-gray-500);
   --color-text-placeholder: var(--color-gray-400);
+  --color-calendar-primary: var(--color-gray-800);
+  --color-calendar-secondary: var(--color-gray-900);
   --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.5);
 }
