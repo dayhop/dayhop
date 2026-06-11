@@ -11,7 +11,7 @@ interface SelectFieldProps {
   defaultMessage?: string;
   list: string[];
   selectedOption?: string;
-  isLabelShow?: boolean;
+  isLabelReaction?: boolean;
 }
 
 export function SelectField({
@@ -20,7 +20,7 @@ export function SelectField({
   defaultMessage,
   list,
   selectedOption,
-  isLabelShow = true,
+  isLabelReaction = false,
 }: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const displayedMessage = selectedOption || defaultMessage;
@@ -48,8 +48,8 @@ export function SelectField({
   }, [isOpen]);
 
   return (
-    <div ref={dropDownRef} className="relatve flex w-full flex-col gap-2.5 font-bold">
-      <div className={isLabelShow ? 'block' : 'hidden'}>{label}</div>
+    <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
+      <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>
       <div className="relative w-full">
         <button
           onClick={handleClickDropdown}
