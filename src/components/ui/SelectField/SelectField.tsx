@@ -53,12 +53,12 @@ export function SelectField({
   return (
     <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
       {label && <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>}
-      <div className="relative w-full shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]">
+      <div className="relative w-full">
         <button
           onClick={handleClickDropdown}
           type="button"
           disabled={disabled}
-          className={`border-border-default flex h-13 w-full min-w-29 items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+          className={`border-border-default flex h-13 w-full min-w-29 items-center justify-between gap-3 rounded-2xl border bg-white px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <span
             className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} font-medium`}
