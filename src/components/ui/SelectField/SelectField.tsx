@@ -58,10 +58,10 @@ export function SelectField({
           onClick={handleClickDropdown}
           type="button"
           disabled={disabled}
-          className={`border-border-default flex h-13 w-full min-w-29 cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+          className={`border-border-default flex h-13 w-full min-w-29 items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <span
-            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} cursor-default font-medium`}
+            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} font-medium`}
           >
             {displayedMessage}
           </span>
