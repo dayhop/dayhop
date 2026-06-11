@@ -22,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className={pretendard.variable}>
+    <html lang="ko" className={pretendard.variable}>
+      <body className="font-sans">
         {children}
         <Toast />
       </body>
