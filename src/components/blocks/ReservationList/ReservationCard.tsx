@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/Button';
-import { Status } from '@/types/api/activities-types';
+import { ReservationStateBadge } from '@/components/ui/ReservationList';
+import { ReservationStatus } from '@/types/api';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
 
@@ -9,7 +10,7 @@ interface ReservationCardProps {
   endTime: string;
   date: string;
   totalPrice: number;
-  status: Status;
+  status: ReservationStatus;
   headCount: number;
   bannerImageUrl: string;
 }
@@ -28,8 +29,7 @@ export function ReservationCard({
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
       <div className="flex h-37 w-full items-stretch">
         <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
-          {/* TODO: 뱃지 컴포넌트로 변경 필요 */}
-          <div>{status}</div>
+          <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
             <div className="truncate font-bold">{title}</div>
             <div className="text-text-tertiary hidden text-[13px] lg:flex">{`${date} · ${startTime} ~ ${endTime}`}</div>

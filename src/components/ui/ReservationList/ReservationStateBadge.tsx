@@ -1,9 +1,9 @@
-import { ReservationState } from '@/types/ResevationList/ReservationState';
+import { ReservationStatus } from '@/types/api';
 
 interface ReservationStateBadgeProps {
-  reservationState: ReservationState;
+  reservationState: ReservationStatus;
 }
-const RESERVATION_MAP: Record<ReservationState, { text: string; className: string }> = {
+const RESERVATION_MAP: Record<ReservationStatus, { text: string; className: string }> = {
   pending: {
     text: '예약 완료',
     className: 'text-status-pending-text bg-status-pending-bg',
