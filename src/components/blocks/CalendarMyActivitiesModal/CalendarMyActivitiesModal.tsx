@@ -67,22 +67,35 @@ export const CalendarMyActivitiesModal = ({
   }, [activityId, date]);
 
   const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
+  const selectedScheduleId = selectedSchedule?.scheduleId;
 
   useEffect(() => {
     async function loadReservations() {
-      if (!selectedSchedule) {
+      if (selectedScheduleId === undefined) {
         setReservations([]);
         return;
       }
-      const { scheduleId } = selectedSchedule;
       const data = await getMyActivityReservations(activityId, {
-        scheduleId,
+        scheduleId: selectedScheduleId,
         status: activeTab,
       });
       setReservations(data.reservations);
     }
     loadReservations();
-  }, [activityId, selectedSchedule, activeTab]);
+  }, [activityId, selectedScheduleId, activeTab]);
+
+  const refreshAfterAction = async () => {
+    if (selectedScheduleId === undefined) return;
+    const [updatedSchedules, updatedReservations] = await Promise.all([
+      getMyActivityReservedSchedule(activityId, { date }),
+      getMyActivityReservations(activityId, {
+        scheduleId: selectedScheduleId,
+        status: activeTab,
+      }),
+    ]);
+    setSchedules(updatedSchedules);
+    setReservations(updatedReservations.reservations);
+  };
 
   return (
     <Modal
@@ -93,7 +106,7 @@ export const CalendarMyActivitiesModal = ({
     >
       {/* 헤더 */}
       <div className="mb-3 flex items-center justify-between px-6">
-        <span className="text-text-primary text-lg font-bold lg:text-[20px]">
+        <span className="text-text-primary text-lg leading-none font-bold lg:text-[20px]">
           {formatDate(date)}
         </span>
         <button onClick={onClose} className="hidden cursor-pointer lg:block">
@@ -123,10 +136,12 @@ export const CalendarMyActivitiesModal = ({
           })}
         </div>
 
-        <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col">
+        <div className="custom-textarea-scrollbar flex max-h-96.25 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col">
           {/* 예약 시간 */}
           <div className="flex flex-col gap-3 md:flex-1">
-            <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 시간</h3>
+            <h3 className="text-text-primary text-base leading-[1.15] font-bold lg:text-lg">
+              예약 시간
+            </h3>
             <SelectField
               list={schedules.map(formatTimeOption)}
               onSelectOption={setSelectedTime}
@@ -140,7 +155,9 @@ export const CalendarMyActivitiesModal = ({
 
           {/* 예약 내역 */}
           <div className="flex flex-col gap-3 md:flex-1">
-            <h3 className="text-text-primary text-base font-bold lg:text-lg">예약 내역</h3>
+            <h3 className="text-text-primary text-base leading-[1.15] font-bold lg:text-lg">
+              예약 내역
+            </h3>
             <ul className="flex min-h-20 flex-col gap-3.5">
               {reservations.length === 0 ? (
                 <p className="text-text-tertiary py-4 text-center text-sm">예약 내역이 없습니다</p>
@@ -155,21 +172,13 @@ export const CalendarMyActivitiesModal = ({
                       await patchMyActivityReservationStatus(activityId, reservation.id, {
                         status: 'confirmed',
                       });
-                      const data = await getMyActivityReservations(activityId, {
-                        scheduleId: selectedSchedule!.scheduleId,
-                        status: activeTab,
-                      });
-                      setReservations(data.reservations);
+                      await refreshAfterAction();
                     }}
                     onDecline={async () => {
                       await patchMyActivityReservationStatus(activityId, reservation.id, {
                         status: 'declined',
                       });
-                      const data = await getMyActivityReservations(activityId, {
-                        scheduleId: selectedSchedule!.scheduleId,
-                        status: activeTab,
-                      });
-                      setReservations(data.reservations);
+                      await refreshAfterAction();
                     }}
                   />
                 ))
