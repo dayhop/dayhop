@@ -29,6 +29,7 @@ export function SelectField({
   const dropDownRef = useRef<HTMLDivElement>(null);
 
   const handleClickDropdown = () => {
+    if (disabled) return;
     setIsOpen(!isOpen);
   };
 
@@ -48,8 +49,6 @@ export function SelectField({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
-
-  if (disabled) return;
 
   return (
     <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
