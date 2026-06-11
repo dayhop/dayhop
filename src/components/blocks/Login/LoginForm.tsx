@@ -9,16 +9,12 @@ import { postLogin } from '@/lib/api/auth';
 import { validateEmail, validatePassword } from '@/utils/validate';
 
 import { saveToken } from '@/actions/auth';
+import { showToast } from '@/utils/toast';
 
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     password: '',
-  });
-
-  const [isError, setIsError] = useState({
-    email: false,
-    password: false,
   });
 
   const [formData, setFormData] = useState({
@@ -27,6 +23,7 @@ export function LoginForm() {
   });
 
   const validateField = (id: string, value: string) => {
+    if (!value || !id) return;
     let errorMessage = '';
     switch (id) {
       case 'email':
@@ -41,11 +38,6 @@ export function LoginForm() {
     setErrorMessage((prev) => ({
       ...prev,
       [id]: errorMessage,
-    }));
-
-    setIsError((prev) => ({
-      ...prev,
-      [id]: errorMessage !== '',
     }));
   };
 
@@ -62,8 +54,9 @@ export function LoginForm() {
     try {
       const res = await postLogin(formData);
       await saveToken(res.accessToken, res.refreshToken);
-    } catch (e) {
-      console.error(`로그인 실패${e}`);
+      showToast.success(`${res.user.nickname} 님 반갑습니다. `);
+    } catch {
+      showToast.error('로그인에 실패했습니다.');
     }
   };
 
@@ -72,7 +65,7 @@ export function LoginForm() {
       <AuthField
         title="이메일"
         errorMessage={errorMessage.email}
-        isError={isError.email}
+        isError={!!errorMessage.email}
         handleChange={handleChange}
         handleFocusout={handleFocusout}
         placeholder="이메일을 입력해 주세요"
@@ -81,7 +74,7 @@ export function LoginForm() {
       <AuthField
         title="비밀번호"
         errorMessage={errorMessage.password}
-        isError={isError.password}
+        isError={!!errorMessage.password}
         handleChange={handleChange}
         handleFocusout={handleFocusout}
         placeholder="비밀번호를 입력해 주세요"
@@ -89,7 +82,9 @@ export function LoginForm() {
         label="password"
       />
       <Button
-        disabled={isError.email || isError.password || !formData.email || !formData.password}
+        disabled={
+          !!errorMessage.email || !!errorMessage.password || !formData.email || !formData.password
+        }
         type="submit"
       >
         로그인하기

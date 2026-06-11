@@ -10,6 +10,7 @@ import {
   validatePasswordConfirm,
 } from '@/utils/validate';
 import { AuthField } from '../AuthField/AuthField';
+import { showToast } from '@/utils/toast';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -17,13 +18,6 @@ export function SignupForm() {
     name: '',
     password: '',
     passwordConfirm: '',
-  });
-
-  const [isError, setIsError] = useState({
-    email: false,
-    name: false,
-    password: false,
-    passwordConfirm: false,
   });
 
   const [errorMessage, setErrorMessage] = useState({
@@ -45,6 +39,7 @@ export function SignupForm() {
   };
 
   const validateField = (id: string, value: string) => {
+    if (!value || !id) return;
     let errorMessage = '';
 
     switch (id) {
@@ -58,7 +53,6 @@ export function SignupForm() {
         errorMessage = validatePassword(value);
         if (formData.passwordConfirm) {
           const confirmErrorMsg = validatePasswordConfirm(value, formData.passwordConfirm);
-          setIsError((prev) => ({ ...prev, passwordConfirm: !!confirmErrorMsg }));
           setErrorMessage((prev) => ({ ...prev, passwordConfirm: confirmErrorMsg }));
         }
         break;
@@ -73,8 +67,6 @@ export function SignupForm() {
       ...prev,
       [id]: errorMessage,
     }));
-
-    setIsError((prev) => ({ ...prev, [id]: errorMessage !== '' }));
   };
 
   const handleformSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -86,10 +78,10 @@ export function SignupForm() {
     };
     try {
       const res = await postSignUp(requestBody);
-
+      showToast.success('회원가입에 성공했습니다.');
       return res;
-    } catch (error) {
-      console.error('회원가입 실패:', error);
+    } catch {
+      showToast.error('회원가입에 실패했습니다.');
     }
   };
 
@@ -98,7 +90,7 @@ export function SignupForm() {
       <AuthField
         title="이메일"
         errorMessage={errorMessage.email}
-        isError={isError.email}
+        isError={!!errorMessage.email}
         handleChange={handleChange}
         handleFocusout={handleFocusout}
         placeholder="이메일을 입력해 주세요"
@@ -107,7 +99,7 @@ export function SignupForm() {
       <AuthField
         title="닉네임"
         errorMessage={errorMessage.name}
-        isError={isError.name}
+        isError={!!errorMessage.name}
         handleChange={handleChange}
         handleFocusout={handleFocusout}
         placeholder="닉네임을 입력해 주세요"
@@ -117,7 +109,7 @@ export function SignupForm() {
         title="비밀번호 확인"
         type="password"
         errorMessage={errorMessage.password}
-        isError={isError.password}
+        isError={!!errorMessage.password}
         handleChange={handleChange}
         handleFocusout={handleFocusout}
         placeholder="8자 이상 입력해 주세요"
@@ -127,7 +119,7 @@ export function SignupForm() {
         title="비밀번호 확인"
         type="password"
         errorMessage={errorMessage.passwordConfirm}
-        isError={isError.passwordConfirm}
+        isError={!!errorMessage.passwordConfirm}
         handleChange={handleChange}
         handleFocusout={handleFocusout}
         placeholder="비밀번호를 한 번 더 입력해 주세요"
@@ -136,10 +128,10 @@ export function SignupForm() {
       <Button
         type="submit"
         disabled={
-          isError['email'] ||
-          isError['name'] ||
-          isError['password'] ||
-          isError['passwordConfirm'] ||
+          !!errorMessage.email ||
+          !!errorMessage.name ||
+          !!errorMessage.password ||
+          !!errorMessage.passwordConfirm ||
           formData.email === '' ||
           formData.name === '' ||
           formData.password === '' ||
