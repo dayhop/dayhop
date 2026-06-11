@@ -6,6 +6,7 @@ import { Modal } from '@/components/ui/Modal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { SelectField } from '@/components/ui/SelectField';
 import { cn } from '@/utils/cn';
+import { showToast } from '@/utils/toast';
 import { ReservationItem } from './ReservationItem';
 import {
   getMyActivityReservedSchedule,
@@ -219,8 +220,17 @@ export const CalendarMyActivitiesModal = ({
         isOpen={pendingAction !== null}
         onClose={() => setPendingAction(null)}
         onConfirm={async () => {
-          await pendingAction?.execute();
-          setPendingAction(null);
+          const isConfirmed = pendingAction?.type === 'confirmed';
+          try {
+            await pendingAction?.execute();
+            showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
+          } catch {
+            showToast.error(
+              isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.'
+            );
+          } finally {
+            setPendingAction(null);
+          }
         }}
         message={
           pendingAction?.type === 'confirmed'
