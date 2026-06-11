@@ -36,8 +36,13 @@ const TIME_LIST: string[] = [
   '23:00',
 ];
 
+interface CreateTimeSlotFormProps {
+  setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
+  setIsData: Dispatch<SetStateAction<boolean>>;
+}
+
 //prop으로 넘겨줄때는 schedules만 넘겨주면 안에 데이터만
-export function CreateTimeSlotForm() {
+export function CreateTimeSlotForm({ setDateFormData, setIsData }: CreateTimeSlotFormProps) {
   const [scheduleFormData, setScheduleFormData] = useState<ActivityScheduleInput>({
     date: '',
     startTime: '',
@@ -58,6 +63,8 @@ export function CreateTimeSlotForm() {
       alert('등록할 날짜와 시간을 모두 선택해주세요');
       return;
     }
+    setDateFormData((prev) => [...prev, scheduleFormData]);
+    setIsData(true);
     setScheduleFormData({ date: '', startTime: '', endTime: '' });
     console.log(scheduleFormData);
   };

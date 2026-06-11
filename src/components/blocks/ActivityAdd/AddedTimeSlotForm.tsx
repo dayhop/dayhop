@@ -2,7 +2,6 @@
 
 import { SelectField } from '@/components/ui/SelectField';
 import { DateField } from '@/components/ui/SelectField/DateField';
-import { PlusButton } from '@/components/ui/SelectField/PlusButton';
 
 import MinusIcon from '@/assets/icon/MinusIcon.svg';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -36,13 +35,15 @@ const TIME_LIST: string[] = [
   '22:00',
   '23:00',
 ];
-
-//prop으로 넘겨줄때는 schedules만 넘겨주면 안에 데이터만
-export function AddedTimeSlotForm() {
+interface AddedTimeSlotFormProp {
+  data: ActivityScheduleInput;
+  setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
+}
+export function AddedTimeSlotForm({ data, setDateFormData }: AddedTimeSlotFormProp) {
   const [scheduleFormData, setScheduleFormData] = useState<ActivityScheduleInput>({
-    date: '',
-    startTime: '',
-    endTime: '',
+    date: data.date,
+    startTime: data.startTime,
+    endTime: data.endTime,
   });
 
   const handleSelectTime = (field: 'startTime' | 'endTime', option: string) => {
@@ -56,7 +57,8 @@ export function AddedTimeSlotForm() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const handleClickRemove = () => {
-    setIsOpen(!isOpen);
+    setDateFormData((prev) => prev.filter((item) => item !== data));
+    setIsOpen(false);
   };
 
   const endTimeList = scheduleFormData.startTime
@@ -92,7 +94,7 @@ export function AddedTimeSlotForm() {
               />
             </div>
           </div>
-          <div className="flex items-center justify-center md:mt-7">
+          <div className="flex items-center justify-center">
             <MinusButton onClick={handleClickRemove} />
           </div>
         </div>
