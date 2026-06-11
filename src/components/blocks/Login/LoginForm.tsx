@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { AuthField } from '../AuthField/AuthField';
 
 import { postLogin } from '@/lib/api/auth';
-import { validateEmail, validatePassword } from '@/utils/vaildate';
+import { validateEmail, validatePassword } from '@/utils/validate';
 
 import { saveToken } from '@/actions/auth';
 
@@ -62,7 +62,6 @@ export function LoginForm() {
     try {
       const res = await postLogin(formData);
       await saveToken(res.accessToken, res.refreshToken);
-      console.log(res);
     } catch (e) {
       console.error(`로그인 실패${e}`);
     }

@@ -37,7 +37,7 @@ interface PopoverContentProps {
 
 const PopoverContent = ({ children, className }: PopoverContentProps) => {
   return (
-    <div role="dialog" className={cn('bg-bg absolute z-50', className)}>
+    <div role="menu" className={cn('bg-bg absolute z-50', className)}>
       {children}
     </div>
   );
@@ -94,7 +94,7 @@ export const Popover: PopoverComponent = ({
         <button
           type="button"
           aria-label={ariaLabel}
-          aria-haspopup="dialog"
+          aria-haspopup="menu"
           aria-expanded={isOpen}
           className={cn('cursor-pointer', triggerClassName)}
           onClick={() => setIsOpen((prev) => !prev)}

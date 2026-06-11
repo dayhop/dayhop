@@ -1,19 +1,5 @@
-export type ActivityCategory = '문화 · 예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
-
-export interface ActivityItem {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  category: ActivityCategory;
-  price: number;
-  address: string;
-  bannerImageUrl: string;
-  rating: number;
-  reviewCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput, ReservationStatus } from '@/types/api';
+export type { ActivityCategory, ActivityItem, SubImage, ActivityScheduleInput, ReservationStatus };
 
 export interface GetMyActivitiesParams {
   cursorId?: number;
@@ -31,6 +17,7 @@ export interface ReservationCount {
   confirmed: number;
   completed: number;
 }
+
 export interface GetMyActivityReservationDashboardParams {
   year: string;
   month: string;
@@ -57,8 +44,6 @@ export interface GetMyActivityReservedScheduleResponse {
   endTime: string;
   count: ReservedScheduleCount;
 }
-
-export type ReservationStatus = 'pending' | 'confirmed' | 'declined' | 'canceled' | 'completed';
 
 export interface MyActivityReservation {
   id: number;
@@ -97,12 +82,6 @@ export interface PatchMyActivityReservationStatusRequest {
 
 export type PatchMyActivityReservationStatusResponse = MyActivityReservation;
 
-export interface ActivityScheduleInput {
-  date: string;
-  startTime: string;
-  endTime: string;
-}
-
 export interface PatchMyActivityRequest {
   title?: string;
   category?: ActivityCategory;
@@ -114,11 +93,6 @@ export interface PatchMyActivityRequest {
   subImageUrlsToAdd?: string[];
   scheduleIdsToRemove?: number[];
   schedulesToAdd?: ActivityScheduleInput[];
-}
-
-export interface SubImage {
-  id: number;
-  imageUrl: string;
 }
 
 export interface TimeSlot {
