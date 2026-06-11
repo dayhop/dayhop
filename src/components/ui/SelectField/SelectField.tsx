@@ -68,7 +68,7 @@ export function SelectField({
           <ArrowDown />
         </button>
         {isOpen && (
-          <div className="border-border-default absolute z-50 mt-2 flex h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3">
+          <div className="border-border-default absolute z-50 mt-2 flex max-h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3">
             {list.map((item) => {
               return (
                 <Button
