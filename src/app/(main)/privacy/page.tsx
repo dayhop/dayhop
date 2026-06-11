@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="min-h-screen bg-white py-16 md:py-24">
+    <main className="bg-bg min-h-screen py-16 md:py-24">
       <div className="mx-auto max-w-[640px] px-6">
         {/* Header */}
         <div className="mb-12">
@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
               회사는 회원가입, 원활한 고객 상담, 각종 서비스 제공을 위해 서비스 최초 이용 시 아래와
               같은 개인정보를 수집하고 있습니다.
             </p>
-            <ul className="text-text-tertiary space-y-2 border-l-2 border-gray-100 pl-4 text-[14px]">
+            <ul className="text-text-tertiary border-border-default space-y-2 border-l-2 pl-4 text-[14px]">
               <li>• 필수 수집 항목: 이메일 주소, 비밀번호, 닉네임, 프로필 이미지</li>
               <li>
                 • 서비스 이용 과정에서 자동 생성되어 수집되는 항목: IP 주소, 쿠키, 방문 일시, 서비스
@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
               2. 개인정보의 수집 및 이용목적
             </h2>
             <p>회사는 수집한 개인정보를 다음의 목적을 위해 활용합니다.</p>
-            <ul className="text-text-tertiary space-y-2 border-l-2 border-gray-100 pl-4 text-[14px]">
+            <ul className="text-text-tertiary border-border-default space-y-2 border-l-2 pl-4 text-[14px]">
               <li>
                 • 회원 관리: 회원제 서비스 이용에 따른 본인확인, 개인 식별, 불량회원의 부정 이용
                 방지와 비인가 사용 방지, 가입 의사 확인, 고지사항 전달
@@ -72,7 +72,7 @@ export default function PrivacyPolicyPage() {
               파기합니다. 단, 관계법령의 규정에 의하여 보존할 필요가 있는 경우 회사는 아래와 같이
               관계법령에서 정한 일정한 기간 동안 회원정보를 보관합니다.
             </p>
-            <ul className="text-text-tertiary space-y-2 border-l-2 border-gray-100 pl-4 text-[14px]">
+            <ul className="text-text-tertiary border-border-default space-y-2 border-l-2 pl-4 text-[14px]">
               <li>
                 • 계약 또는 청약철회 등에 관한 기록: 5년 (전자상거래 등에서의 소비자보호에 관한
                 법률)
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
               이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이
               파기합니다. 회사의 개인정보 파기절차 및 방법은 다음과 같습니다.
             </p>
-            <ul className="text-text-tertiary space-y-2 border-l-2 border-gray-100 pl-4 text-[14px]">
+            <ul className="text-text-tertiary border-border-default space-y-2 border-l-2 pl-4 text-[14px]">
               <li>
                 • 파기절차: 이용자가 회원가입 등을 위해 입력한 정보는 목적이 달성된 후 별도의 DB로
                 옮겨져 내부 방침 및 기타 관련 법령에 의한 정보보호 사유에 따라 일정 기간 보존된 후
@@ -130,7 +130,7 @@ export default function PrivacyPolicyPage() {
               회사는 이용자의 개인정보를 보호하고 개인정보와 관련한 불만을 처리하기 위하여 아래와
               같이 관련 부서 및 개인정보 보호책임자를 지정하고 있습니다.
             </p>
-            <div className="text-text-tertiary my-2 space-y-1 border-t border-b border-gray-100 py-4 text-[14px]">
+            <div className="text-text-tertiary border-border-default my-2 space-y-1 border-t border-b py-4 text-[14px]">
               <p className="text-text-primary font-medium">개인정보 보호담당부서: DayHOP 운영팀</p>
               <p>• 이메일: support@dayhop.co.kr</p>
               <p>• 전화번호: 1544-0000</p>
