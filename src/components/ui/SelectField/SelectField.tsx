@@ -12,6 +12,7 @@ interface SelectFieldProps {
   list: string[];
   selectedOption?: string;
   isLabelReaction?: boolean;
+  disabled?: boolean;
 }
 
 export function SelectField({
@@ -21,6 +22,7 @@ export function SelectField({
   list,
   selectedOption,
   isLabelReaction = false,
+  disabled = false,
 }: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const displayedMessage = selectedOption || defaultMessage;
@@ -47,6 +49,8 @@ export function SelectField({
     };
   }, [isOpen]);
 
+  if (disabled) return;
+
   return (
     <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
       <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>
@@ -54,7 +58,8 @@ export function SelectField({
         <button
           onClick={handleClickDropdown}
           type="button"
-          className="border-border-default flex h-13 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5"
+          disabled={disabled}
+          className={`border-border-default flex h-13 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <span
             className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} cursor-default font-medium`}
@@ -64,7 +69,7 @@ export function SelectField({
           <ArrowDown />
         </button>
         {isOpen && (
-          <div className="border-border-default absolute z-50 mt-2 flex h-64 w-full flex-col gap-1 overflow-y-scroll rounded-2xl border bg-white p-3">
+          <div className="border-border-default absolute z-50 mt-2 flex h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3">
             {list.map((item) => {
               return (
                 <Button
