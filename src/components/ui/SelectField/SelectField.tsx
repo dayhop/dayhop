@@ -48,7 +48,7 @@ export function SelectField({
   }, [isOpen]);
 
   return (
-    <div ref={dropDownRef} className="relatve flex w-full flex-col gap-2.5 font-bold">
+    <div ref={dropDownRef} className="relative flex w-full flex-col gap-2.5 font-bold">
       <div className={`${isLabelReaction ? 'hidden md:flex' : ''}`}>{label}</div>
       <div className="relative w-full">
         <button

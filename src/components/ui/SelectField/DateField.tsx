@@ -3,15 +3,16 @@
 import { ActivityScheduleInput } from '@/types/api';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-interface DateFiledProp {
-  data?: ActivityScheduleInput;
+interface DateFieldProp {
+  data: string;
   setFormData: Dispatch<SetStateAction<ActivityScheduleInput>>;
+  isLabel?: boolean;
 }
-export function DateField({ data, setFormData }: DateFiledProp) {
+export function DateField({ data, setFormData, isLabel = true }: DateFieldProp) {
   const [inputType, setInputType] = useState<'text' | 'date'>('text');
   return (
     <div className="flex w-full flex-col gap-2.5">
-      <label className="font-bold" htmlFor="activityDate">
+      <label className={`${isLabel ? '' : 'hidden'} font-bold`} htmlFor="activityDate">
         날짜
       </label>
       <input
