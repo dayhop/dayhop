@@ -80,9 +80,7 @@ export function SignupForm() {
       const res = await postSignUp(requestBody);
       showToast.success('회원가입에 성공했습니다.');
       return res;
-    } catch {
-      showToast.error('회원가입에 실패했습니다.');
-    }
+    } catch {}
   };
 
   return (
@@ -106,7 +104,7 @@ export function SignupForm() {
         label="name"
       />
       <AuthField
-        title="비밀번호 확인"
+        title="비밀번호"
         type="password"
         errorMessage={errorMessage.password}
         isError={!!errorMessage.password}

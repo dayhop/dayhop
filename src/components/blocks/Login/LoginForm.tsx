@@ -55,9 +55,7 @@ export function LoginForm() {
       const res = await postLogin(formData);
       await saveToken(res.accessToken, res.refreshToken);
       showToast.success(`${res.user.nickname} 님 반갑습니다. `);
-    } catch {
-      showToast.error('로그인에 실패했습니다.');
-    }
+    } catch {}
   };
 
   return (
