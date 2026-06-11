@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'image.utoimage.com',
+        hostname: '**',
         port: '',
         pathname: '/**',
       },
