@@ -1,7 +1,7 @@
 import { StarRating } from '@/components/ui/StarRating';
 import { totalPriceToString } from '@/utils/priceFormat';
 
-interface UserCustomCardProps {
+interface ActivityCardProps {
   data: {
     title: string;
     price: number;
@@ -11,7 +11,7 @@ interface UserCustomCardProps {
   };
 }
 
-export function UserCustomCard({ data }: UserCustomCardProps) {
+export function ActivityCard({ data }: ActivityCardProps) {
   const { title, price, bannerImageUrl, rating, reviewCount } = data;
 
   return (

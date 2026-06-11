@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { UserCustomCard } from './UserCustomCard';
+import { ActivityCard } from './ActivityCard';
 
-const meta: Meta<typeof UserCustomCard> = {
-  title: 'Components/Blocks/Main/UserCustomCard',
-  component: UserCustomCard,
+const meta: Meta<typeof ActivityCard> = {
+  title: 'Components/Blocks/Main/ActivityCard',
+  component: ActivityCard,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof UserCustomCard>;
+type Story = StoryObj<typeof ActivityCard>;
 
 export const Default: Story = {
   args: {
