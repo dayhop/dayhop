@@ -8,40 +8,12 @@ import { ActivityScheduleInput } from '@/types/api';
 import { DateField } from '@/components/ui/AvailableSchedule/DateField';
 import { PlusButton } from '@/components/ui/AvailableSchedule/PlusButton';
 import { showToast } from '@/utils/toast';
-
-//타임 형식...
-const TIME_LIST: string[] = [
-  '00:00',
-  '01:00',
-  '02:00',
-  '03:00',
-  '04:00',
-  '05:00',
-  '06:00',
-  '07:00',
-  '08:00',
-  '09:00',
-  '10:00',
-  '11:00',
-  '12:00',
-  '13:00',
-  '14:00',
-  '15:00',
-  '16:00',
-  '17:00',
-  '18:00',
-  '19:00',
-  '20:00',
-  '21:00',
-  '22:00',
-  '23:00',
-];
+import { TIME_LIST } from '@/constants/ReservationTimes';
 
 interface CreateTimeSlotFormProps {
   setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
 }
 
-//prop으로 넘겨줄때는 schedules만 넘겨주면 안에 데이터만
 export function CreateTimeSlotForm({ setDateFormData }: CreateTimeSlotFormProps) {
   const [scheduleFormData, setScheduleFormData] = useState<ActivityScheduleInput>({
     date: '',

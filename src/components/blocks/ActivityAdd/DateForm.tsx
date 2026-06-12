@@ -11,19 +11,17 @@ export interface DateFormRef {
 
 export function DateForm({ ref }: { ref?: Ref<DateFormRef> }) {
   const [dateFormData, setDateFormData] = useState<ActivityScheduleInput[]>([]);
-  const addedFormsRefs = useRef<Map<string, TimeSlotFormRef>>(new Map());
+
+  const addedFormsRefs = useRef<(TimeSlotFormRef | null)[]>([]);
 
   useImperativeHandle(ref, () => ({
     getValues: () => {
-      const addedData = dateFormData
-        .map((data) => {
-          const key = crypto.randomUUID();
-          const formRef = addedFormsRefs.current.get(key);
+      return dateFormData
+        .map((_, index) => {
+          const formRef = addedFormsRefs.current[index];
           return formRef ? formRef.getValues() : null;
         })
-        .filter((data) => data !== null) as ActivityScheduleInput[];
-
-      return addedData;
+        .filter((data): data is ActivityScheduleInput => data !== null);
     },
   }));
 
@@ -32,19 +30,16 @@ export function DateForm({ ref }: { ref?: Ref<DateFormRef> }) {
       <label className="font-bold">예약 가능한 시간대</label>
       <CreateTimeSlotForm setDateFormData={setDateFormData} />
 
-      {dateFormData.map((data) => {
+      {dateFormData.map((data, index) => {
         const key = crypto.randomUUID();
+
         return (
           <AddedTimeSlotForm
             key={key}
             data={data}
             setDateFormData={setDateFormData}
             ref={(el) => {
-              if (el) {
-                addedFormsRefs.current.set(key, el);
-              } else {
-                addedFormsRefs.current.delete(key);
-              }
+              addedFormsRefs.current[index] = el;
             }}
           />
         );
