@@ -1,13 +1,11 @@
 import instance from '../instance';
 import * as T from './type';
 
-export const getMyReservations = async ({
-  cursorId,
-  size,
-  status,
-}: T.GetMyReservationsParams): Promise<T.GetMyReservationsResponse> => {
+export const getMyReservations = async (
+  params?: T.GetMyReservationsParams
+): Promise<T.GetMyReservationsResponse> => {
   const { data } = await instance.get<T.GetMyReservationsResponse>('/my-reservations', {
-    params: { cursorId, size, status },
+    params,
   });
   return data;
 };

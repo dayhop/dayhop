@@ -1,29 +1,14 @@
 import { Button } from '@/components/ui/Button';
 import { ReservationStateBadge } from '@/components/ui/ReservationList';
-import { ReservationStatus } from '@/types/api';
+import { Reservation } from '@/lib/api/my-reservations/type';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
 
 interface ReservationCardProps {
-  title: string;
-  startTime: string;
-  endTime: string;
-  date: string;
-  totalPrice: number;
-  status: ReservationStatus;
-  headCount: number;
-  bannerImageUrl: string;
+  data: Reservation;
 }
-export function ReservationCard({
-  title,
-  startTime,
-  endTime,
-  date,
-  totalPrice,
-  status,
-  headCount,
-  bannerImageUrl,
-}: ReservationCardProps) {
+export function ReservationCard({ data }: ReservationCardProps) {
+  const { activity, startTime, endTime, date, totalPrice, status, headCount } = data;
   return (
     <div className="flex w-full max-w-160 min-w-82 flex-col gap-3">
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
@@ -31,7 +16,7 @@ export function ReservationCard({
         <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
           <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
-            <div className="truncate font-bold">{title}</div>
+            <div className="truncate font-bold">{activity.title}</div>
             <div className="text-text-tertiary hidden text-[13px] lg:flex">{`${date} · ${startTime} ~ ${endTime}`}</div>
             <div className="text-text-tertiary text-[13px] lg:hidden">{`${startTime} ~ ${endTime}`}</div>
           </div>
@@ -67,7 +52,7 @@ export function ReservationCard({
           </div>
         </div>
         <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
-          <Image src={bannerImageUrl} alt="배너 이미지" fill className="object-cover" />
+          <Image src={activity.bannerImageUrl} alt="배너 이미지" fill className="object-cover" />
         </div>
       </div>
       {status === 'pending' && (
