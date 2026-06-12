@@ -43,9 +43,8 @@
   --color-status-canceled-bg: #e0e0e5;
   --color-status-canceled-text: #707177;
 
-<<<<<<< feat/header
   --color-status-danger: #e5484d;
-=======
+
   /* 캘린더 상태 배지 */
   --color-calendar-status-completed-bg: var(--color-gray-50);
   --color-calendar-status-completed-text: var(--color-gray-500);
@@ -55,7 +54,6 @@
 
   --color-calendar-status-confirmed-bg: #fff8dd;
   --color-calendar-status-confirmed-text: #ffb051;
->>>>>>> develop
 
   /* 시멘틱 */
 

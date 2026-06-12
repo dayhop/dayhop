@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
 
 import Toast from '@/components/ui/Toast';
-<<<<<<< feat/header
 import { AuthProvider } from '@/contexts/AuthContext';
-=======
 import { pretendard } from '@/lib/fonts';
->>>>>>> develop
 import './globals.css';
 
 export const metadata: Metadata = {
