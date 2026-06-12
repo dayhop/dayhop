@@ -23,6 +23,7 @@ export const ReservationActionBadge = ({ action, onClick }: ReservationActionBad
 
   return (
     <button
+      type="button"
       className={`h-7.5 cursor-pointer rounded-lg px-2.5 text-sm font-medium ${className}`}
       onClick={onClick}
     >
