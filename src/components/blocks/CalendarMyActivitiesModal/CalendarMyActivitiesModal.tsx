@@ -100,16 +100,19 @@ export const CalendarMyActivitiesModal = ({
 
   const refreshAfterAction = async () => {
     if (selectedScheduleId === undefined) return;
-    const [updatedSchedules, updatedReservations] = await Promise.all([
-      getMyActivityReservedSchedule(activityId, { date }),
-      getMyActivityReservations(activityId, {
-        scheduleId: selectedScheduleId,
-        status: activeTab,
-      }),
-    ]);
-    setSchedules(updatedSchedules);
-    setReservations(updatedReservations.reservations);
-    // 에러 시 onConfirm의 try/catch에서 처리
+    try {
+      const [updatedSchedules, updatedReservations] = await Promise.all([
+        getMyActivityReservedSchedule(activityId, { date }),
+        getMyActivityReservations(activityId, {
+          scheduleId: selectedScheduleId,
+          status: activeTab,
+        }),
+      ]);
+      setSchedules(updatedSchedules);
+      setReservations(updatedReservations.reservations);
+    } catch (error) {
+      console.error('Failed to refresh reservation data:', error);
+    }
   };
 
   return (
