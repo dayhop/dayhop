@@ -1,15 +1,15 @@
-import Logo from '@/assets/icon/Logo.svg';
-import { LoginForm } from '@/components/blocks/Login/LoginForm';
-import { OAuth } from '../components/Oauth';
+import { SignupForm } from '@/components/blocks/Signup/SignupForm';
 import Link from 'next/link';
+import { OAuth } from '../components/Oauth';
+import Logo from '@/assets/icon/Logo.svg';
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <div className="mb- mx-auto mt-14 flex w-full max-w-140 flex-col items-center justify-center px-4 md:px-0">
       <Link href="/">
         <Logo />
       </Link>
-      <LoginForm />
+      <SignupForm />
       <OAuth type="login" />
     </div>
   );

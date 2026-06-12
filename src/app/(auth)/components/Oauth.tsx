@@ -18,11 +18,11 @@ export function OAuth({ type }: type) {
         {type === 'login' ? `회원이 아니신가요? ` : '이미 회원이신가요? '}
         {type === 'login' ? (
           <Link href="/signup" className="underline">
-            회원가입
+            회원가입하기
           </Link>
         ) : (
           <Link href="/login" className="underline">
-            로그인
+            로그인하기
           </Link>
         )}
       </div>
