@@ -1,14 +1,41 @@
 'use client';
 
 import { SelectField } from '@/components/ui/SelectField';
-import { DateField } from '@/components/ui/AvailableSchedule/DateField';
-import { PlusButton } from '@/components/ui/AvailableSchedule/PlusButton';
 
 import MinusIcon from '@/assets/icon/MinusIcon.svg';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ActivityScheduleInput } from '@/types/api';
-import { TIME_LIST } from '@/constants/ReservationTimes';
+import { DateField } from '@/components/ui/AvailableSchedule/DateField';
+import { PlusButton } from '@/components/ui/AvailableSchedule/PlusButton';
 import { showToast } from '@/utils/toast';
+
+//타임 형식...
+const TIME_LIST: string[] = [
+  '00:00',
+  '01:00',
+  '02:00',
+  '03:00',
+  '04:00',
+  '05:00',
+  '06:00',
+  '07:00',
+  '08:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '13:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
+  '19:00',
+  '20:00',
+  '21:00',
+  '22:00',
+  '23:00',
+];
 
 interface CreateTimeSlotFormProps {
   setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
@@ -32,12 +59,11 @@ export function CreateTimeSlotForm({ setDateFormData }: CreateTimeSlotFormProps)
 
   const handleClickAdd = () => {
     if (!scheduleFormData.date || !scheduleFormData.startTime || !scheduleFormData.endTime) {
-      showToast.error('모든 항목을 입력해주세요');
+      showToast.error('등록할 날짜와 시간을 모두 선택해주세요');
       return;
     }
     setDateFormData((prev) => [...prev, scheduleFormData]);
     setScheduleFormData({ date: '', startTime: '', endTime: '' });
-    console.log(scheduleFormData);
   };
 
   const endTimeList = scheduleFormData.startTime

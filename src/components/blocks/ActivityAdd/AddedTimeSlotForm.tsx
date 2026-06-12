@@ -4,7 +4,7 @@ import { SelectField } from '@/components/ui/SelectField';
 import { DateField } from '@/components/ui/AvailableSchedule/DateField';
 
 import MinusIcon from '@/assets/icon/MinusIcon.svg';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useState, useImperativeHandle, type Ref } from 'react';
 import { ActivityScheduleInput } from '@/types/api';
 import { MinusButton } from '@/components/ui/AvailableSchedule/MinusButton';
 import { TIME_LIST } from '@/constants/ReservationTimes';
@@ -12,8 +12,14 @@ import { TIME_LIST } from '@/constants/ReservationTimes';
 interface AddedTimeSlotFormProp {
   data: ActivityScheduleInput;
   setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
+  ref?: Ref<TimeSlotFormRef>;
 }
-export function AddedTimeSlotForm({ data, setDateFormData }: AddedTimeSlotFormProp) {
+
+export interface TimeSlotFormRef {
+  getValues: () => ActivityScheduleInput;
+}
+
+export function AddedTimeSlotForm({ data, setDateFormData, ref }: AddedTimeSlotFormProp) {
   const [scheduleFormData, setScheduleFormData] = useState<ActivityScheduleInput>({
     date: data.date,
     startTime: data.startTime,
@@ -27,6 +33,10 @@ export function AddedTimeSlotForm({ data, setDateFormData }: AddedTimeSlotFormPr
       setScheduleFormData((prev) => ({ ...prev, [field]: option }));
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    getValues: () => scheduleFormData,
+  }));
 
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
