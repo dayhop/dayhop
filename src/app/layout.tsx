@@ -1,16 +1,12 @@
 import type { Metadata } from 'next';
 
-import localFont from 'next/font/local';
 import Toast from '@/components/ui/Toast';
+<<<<<<< feat/header
 import { AuthProvider } from '@/contexts/AuthContext';
+=======
+import { pretendard } from '@/lib/fonts';
+>>>>>>> develop
 import './globals.css';
-
-const pretendard = localFont({
-  src: '../../public/fonts/PretendardVariable.woff2',
-  variable: '--font-pretendard',
-  weight: '100 900',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'DayHOP',
