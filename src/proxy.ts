@@ -13,7 +13,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/',
     '/edit-profile',
     '/reservation-list',
     '/my-experiences',

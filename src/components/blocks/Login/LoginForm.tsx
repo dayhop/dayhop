@@ -5,11 +5,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { AuthField } from '../AuthField/AuthField';
 
-import { postLogin } from '@/lib/api/auth';
-import { validateEmail, validatePassword } from '@/utils/validate';
-
-import { saveToken } from '@/actions/auth';
+import { loginAction } from '@/actions/auth';
 import { showToast } from '@/utils/toast';
+import { validateEmail, validatePassword } from '@/utils/validate';
 
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState({
@@ -51,11 +49,10 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const res = await postLogin(formData);
-      await saveToken(res.accessToken, res.refreshToken);
-      showToast.success(`${res.user.nickname} 님 반갑습니다. `);
-    } catch {}
+    const result = await loginAction(formData);
+    if (result.success) {
+      showToast.success(`${result.user?.nickname} 님 반갑습니다.`);
+    }
   };
 
   return (
