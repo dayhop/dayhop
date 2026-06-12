@@ -2,10 +2,10 @@ import { Button } from '@/components/ui/Button';
 import Kakao from '@/assets/icon/Kakao.svg';
 import Link from 'next/link';
 
-interface type {
+interface OAuthProp {
   type: 'signup' | 'login';
 }
-export function OAuth({ type }: type) {
+export function OAuth({ type }: OAuthProp) {
   return (
     <div className="flex w-full flex-col items-center">
       <div className="text-text-placeholder my-7.5 flex w-full items-center gap-3.5">
