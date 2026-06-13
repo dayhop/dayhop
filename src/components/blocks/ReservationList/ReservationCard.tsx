@@ -10,9 +10,9 @@ interface ReservationCardProps {
 export function ReservationCard({ data }: ReservationCardProps) {
   const { activity, startTime, endTime, date, totalPrice, status, headCount } = data;
   return (
-    <div className="flex w-full max-w-160 min-w-82 flex-col gap-3">
+    <div className="mt-5 flex w-full max-w-160 min-w-82 flex-col gap-3">
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
-      <div className="flex h-37 w-full items-stretch">
+      <div className="flex h-37 w-full items-stretch lg:h-43">
         <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
           <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
