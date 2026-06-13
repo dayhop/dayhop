@@ -207,7 +207,7 @@ export const CalendarMyActivitiesModal = ({
                               await patchMyActivityReservationStatus(activityId, reservation.id, {
                                 status: 'confirmed',
                               });
-                              await refreshAfterAction();
+                              refreshAfterAction();
                             },
                           })
                         }
@@ -218,7 +218,7 @@ export const CalendarMyActivitiesModal = ({
                               await patchMyActivityReservationStatus(activityId, reservation.id, {
                                 status: 'declined',
                               });
-                              await refreshAfterAction();
+                              refreshAfterAction();
                             },
                           })
                         }
@@ -235,9 +235,10 @@ export const CalendarMyActivitiesModal = ({
         isOpen={pendingAction !== null}
         onClose={() => setPendingAction(null)}
         onConfirm={async () => {
-          const isConfirmed = pendingAction?.type === 'confirmed';
+          if (!pendingAction) return;
+          const isConfirmed = pendingAction.type === 'confirmed';
           try {
-            await pendingAction?.execute();
+            await pendingAction.execute();
             showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
           } catch {
             showToast.error(
