@@ -5,6 +5,7 @@ import { Calendar } from '../Calendar/Calendar';
 import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
 import { toLocalDateString } from '../Calendar/utils';
+import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 
 export const CalendarBoard = () => {
   const [activityId, setActivityId] = useState<number | null>(null);
@@ -55,17 +56,26 @@ export const CalendarBoard = () => {
   );
 
   return (
-    <Calendar
-      value={selectedDate}
-      onSelectDate={setSelectedDate}
-      onMonthChange={setCurrentMonth}
-      isDateClickable={isDateClickable}
-      dayHeaderClassName="border-b border-border-default"
-      dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
-      selectedClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
-      todayClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
-      holidayClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
-      defaultClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
-    />
+    <>
+      <Calendar
+        value={selectedDate}
+        onSelectDate={setSelectedDate}
+        onMonthChange={setCurrentMonth}
+        isDateClickable={isDateClickable}
+        dayHeaderClassName="border-b border-border-default"
+        dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
+        selectedClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
+        todayClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
+        holidayClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
+        defaultClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
+      />
+      {selectedDate && activityId !== null && (
+        <CalendarMyActivitiesModal
+          activityId={activityId}
+          date={toLocalDateString(selectedDate)}
+          onClose={() => setSelectedDate(undefined)}
+        />
+      )}
+    </>
   );
 };
