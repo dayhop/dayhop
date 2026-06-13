@@ -34,6 +34,8 @@ export const Calendar = ({
   selectedClassName,
   holidayClassName,
   defaultClassName,
+  pointClassName,
+  isDatePoint,
 }: CalendarProps) => {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
 
@@ -123,6 +125,7 @@ export const Calendar = ({
           };
           const isDisabled = isDateDisabled?.(date) ?? false;
           const isNotClickable = isDateClickable ? !isDateClickable(date) : false;
+          const hasPoint = isDatePoint?.(date) ?? false;
 
           return (
             <button
@@ -166,7 +169,7 @@ export const Calendar = ({
                         selectedClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   ) : dateInfo.isToday ? (
                     <span
@@ -175,7 +178,7 @@ export const Calendar = ({
                         todayClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   ) : dateInfo.isHoliday || dateInfo.isSunday ? (
                     <span
@@ -184,7 +187,7 @@ export const Calendar = ({
                         holidayClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   ) : (
                     <span
@@ -193,7 +196,7 @@ export const Calendar = ({
                         defaultClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   )}
                 </span>

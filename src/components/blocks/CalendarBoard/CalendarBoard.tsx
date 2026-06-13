@@ -62,6 +62,8 @@ export const CalendarBoard = () => {
         onSelectDate={setSelectedDate}
         onMonthChange={setCurrentMonth}
         isDateClickable={isDateClickable}
+        isDatePoint={isDateClickable}
+        pointClassName="relative before:absolute before:top-[-2px] before:right-[-4px] before:h-1 before:w-1 before:rounded-full before:bg-[#FF2727] before:content-[''] md:before:top-[-5px] md:before:right-[-13px] md:before:h-[6px] md:before:w-[6px]"
         dayHeaderClassName="border-b border-border-default"
         dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
         selectedClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"

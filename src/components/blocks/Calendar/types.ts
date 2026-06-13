@@ -35,6 +35,8 @@ export type CalendarProps = {
   selectedClassName?: string;
   holidayClassName?: string;
   defaultClassName?: string;
+  pointClassName?: string;
+  isDatePoint?: (date: Date) => boolean;
 };
 
 export type CalendarHeaderProps = {
