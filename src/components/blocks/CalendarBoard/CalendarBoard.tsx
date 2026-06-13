@@ -8,6 +8,7 @@ import { toLocalDateString } from '../Calendar/utils';
 
 export const CalendarBoard = () => {
   const [activityId, setActivityId] = useState<number | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
 
@@ -55,6 +56,8 @@ export const CalendarBoard = () => {
 
   return (
     <Calendar
+      value={selectedDate}
+      onSelectDate={setSelectedDate}
       onMonthChange={setCurrentMonth}
       isDateClickable={isDateClickable}
       dayHeaderClassName="border-b border-border-default"
