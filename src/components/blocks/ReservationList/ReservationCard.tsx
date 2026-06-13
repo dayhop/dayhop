@@ -3,12 +3,16 @@ import { ReservationStateBadge } from '@/components/ui/ReservationList';
 import { Reservation } from '@/lib/api/my-reservations/type';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
+import { useState } from 'react';
+import defaultThumbnail from '@/assets/images/card-thumnail.png';
 
 interface ReservationCardProps {
   data: Reservation;
 }
 export function ReservationCard({ data }: ReservationCardProps) {
   const { activity, startTime, endTime, date, totalPrice, status, headCount } = data;
+  const [imgError, setImgError] = useState(false);
+  const cardImg = imgError || !activity.bannerImageUrl ? defaultThumbnail : activity.bannerImageUrl;
   return (
     <div className="mt-5 flex w-full max-w-160 min-w-82 flex-col gap-3">
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
@@ -52,7 +56,13 @@ export function ReservationCard({ data }: ReservationCardProps) {
           </div>
         </div>
         <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
-          <Image src={activity.bannerImageUrl} alt="배너 이미지" fill className="object-cover" />
+          <Image
+            src={cardImg}
+            alt="배너 이미지"
+            fill
+            className="object-cover"
+            onError={() => setImgError(true)}
+          />
         </div>
       </div>
       {status === 'pending' && (
