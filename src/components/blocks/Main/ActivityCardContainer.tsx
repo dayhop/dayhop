@@ -1,11 +1,10 @@
 'use client';
 
-import { getActivities } from '@/lib/api/activities';
-import { ActivityItem, GetActivitiesParams } from '@/lib/api/activities/type';
+import { ActivityItem } from '@/lib/api/activities/type';
 import ArrowLeft from '@/assets/icon/arrow-left.svg';
 import ArrowRight from '@/assets/icon/arrow-right.svg';
 
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { ActivityCard } from './ActivityCard';
 
 interface ActivityCardProps {
@@ -14,37 +13,12 @@ interface ActivityCardProps {
 }
 
 export function ActivityCardContainer({ activitiesList, title }: ActivityCardProps) {
-  // const [activities, setActivities] = useState<ActivityItem[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // const getData = async () => {
-  //   const params: GetActivitiesParams = {
-  //     method: 'offset',
-  //     sort: sort,
-  //     size: totalCount,
-  //   };
-  //   const response = await getActivities(params);
-  //   console.log(response.activities);
-  //   setActivities(response.activities);
-  //   return response.activities;
-  // };
-  // useEffect(() => {
-  //   const fetchActivities = async () => {
-  //     try {
-  //       await getData();
-  //     } catch (error) {
-  //       throw new Error('활동 데이터를 가져오는데 실패했습니다.', { cause: error });
-  //     }
-  //   };
-
-  //   fetchActivities();
-  // }, [sort, totalCount]);
-
-  // 이전 페이지로 스크롤
   const handlePrev = () => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      // 스크롤이 맨 앞(0)에 도달했다면 맨 끝으로 이동
+
       if (scrollLeft <= 0) {
         scrollRef.current.scrollTo({ left: scrollWidth, behavior: 'smooth' });
       } else {
@@ -53,11 +27,9 @@ export function ActivityCardContainer({ activitiesList, title }: ActivityCardPro
     }
   };
 
-  // 다음 페이지로 스크롤
   const handleNext = () => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      // 스크롤이 맨 끝에 도달했다면 다시 맨 앞(0)으로 이동 (소수점 오차 보정을 위해 Math.ceil 사용)
       if (Math.ceil(scrollLeft + clientWidth) >= scrollWidth) {
         scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
