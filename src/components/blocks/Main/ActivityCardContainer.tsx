@@ -14,8 +14,6 @@ interface ActivityCardProps {
   sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest';
 }
 
-const SHOW_ITEM = 3;
-
 export function ActivityCardContainer({ totalCount, sort, title }: ActivityCardProps) {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -36,12 +34,12 @@ export function ActivityCardContainer({ totalCount, sort, title }: ActivityCardP
       try {
         await getData();
       } catch (error) {
-        console.error(error);
+        throw new Error('활동 데이터를 가져오는데 실패했습니다.', { cause: error });
       }
     };
 
     fetchActivities();
-  }, []);
+  }, [sort, totalCount]);
 
   // 이전 페이지로 스크롤
   const handlePrev = () => {
