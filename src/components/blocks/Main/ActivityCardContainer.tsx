@@ -9,37 +9,36 @@ import { useEffect, useState, useRef } from 'react';
 import { ActivityCard } from './ActivityCard';
 
 interface ActivityCardProps {
+  activitiesList: ActivityItem[];
   title: string;
-  totalCount: number;
-  sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest';
 }
 
-export function ActivityCardContainer({ totalCount, sort, title }: ActivityCardProps) {
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
+export function ActivityCardContainer({ activitiesList, title }: ActivityCardProps) {
+  // const [activities, setActivities] = useState<ActivityItem[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const getData = async () => {
-    const params: GetActivitiesParams = {
-      method: 'offset',
-      sort: sort,
-      size: totalCount,
-    };
-    const response = await getActivities(params);
-    console.log(response.activities);
-    setActivities(response.activities);
-    return response.activities;
-  };
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        await getData();
-      } catch (error) {
-        throw new Error('활동 데이터를 가져오는데 실패했습니다.', { cause: error });
-      }
-    };
+  // const getData = async () => {
+  //   const params: GetActivitiesParams = {
+  //     method: 'offset',
+  //     sort: sort,
+  //     size: totalCount,
+  //   };
+  //   const response = await getActivities(params);
+  //   console.log(response.activities);
+  //   setActivities(response.activities);
+  //   return response.activities;
+  // };
+  // useEffect(() => {
+  //   const fetchActivities = async () => {
+  //     try {
+  //       await getData();
+  //     } catch (error) {
+  //       throw new Error('활동 데이터를 가져오는데 실패했습니다.', { cause: error });
+  //     }
+  //   };
 
-    fetchActivities();
-  }, [sort, totalCount]);
+  //   fetchActivities();
+  // }, [sort, totalCount]);
 
   // 이전 페이지로 스크롤
   const handlePrev = () => {
@@ -80,7 +79,7 @@ export function ActivityCardContainer({ totalCount, sort, title }: ActivityCardP
         ref={scrollRef}
         className="flex scrollbar-none gap-4 overflow-x-auto [-ms-overflow-style:none] lg:overflow-x-hidden [&::-webkit-scrollbar]:hidden"
       >
-        {activities.map((activity) => {
+        {activitiesList.map((activity) => {
           return <ActivityCard key={activity.id} data={activity} />;
         })}
       </div>
