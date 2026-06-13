@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Calendar } from '../Calendar/Calendar';
 import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
+import { toLocalDateString } from '../Calendar/utils';
 
 export const CalendarBoard = () => {
   const [activityId, setActivityId] = useState<number | null>(null);
@@ -45,8 +46,14 @@ export const CalendarBoard = () => {
     fetchDashboard();
   }, [activityId, currentMonth]);
 
+  const isDateClickable = useMemo(
+    () => (date: Date) => dateDataMap.has(toLocalDateString(date)),
+    [dateDataMap]
+  );
+
   return (
     <Calendar
+      isDateClickable={isDateClickable}
       dayHeaderClassName="border-b border-border-default"
       dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
       selectedClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
