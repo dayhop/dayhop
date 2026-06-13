@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
-import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
+import { getMyActivityReservationDashboard } from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
@@ -10,38 +10,22 @@ import { toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 
 interface CalendarBoardProps {
+  activityId: number;
   wrapperClassName?: string;
 }
 
-export const CalendarBoard = ({ wrapperClassName }: CalendarBoardProps) => {
-  const [activityId, setActivityId] = useState<number | null>(null);
+export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    async function fetchActivities() {
-      try {
-        const data = await getMyActivities();
-        if (data.activities.length > 0) {
-          setActivityId(data.activities[0].id);
-        }
-      } catch {
-        // 글로벌 인터셉터에서 처리
-      }
-    }
-    fetchActivities();
-  }, []);
-
-  useEffect(() => {
-    if (activityId === null) return;
-
     let ignore = false;
 
     async function fetchDashboard() {
       try {
-        const data = await getMyActivityReservationDashboard(activityId!, {
+        const data = await getMyActivityReservationDashboard(activityId, {
           year: String(currentMonth.getFullYear()),
           month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
         });
