@@ -1,10 +1,11 @@
-import { ReservationCount } from '@/lib/api/my-activities/type';
-import { Calendar } from '../Calendar/Calendar';
 import { useEffect, useState } from 'react';
-import { getMyActivities } from '@/lib/api/my-activities';
+import { Calendar } from '../Calendar/Calendar';
+import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
+import type { ReservationCount } from '@/lib/api/my-activities/type';
 
 export const CalendarBoard = () => {
   const [activityId, setActivityId] = useState<number | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
 
   useEffect(() => {
@@ -20,6 +21,28 @@ export const CalendarBoard = () => {
     }
     fetchActivities();
   }, []);
+
+  useEffect(() => {
+    if (activityId === null) return;
+
+    async function fetchDashboard() {
+      try {
+        const data = await getMyActivityReservationDashboard(activityId!, {
+          year: String(currentMonth.getFullYear()),
+          month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
+        });
+        const map = new Map<string, ReservationCount>();
+        data.forEach(({ date, reservations: r }) => {
+          if (r.pending > 0 || r.confirmed > 0 || r.completed > 0) {
+            map.set(date, r);
+          }
+        });
+      } catch {
+        //글로벌 인터셉터에서 처리
+      }
+    }
+    fetchDashboard();
+  });
 
   return (
     <Calendar
