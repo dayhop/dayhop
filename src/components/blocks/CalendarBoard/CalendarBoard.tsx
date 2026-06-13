@@ -9,7 +9,11 @@ import type { CalendarDateInfo } from '../Calendar/types';
 import { toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 
-export const CalendarBoard = () => {
+interface CalendarBoardProps {
+  wrapperClassName?: string;
+}
+
+export const CalendarBoard = ({ wrapperClassName }: CalendarBoardProps) => {
   const [activityId, setActivityId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -89,6 +93,7 @@ export const CalendarBoard = () => {
         isDateClickable={isDateClickable}
         renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
+        className={wrapperClassName}
         pointClassName="relative before:absolute before:top-[-2px] before:right-[-4px] before:h-1 before:w-1 before:rounded-full before:bg-[#FF2727] before:content-[''] md:before:top-[-5px] md:before:right-[-13px] md:before:h-[6px] md:before:w-[6px]"
         dayHeaderClassName="border-b border-border-default"
         dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
