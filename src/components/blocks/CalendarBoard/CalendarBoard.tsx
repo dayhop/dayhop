@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 import { Calendar } from '../Calendar/Calendar';
 import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
