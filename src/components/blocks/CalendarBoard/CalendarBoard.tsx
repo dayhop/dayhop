@@ -53,6 +53,7 @@ export const CalendarBoard = () => {
 
   return (
     <Calendar
+      onMonthChange={setCurrentMonth}
       isDateClickable={isDateClickable}
       dayHeaderClassName="border-b border-border-default"
       dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
