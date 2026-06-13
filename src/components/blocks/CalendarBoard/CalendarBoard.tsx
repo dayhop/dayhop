@@ -1,13 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Calendar } from '../Calendar/Calendar';
+import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
 import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
+import { Calendar } from '../Calendar/Calendar';
+import type { CalendarDateInfo } from '../Calendar/types';
 import { toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
-import { CalendarDateInfo } from '../Calendar/types';
-import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
 
 export const CalendarBoard = () => {
   const [activityId, setActivityId] = useState<number | null>(null);

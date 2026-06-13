@@ -113,8 +113,8 @@ export const CalendarMyActivitiesModal = ({
       setSchedules(updatedSchedules);
       setReservations(updatedReservations.reservations);
       onReservationChange?.();
-    } catch (error) {
-      console.error('Failed to refresh reservation data:', error);
+    } catch {
+      // 글로벌 인터셉터에서 처리
     }
   };
 
