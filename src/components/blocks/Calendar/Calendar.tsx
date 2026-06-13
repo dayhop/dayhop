@@ -32,6 +32,7 @@ export const Calendar = ({
   todayClassName,
   selectedClassName,
   holidayClassName,
+  defaultClassName,
 }: CalendarProps) => {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
 
@@ -183,7 +184,12 @@ export const Calendar = ({
                       <span>{dateInfo.dateNumber}</span>
                     </span>
                   ) : (
-                    <span className="mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5">
+                    <span
+                      className={cn(
+                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
+                        defaultClassName
+                      )}
+                    >
                       <span>{dateInfo.dateNumber}</span>
                     </span>
                   )}

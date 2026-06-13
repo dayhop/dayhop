@@ -33,6 +33,7 @@ export type CalendarProps = {
   todayClassName?: string;
   selectedClassName?: string;
   holidayClassName?: string;
+  defaultClassName?: string;
 };
 
 export type CalendarHeaderProps = {
