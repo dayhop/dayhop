@@ -42,7 +42,7 @@ export const CalendarBoard = () => {
       }
     }
     fetchDashboard();
-  });
+  }, [activityId, currentMonth]);
 
   return (
     <Calendar
