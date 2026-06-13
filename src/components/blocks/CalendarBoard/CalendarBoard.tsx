@@ -73,7 +73,10 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
       <Calendar
         value={selectedDate}
         onSelectDate={setSelectedDate}
-        onMonthChange={setCurrentMonth}
+        onMonthChange={(month) => {
+          setCurrentMonth(month);
+          setSelectedDate(undefined);
+        }}
         isDateClickable={isDateClickable}
         renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
