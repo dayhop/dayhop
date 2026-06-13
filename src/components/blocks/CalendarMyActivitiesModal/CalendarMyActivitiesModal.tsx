@@ -23,6 +23,7 @@ interface CalendarMyActivitiesModalProps {
   activityId: number;
   date: string; // YYYY-MM-DD
   onClose: () => void;
+  onReservationChange?: () => void;
   className?: string;
   overlayClassName?: string;
 }
@@ -48,6 +49,7 @@ export const CalendarMyActivitiesModal = ({
   activityId,
   date,
   onClose,
+  onReservationChange,
   className,
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
@@ -110,6 +112,7 @@ export const CalendarMyActivitiesModal = ({
       ]);
       setSchedules(updatedSchedules);
       setReservations(updatedReservations.reservations);
+      onReservationChange?.();
     } catch (error) {
       console.error('Failed to refresh reservation data:', error);
     }

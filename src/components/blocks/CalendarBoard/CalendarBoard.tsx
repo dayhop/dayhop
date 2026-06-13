@@ -14,6 +14,7 @@ export const CalendarBoard = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     async function fetchActivities() {
@@ -50,7 +51,7 @@ export const CalendarBoard = () => {
       }
     }
     fetchDashboard();
-  }, [activityId, currentMonth]);
+  }, [activityId, currentMonth, refreshKey]);
 
   const isDateClickable = useMemo(
     () => (date: Date) => dateDataMap.has(toLocalDateString(date)),
@@ -94,6 +95,7 @@ export const CalendarBoard = () => {
           activityId={activityId}
           date={toLocalDateString(selectedDate)}
           onClose={() => setSelectedDate(undefined)}
+          onReservationChange={() => setRefreshKey((k) => k + 1)}
           className="flex max-h-[70vh] w-full flex-col rounded-t-[30px] px-0 py-7.5 shadow-[0_4px_24px_0_rgba(156,180,202,0.20)] lg:pointer-events-auto lg:max-w-85"
           overlayClassName="items-end lg:absolute lg:bg-transparent lg:pointer-events-none lg:inset-auto lg:right-[27px] lg:bottom-[-13px] z-49"
         />
