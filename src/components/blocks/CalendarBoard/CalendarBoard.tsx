@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar } from '../Calendar/Calendar';
 import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
 import { toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
+import { CalendarDateInfo } from '../Calendar/types';
+import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
 
 export const CalendarBoard = () => {
   const [activityId, setActivityId] = useState<number | null>(null);
@@ -55,6 +57,21 @@ export const CalendarBoard = () => {
     [dateDataMap]
   );
 
+  const renderDateExtra = useCallback(
+    (dateInfo: CalendarDateInfo) => {
+      const data = dateDataMap.get(toLocalDateString(dateInfo.date));
+      if (!data) return null;
+      return (
+        <div className="mt-1 flex w-full max-w-11.5 flex-col items-center gap-1.25 md:max-w-17">
+          {data.pending > 0 && <CalendarStatusBadge status="pending" count={data.pending} />}
+          {data.confirmed > 0 && <CalendarStatusBadge status="confirmed" count={data.confirmed} />}
+          {data.completed > 0 && <CalendarStatusBadge status="completed" count={data.completed} />}
+        </div>
+      );
+    },
+    [dateDataMap]
+  );
+
   return (
     <>
       <Calendar
@@ -62,6 +79,7 @@ export const CalendarBoard = () => {
         onSelectDate={setSelectedDate}
         onMonthChange={setCurrentMonth}
         isDateClickable={isDateClickable}
+        renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
         pointClassName="relative before:absolute before:top-[-2px] before:right-[-4px] before:h-1 before:w-1 before:rounded-full before:bg-[#FF2727] before:content-[''] md:before:top-[-5px] md:before:right-[-13px] md:before:h-[6px] md:before:w-[6px]"
         dayHeaderClassName="border-b border-border-default"

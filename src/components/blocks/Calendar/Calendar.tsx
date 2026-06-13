@@ -17,6 +17,7 @@ export const Calendar = ({
   onMonthChange,
   holidays = [],
   renderDateCell,
+  renderDateExtra,
   isDateDisabled,
   isDateClickable,
   headerVariant = 'default',
@@ -160,7 +161,10 @@ export const Calendar = ({
                 renderDateCell(dateInfo)
               ) : (
                 <span
-                  className={cn('flex h-full w-full justify-center font-medium', dateCellClassName)}
+                  className={cn(
+                    'flex h-full w-full flex-col items-center font-medium',
+                    dateCellClassName
+                  )}
                 >
                   {dateInfo.isSelected ? (
                     <span
@@ -199,6 +203,7 @@ export const Calendar = ({
                       <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   )}
+                  {renderDateExtra?.(dateInfo)}
                 </span>
               )}
             </button>
