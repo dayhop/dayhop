@@ -41,6 +41,7 @@ export const CalendarStatusSection = () => {
           />
           <div className="mt-7.5 md:mt-6 lg:relative lg:mt-7.5">
             <CalendarBoard
+              key={selectedActivity.id}
               activityId={selectedActivity.id}
               wrapperClassName="md:rounded-3xl md:bg-white md:pt-5 md:pb-2.5 md:shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]"
             />
