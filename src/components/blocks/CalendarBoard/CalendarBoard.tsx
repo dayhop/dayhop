@@ -37,6 +37,7 @@ export const CalendarBoard = () => {
             map.set(date, r);
           }
         });
+        setDateDataMap(map);
       } catch {
         //글로벌 인터셉터에서 처리
       }
