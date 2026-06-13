@@ -18,6 +18,7 @@ export const Calendar = ({
   holidays = [],
   renderDateCell,
   isDateDisabled,
+  isDateClickable,
   headerVariant = 'default',
   className,
   headerClassName,
@@ -121,6 +122,7 @@ export const Calendar = ({
             isSunday: date.getDay() === 0,
           };
           const isDisabled = isDateDisabled?.(date) ?? false;
+          const isNotClickable = isDateClickable ? !isDateClickable(date) : false;
 
           return (
             <button
@@ -147,6 +149,7 @@ export const Calendar = ({
                 'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
                 isDisabled && 'cursor-not-allowed opacity-40',
                 !dateInfo.isCurrentMonth && 'opacity-40',
+                isNotClickable && 'pointer-events-none cursor-default',
                 dateClassName
               )}
             >

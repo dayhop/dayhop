@@ -19,6 +19,7 @@ export type CalendarProps = {
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
   isDateDisabled?: (date: Date) => boolean;
+  isDateClickable?: (date: Date) => boolean;
   headerVariant?: CalendarHeaderVariant;
   className?: string;
   headerClassName?: string;
