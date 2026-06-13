@@ -33,12 +33,15 @@ export const CalendarBoard = () => {
   useEffect(() => {
     if (activityId === null) return;
 
+    let ignore = false;
+
     async function fetchDashboard() {
       try {
         const data = await getMyActivityReservationDashboard(activityId!, {
           year: String(currentMonth.getFullYear()),
           month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
         });
+        if (ignore) return;
         const map = new Map<string, ReservationCount>();
         data.forEach(({ date, reservations: r }) => {
           if (r.pending > 0 || r.confirmed > 0 || r.completed > 0) {
@@ -47,10 +50,14 @@ export const CalendarBoard = () => {
         });
         setDateDataMap(map);
       } catch {
-        //글로벌 인터셉터에서 처리
+        // 글로벌 인터셉터에서 처리
       }
     }
     fetchDashboard();
+
+    return () => {
+      ignore = true;
+    };
   }, [activityId, currentMonth, refreshKey]);
 
   const isDateClickable = useMemo(
