@@ -2,31 +2,45 @@
 
 import { PreviewImg } from '@/components/ui/ActivityAdd/PreviewImg';
 import { UploadImg } from '@/components/ui/ActivityAdd/UploadImg';
-import { useState } from 'react';
+import { Ref, useImperativeHandle, useState } from 'react';
 
 interface ImgUploadProps {
   mode: 'banner' | 'detail';
+  ref?: Ref<ImgUploadRef>;
 }
 
-export function ImgUpload({ mode }: ImgUploadProps) {
-  const [imgList, setImgList] = useState<string[]>([]);
+export interface ImgUploadRef {
+  getValues: () => File[];
+}
+
+export function ImgUpload({ mode, ref }: ImgUploadProps) {
+  const [imgFiles, setImgFiles] = useState<File[]>([]);
   const LIMIT = mode === 'banner' ? 1 : 4;
+
+  useImperativeHandle(ref, () => ({
+    getValues: () => imgFiles,
+  }));
 
   return (
     <div className="flex flex-col gap-2.5">
       <div>{mode === 'banner' ? '배너 이미지 등록' : '소개 이미지 등록'}</div>
       <div className="flex gap-3">
-        {imgList.length < LIMIT && (
-          <UploadImg onFileSelect={(newImg: string) => setImgList((prev) => [...prev, newImg])} />
+        {imgFiles.length < LIMIT && (
+          <UploadImg onFileSelect={(newFile: File) => setImgFiles((prev) => [...prev, newFile])} />
         )}
-        {imgList.length > 0 &&
-          imgList.map((img) => (
-            <PreviewImg
-              key={img}
-              imgUrl={img}
-              onClickDeleteButton={() => setImgList((prev) => prev.filter((item) => item !== img))}
-            />
-          ))}
+        {imgFiles.length > 0 &&
+          imgFiles.map((file, index) => {
+            const imgPreview = URL.createObjectURL(file);
+            return (
+              <PreviewImg
+                key={`${file.name}-${index}`}
+                imgUrl={imgPreview}
+                onClickDeleteButton={() =>
+                  setImgFiles((prev) => prev.filter((item) => item !== file))
+                }
+              />
+            );
+          })}
       </div>
     </div>
   );
