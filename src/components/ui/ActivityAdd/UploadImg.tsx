@@ -2,14 +2,17 @@ import ImgAddIcon from '@/assets/icon/ImgAddIcon.svg';
 import { ChangeEvent } from 'react';
 
 interface UploadImgProp {
-  onFileSelect: (file: File) => void;
+  onFileSelect: (fileName: string) => void;
 }
 
 export function UploadImg({ onFileSelect }: UploadImgProp) {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if (!file) return;
+    const previewUrl = URL.createObjectURL(file);
     if (file) {
-      onFileSelect(file);
+      onFileSelect(previewUrl);
+      console.log(file.name);
     }
   };
   return (
