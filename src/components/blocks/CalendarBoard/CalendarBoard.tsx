@@ -2,12 +2,21 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
-import { getMyActivityReservationDashboard } from '@/lib/api/my-activities';
+import {
+  getMyActivityReservationDashboard,
+  getMyActivityReservedSchedule,
+} from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
 import { toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
+
+function isPastTime(date: string, endTime: string): boolean {
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = endTime.split(':').map(Number);
+  return new Date(year, month - 1, day, hour, minute) < new Date();
+}
 
 interface CalendarBoardProps {
   activityId: number;
@@ -25,15 +34,34 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
 
     async function fetchDashboard() {
       try {
-        const data = await getMyActivityReservationDashboard(activityId, {
+        const dashboard = await getMyActivityReservationDashboard(activityId, {
           year: String(currentMonth.getFullYear()),
           month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
         });
         if (ignore) return;
+
+        const reservedDates = dashboard
+          .filter(({ reservations: r }) => r.pending > 0 || r.confirmed > 0 || r.completed > 0)
+          .map(({ date }) => date);
+
+        const scheduleResults = await Promise.all(
+          reservedDates.map((date) => getMyActivityReservedSchedule(activityId, { date }))
+        );
+        if (ignore) return;
+
         const map = new Map<string, ReservationCount>();
-        data.forEach(({ date, reservations: r }) => {
-          if (r.pending > 0 || r.confirmed > 0 || r.completed > 0) {
-            map.set(date, r);
+        reservedDates.forEach((date, i) => {
+          const slots = scheduleResults[i];
+          const counts: ReservationCount = { pending: 0, confirmed: 0, completed: 0 };
+          slots.forEach((slot) => {
+            if (slot.count.pending > 0) counts.pending += 1;
+            if (slot.count.confirmed > 0) {
+              if (isPastTime(date, slot.endTime)) counts.completed += 1;
+              else counts.confirmed += 1;
+            }
+          });
+          if (counts.pending > 0 || counts.confirmed > 0 || counts.completed > 0) {
+            map.set(date, counts);
           }
         });
         setDateDataMap(map);
