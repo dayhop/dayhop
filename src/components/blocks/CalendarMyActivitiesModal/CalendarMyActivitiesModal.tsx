@@ -25,6 +25,7 @@ interface CalendarMyActivitiesModalProps {
   date: string; // YYYY-MM-DD
   onClose: () => void;
   onReservationChange?: () => void;
+  cachedSchedules?: GetMyActivityReservedScheduleResponse[];
   className?: string;
   overlayClassName?: string;
 }
@@ -51,6 +52,7 @@ export const CalendarMyActivitiesModal = ({
   date,
   onClose,
   onReservationChange,
+  cachedSchedules = [],
   className,
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
@@ -63,32 +65,53 @@ export const CalendarMyActivitiesModal = ({
     execute: () => Promise<void>;
   } | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const selectedTimeRef = useRef(selectedTime);
-  useEffect(() => {
-    selectedTimeRef.current = selectedTime;
-  }, [selectedTime]);
+  // 모달이 열릴 때의 캐시값만 사용 (props 변경에 반응하지 않음)
+  const cachedSchedulesRef = useRef(cachedSchedules);
 
+  // 초기 로드: date/activityId 변경 시 스케줄 목록 리셋
   useEffect(() => {
     let ignore = false;
     async function loadSchedules() {
       try {
         const data = await getMyActivityReservedSchedule(activityId, { date });
         if (ignore) return;
-        setSchedules(data);
-        const currentTime = selectedTimeRef.current;
-        const isStillAvailable = data.some((s) => formatTimeOption(s) === currentTime);
-        setSelectedTime(
-          isStillAvailable ? currentTime : data.length > 0 ? formatTimeOption(data[0]) : ''
-        );
+        // API가 반환하지 않는 과거 슬롯은 캐시에서 보완 (셀렉트박스 복원)
+        const apiIds = new Set(data.map((s) => s.scheduleId));
+        const merged = [
+          ...data,
+          ...cachedSchedulesRef.current.filter((s) => !apiIds.has(s.scheduleId)),
+        ].sort((a, b) => a.startTime.localeCompare(b.startTime));
+        setSchedules(merged);
+        setSelectedTime(merged.length > 0 ? formatTimeOption(merged[0]) : '');
       } catch {
         if (!ignore) {
           setSchedules([]);
           setSelectedTime('');
-          setReservations([]);
         }
       }
     }
     loadSchedules();
+    return () => {
+      ignore = true;
+    };
+  }, [activityId, date]);
+
+  // 승인/거절 후 슬롯별 카운트 갱신 (스케줄 목록은 유지)
+  useEffect(() => {
+    if (refreshTrigger === 0) return;
+    let ignore = false;
+    async function refreshScheduleCounts() {
+      try {
+        const data = await getMyActivityReservedSchedule(activityId, { date });
+        if (ignore) return;
+        setSchedules((prev) =>
+          prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
+        );
+      } catch {
+        // 글로벌 인터셉터에서 처리
+      }
+    }
+    refreshScheduleCounts();
     return () => {
       ignore = true;
     };
@@ -98,6 +121,7 @@ export const CalendarMyActivitiesModal = ({
   const selectedScheduleId = selectedSchedule?.scheduleId;
   const isSchedulePast = selectedSchedule ? isPastTime(date, selectedSchedule.endTime) : false;
 
+  // 탭/스케줄/리프레시 변경 시 예약 목록 조회
   useEffect(() => {
     let ignore = false;
     async function loadReservations() {
