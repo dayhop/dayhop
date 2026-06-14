@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
+import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
 import {
   getMyActivityReservationDashboard,
   getMyActivityReservedSchedule,
@@ -22,6 +23,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
   const [refreshKey, setRefreshKey] = useState(0);
+  const holidays = useKoreanHolidays(currentMonth.getFullYear(), currentMonth.getMonth());
 
   useEffect(() => {
     let ignore = false;
@@ -96,6 +98,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
           setCurrentMonth(month);
           setSelectedDate(undefined);
         }}
+        holidays={holidays}
         isDateClickable={isDateClickable}
         renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
