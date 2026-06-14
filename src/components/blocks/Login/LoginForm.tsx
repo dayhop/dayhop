@@ -5,11 +5,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { AuthField } from '../AuthField/AuthField';
 
-import { loginAction } from '@/actions/auth';
+import { postLogin } from '@/lib/api/auth';
 import { showToast } from '@/utils/toast';
 import { validateEmail, validatePassword } from '@/utils/validate';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm() {
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     password: '',
@@ -49,10 +51,11 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = await loginAction(formData);
-    if (result.success) {
+    try {
+      const result = await postLogin(formData);
       showToast.success(`${result.user?.nickname} 님 반갑습니다.`);
-    }
+      router.push('/reservation-list');
+    } catch {}
   };
 
   return (
