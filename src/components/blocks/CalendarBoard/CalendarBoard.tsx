@@ -48,13 +48,11 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
           const slots = scheduleResults[i];
           const counts: ReservationCount = { pending: 0, confirmed: 0, completed: 0 };
           slots.forEach((slot) => {
+            if (isPastTime(date, slot.endTime)) return;
             if (slot.count.pending > 0) counts.pending += 1;
-            if (slot.count.confirmed > 0) {
-              if (isPastTime(date, slot.endTime)) counts.completed += 1;
-              else counts.confirmed += 1;
-            }
+            if (slot.count.confirmed > 0) counts.confirmed += 1;
           });
-          if (counts.pending > 0 || counts.confirmed > 0 || counts.completed > 0) {
+          if (counts.pending > 0 || counts.confirmed > 0) {
             map.set(date, counts);
           }
         });
@@ -83,7 +81,6 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
         <div className="mt-1 flex w-full max-w-11.5 flex-col items-center gap-1.25 md:max-w-17">
           {data.pending > 0 && <CalendarStatusBadge status="pending" count={data.pending} />}
           {data.confirmed > 0 && <CalendarStatusBadge status="confirmed" count={data.confirmed} />}
-          {data.completed > 0 && <CalendarStatusBadge status="completed" count={data.completed} />}
         </div>
       );
     },
