@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getActivities } from '@/lib/api/activities';
 import type { ActivityItem, ActivityCategory } from '@/types/api';
-import { MOCK_ACTIVITIES_WITH_COORDS } from './constants';
 
 type ActivityWithCoord = ActivityItem & { lat: number; lng: number };
 
@@ -102,11 +101,6 @@ export function useKakaoMap() {
       if (apiActivities && apiActivities.length > 0) {
         const processed = await Promise.all(
           apiActivities.map(async (act) => {
-            const matchedMock = MOCK_ACTIVITIES_WITH_COORDS.find((m) => m.id === act.id);
-            if (matchedMock && matchedMock.address === act.address) {
-              return { ...act, lat: matchedMock.lat, lng: matchedMock.lng };
-            }
-
             const coords = await geocodeAddress(act.address);
             if (coords) {
               return { ...act, lat: coords.lat, lng: coords.lng };
@@ -117,11 +111,11 @@ export function useKakaoMap() {
         );
         setActivities(processed);
       } else {
-        setActivities(MOCK_ACTIVITIES_WITH_COORDS);
+        setActivities([]);
       }
     } catch (error) {
-      console.warn('API fetch failed, falling back to mock coordinates:', error);
-      setActivities(MOCK_ACTIVITIES_WITH_COORDS);
+      console.warn('API fetch failed, setting empty activities:', error);
+      setActivities([]);
     }
   }, [geocodeAddress]);
 
