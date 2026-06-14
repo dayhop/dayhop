@@ -21,6 +21,7 @@ serverInstance.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+    //error 상태가 401: Unauthorized이고
     if (
       error.response?.status === 401 &&
       originalRequest &&
@@ -32,8 +33,14 @@ serverInstance.interceptors.response.use(
         await postRefreshToken();
         return serverInstance(originalRequest);
       } catch (refreshError) {
-        (await cookies()).delete('accessToken');
-        (await cookies()).delete('refreshToken');
+        try {
+          //delete 시도, 화면 렌더링 중이라면 에러가 발생함.
+          (await cookies()).delete('accessToken');
+          (await cookies()).delete('refreshToken');
+        } catch (cookieError) {
+          //TODO 처리 방법 ....
+          console.error('서버 컴포넌트 렌더링 중... 쿠키 삭제 생략 에러');
+        }
         return Promise.reject(refreshError);
       }
     }

@@ -37,11 +37,16 @@ export const postRefreshToken = async (): Promise<T.TokenResponse> => {
       },
     }
   );
-  (await cookies()).set('accessToken', data.accessToken, {
-    httpOnly: true,
-    secure: true,
-    path: '/',
-  });
+  try {
+    (await cookies()).set('accessToken', data.accessToken, {
+      httpOnly: true,
+      secure: true,
+      path: '/',
+    });
+  } catch (cookieError) {
+    //TODO: 에러처리방법
+    console.error('서버 컴포넌트 렌더링 중이라 쿠키 갱신 생략됨 (미들웨어가 처리함)');
+  }
 
   return data;
 };
