@@ -80,7 +80,6 @@ export const CalendarMyActivitiesModal = ({
         setSelectedTime(
           isStillAvailable ? currentTime : data.length > 0 ? formatTimeOption(data[0]) : ''
         );
-        setReservations([]);
       } catch {
         if (!ignore) {
           setSchedules([]);
@@ -250,6 +249,7 @@ export const CalendarMyActivitiesModal = ({
           const isConfirmed = pendingAction.type === 'confirmed';
           try {
             await pendingAction.execute();
+            setActiveTab(isConfirmed ? 'confirmed' : 'declined');
             showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
           } catch {
             showToast.error(
