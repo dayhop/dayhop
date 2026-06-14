@@ -27,7 +27,16 @@ export const postLogin = async (body: T.LoginRequest): Promise<T.LoginResponse> 
 };
 
 export const postRefreshToken = async (): Promise<T.TokenResponse> => {
-  const { data } = await serverInstance.post<T.TokenResponse>('/auth/tokens');
+  const refreshToken = (await cookies()).get('refreshToken')?.value;
+  const { data } = await serverInstance.post<T.TokenResponse>(
+    '/auth/tokens',
+    {},
+    {
+      headers: {
+        Cookie: `refreshToken=${refreshToken}`,
+      },
+    }
+  );
   (await cookies()).set('accessToken', data.accessToken, {
     httpOnly: true,
     secure: true,
