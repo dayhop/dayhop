@@ -8,6 +8,7 @@ interface ReservationItemProps {
   nickname: string;
   headCount: number;
   activeTab: TabStatus;
+  isPast?: boolean;
   onApprove?: () => void;
   onDecline?: () => void;
 }
@@ -16,6 +17,7 @@ export const ReservationItem = ({
   nickname,
   headCount,
   activeTab,
+  isPast,
   onApprove,
   onDecline,
 }: ReservationItemProps) => {
@@ -37,12 +39,17 @@ export const ReservationItem = ({
       </ul>
 
       <div className="shrink-0">
-        {activeTab === 'pending' && (
-          <div className="flex flex-col gap-2">
-            <ReservationActionBadge action="confirmed" onClick={onApprove} />
-            <ReservationActionBadge action="declined" onClick={onDecline} />
-          </div>
-        )}
+        {activeTab === 'pending' &&
+          (isPast ? (
+            <div className="inline-flex w-fit items-center justify-center rounded-full bg-gray-100 px-2 py-1 text-[13px] font-bold text-gray-500">
+              종료
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <ReservationActionBadge action="confirmed" onClick={onApprove} />
+              <ReservationActionBadge action="declined" onClick={onDecline} />
+            </div>
+          ))}
 
         {activeTab === 'confirmed' && <ReservationStateBadge reservationState="confirmed" />}
         {activeTab === 'declined' && <ReservationStateBadge reservationState="declined" />}

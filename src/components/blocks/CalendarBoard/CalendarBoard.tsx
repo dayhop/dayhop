@@ -9,14 +9,8 @@ import {
 import type { ReservationCount } from '@/lib/api/my-activities/type';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
-import { toLocalDateString } from '../Calendar/utils';
+import { isPastTime, toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
-
-function isPastTime(date: string, endTime: string): boolean {
-  const [year, month, day] = date.split('-').map(Number);
-  const [hour, minute] = endTime.split(':').map(Number);
-  return new Date(year, month - 1, day, hour, minute) < new Date();
-}
 
 interface CalendarBoardProps {
   activityId: number;

@@ -8,6 +8,7 @@ import { SelectField } from '@/components/ui/SelectField';
 import { cn } from '@/utils/cn';
 import { showToast } from '@/utils/toast';
 import { ReservationItem } from './ReservationItem';
+import { isPastTime } from '../Calendar/utils';
 import {
   getMyActivityReservedSchedule,
   getMyActivityReservations,
@@ -88,6 +89,7 @@ export const CalendarMyActivitiesModal = ({
 
   const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
   const selectedScheduleId = selectedSchedule?.scheduleId;
+  const isSchedulePast = selectedSchedule ? isPastTime(date, selectedSchedule.endTime) : false;
 
   useEffect(() => {
     let ignore = false;
@@ -200,6 +202,7 @@ export const CalendarMyActivitiesModal = ({
                         nickname={reservation.nickname}
                         headCount={reservation.headCount}
                         activeTab={activeTab}
+                        isPast={isSchedulePast}
                         onApprove={() =>
                           setPendingAction({
                             type: 'confirmed',
