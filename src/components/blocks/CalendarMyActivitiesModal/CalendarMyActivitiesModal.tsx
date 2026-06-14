@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -63,6 +63,10 @@ export const CalendarMyActivitiesModal = ({
     execute: () => Promise<void>;
   } | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const selectedTimeRef = useRef(selectedTime);
+  useEffect(() => {
+    selectedTimeRef.current = selectedTime;
+  }, [selectedTime]);
 
   useEffect(() => {
     let ignore = false;
@@ -71,7 +75,11 @@ export const CalendarMyActivitiesModal = ({
         const data = await getMyActivityReservedSchedule(activityId, { date });
         if (ignore) return;
         setSchedules(data);
-        setSelectedTime(data.length > 0 ? formatTimeOption(data[0]) : '');
+        const currentTime = selectedTimeRef.current;
+        const isStillAvailable = data.some((s) => formatTimeOption(s) === currentTime);
+        setSelectedTime(
+          isStillAvailable ? currentTime : data.length > 0 ? formatTimeOption(data[0]) : ''
+        );
         setReservations([]);
       } catch {
         if (!ignore) {
