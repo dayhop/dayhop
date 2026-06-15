@@ -17,7 +17,9 @@ export const Calendar = ({
   onMonthChange,
   holidays = [],
   renderDateCell,
+  renderDateExtra,
   isDateDisabled,
+  isDateClickable,
   headerVariant = 'default',
   className,
   headerClassName,
@@ -32,6 +34,9 @@ export const Calendar = ({
   todayClassName,
   selectedClassName,
   holidayClassName,
+  defaultClassName,
+  pointClassName,
+  isDatePoint,
 }: CalendarProps) => {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
 
@@ -120,6 +125,8 @@ export const Calendar = ({
             isSunday: date.getDay() === 0,
           };
           const isDisabled = isDateDisabled?.(date) ?? false;
+          const isNotClickable = isDateClickable ? !isDateClickable(date) : false;
+          const hasPoint = isDatePoint?.(date) ?? false;
 
           return (
             <button
@@ -146,6 +153,7 @@ export const Calendar = ({
                 'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
                 isDisabled && 'cursor-not-allowed opacity-40',
                 !dateInfo.isCurrentMonth && 'opacity-40',
+                isNotClickable && 'pointer-events-none cursor-default',
                 dateClassName
               )}
             >
@@ -153,7 +161,10 @@ export const Calendar = ({
                 renderDateCell(dateInfo)
               ) : (
                 <span
-                  className={cn('flex h-full w-full justify-center font-medium', dateCellClassName)}
+                  className={cn(
+                    'flex h-full w-full flex-col items-center font-medium',
+                    dateCellClassName
+                  )}
                 >
                   {dateInfo.isSelected ? (
                     <span
@@ -162,7 +173,7 @@ export const Calendar = ({
                         selectedClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   ) : dateInfo.isToday ? (
                     <span
@@ -171,7 +182,7 @@ export const Calendar = ({
                         todayClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   ) : dateInfo.isHoliday || dateInfo.isSunday ? (
                     <span
@@ -180,13 +191,19 @@ export const Calendar = ({
                         holidayClassName
                       )}
                     >
-                      <span>{dateInfo.dateNumber}</span>
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   ) : (
-                    <span className="mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5">
-                      <span>{dateInfo.dateNumber}</span>
+                    <span
+                      className={cn(
+                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
+                        defaultClassName
+                      )}
+                    >
+                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
                     </span>
                   )}
+                  {renderDateExtra?.(dateInfo)}
                 </span>
               )}
             </button>
