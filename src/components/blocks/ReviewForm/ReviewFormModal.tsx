@@ -22,6 +22,8 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
 
+  const isValid = rating > 0 && content.trim().length > 0;
+
   return (
     <Modal
       onClose={onClose}
@@ -55,10 +57,12 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
           placeholder="체험에서 느낀 경험을 자유롭게 남겨주세요"
           maxLength={100}
           showCount
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
         />
       </div>
 
-      <Button variant="primary" size="lg" className="mt-6">
+      <Button variant="primary" size="lg" className="mt-6" disabled={!isValid}>
         작성하기
       </Button>
     </Modal>
