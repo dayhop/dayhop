@@ -13,9 +13,11 @@ export const CalendarStatusSection = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     async function fetchActivities() {
       try {
         const data = await getMyActivities();
+        if (ignore) return;
         setActivities(data.activities);
         if (data.activities.length > 0) {
           setSelectedActivity(data.activities[0]);
@@ -23,10 +25,13 @@ export const CalendarStatusSection = () => {
       } catch {
         // 글로벌 인터셉터에서 처리
       } finally {
-        setIsLoading(false);
+        if (!ignore) setIsLoading(false);
       }
     }
     fetchActivities();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (
