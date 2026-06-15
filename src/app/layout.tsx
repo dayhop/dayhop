@@ -22,15 +22,16 @@ async function getMe() {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getMe();
   return (
     <html lang="ko" className={pretendard.variable}>
       <body className="font-sans">
-        <AuthProvider initialUser={getMe()}>
+        <AuthProvider initialUser={user}>
           {children}
           <Toast />
         </AuthProvider>
