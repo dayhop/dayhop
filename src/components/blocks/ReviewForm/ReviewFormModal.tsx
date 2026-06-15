@@ -6,7 +6,9 @@ import { StarRating } from '@/components/ui/StarRating';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 import IconClose from '@/assets/icon/icon-close.svg';
+import { postMyReservationReview } from '@/lib/api/my-reservations';
 import type { Reservation } from '@/lib/api/my-reservations/type';
+import { showToast } from '@/utils/toast';
 
 export interface ReviewFormModalProps {
   reservation: Pick<
@@ -21,8 +23,21 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
 
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isValid = rating > 0 && content.trim().length > 0;
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      await postMyReservationReview({ reservationId: reservation.id }, { rating, content });
+      showToast.success('후기가 등록되었습니다.');
+      onClose();
+    } catch {
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Modal
@@ -62,7 +77,13 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
         />
       </div>
 
-      <Button variant="primary" size="lg" className="mt-6" disabled={!isValid}>
+      <Button
+        variant="primary"
+        size="lg"
+        className="mt-6"
+        disabled={!isValid || isSubmitting}
+        onClick={handleSubmit}
+      >
         작성하기
       </Button>
     </Modal>
