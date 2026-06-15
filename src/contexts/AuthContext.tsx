@@ -13,6 +13,28 @@ import axios from 'axios';
 import { getMyUser } from '@/lib/api/users';
 import { User } from '@/types/api';
 
+// 쿠키 관리를 위한 헬퍼 함수
+function getCookie(name: string): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length >= 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue ? decodeURIComponent(cookieValue) : undefined;
+  }
+  return undefined;
+}
+
+function setCookie(name: string, value: string, maxAgeSeconds: number) {
+  if (typeof window === 'undefined') return;
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}; secure; samesite=lax`;
+}
+
+function deleteCookie(name: string) {
+  if (typeof window === 'undefined') return;
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; secure; samesite=lax`;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -32,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(
     (options?: { redirect?: boolean }) => {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('accessToken');
+        deleteCookie('accessToken');
       }
       setUser(null);
       if (options?.redirect !== false) {
@@ -57,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('accessToken');
+        const token = getCookie('accessToken');
         if (token) {
           await fetchUser();
         }
@@ -71,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = useCallback(
     async (accessToken: string) => {
       if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', accessToken);
+        setCookie('accessToken', accessToken, 60 * 15);
       }
       await fetchUser();
     },
@@ -79,7 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const refreshUser = useCallback(async () => {
-    if (typeof window !== 'undefined' && localStorage.getItem('accessToken')) {
+    if (typeof window !== 'undefined' && getCookie('accessToken')) {
       await fetchUser();
     }
   }, [fetchUser]);
