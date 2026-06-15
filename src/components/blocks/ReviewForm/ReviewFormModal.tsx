@@ -45,7 +45,7 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
       </div>
 
       <div className="mt-5 flex justify-center">
-        <StarRating mode="interactive" rating={0} onChange={() => {}} />
+        <StarRating mode="interactive" rating={rating} onChange={setRating} />
       </div>
 
       <div className="mt-6">
