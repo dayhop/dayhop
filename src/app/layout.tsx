@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Toast from '@/components/ui/Toast';
 import { pretendard } from '@/lib/fonts';
 import './globals.css';
+import AuthProvider from '@/providers/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'DayHOP',
@@ -17,8 +18,10 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.variable}>
       <body className="font-sans">
-        {children}
-        <Toast />
+        <AuthProvider>
+          {children}
+          <Toast />
+        </AuthProvider>
       </body>
     </html>
   );
