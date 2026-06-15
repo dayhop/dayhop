@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Avatar } from '@/components/ui/Avatar';
 import LogoIcon from '@/assets/icon/logoIcon.svg';
 
 export const Header = () => {
-  const { user, isLoggedIn, logout, isLoading: isAuthLoading } = useAuth();
+  const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
