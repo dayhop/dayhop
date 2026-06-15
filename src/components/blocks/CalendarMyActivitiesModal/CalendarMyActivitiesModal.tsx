@@ -23,6 +23,7 @@ interface CalendarMyActivitiesModalProps {
   activityId: number;
   date: string; // YYYY-MM-DD
   onClose: () => void;
+  onReservationChange?: () => void;
   className?: string;
   overlayClassName?: string;
 }
@@ -48,6 +49,7 @@ export const CalendarMyActivitiesModal = ({
   activityId,
   date,
   onClose,
+  onReservationChange,
   className,
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
@@ -59,27 +61,36 @@ export const CalendarMyActivitiesModal = ({
     type: 'confirmed' | 'declined';
     execute: () => Promise<void>;
   } | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
+    let ignore = false;
     async function loadSchedules() {
-      setSchedules([]);
-      setSelectedTime('');
-      setReservations([]);
       try {
         const data = await getMyActivityReservedSchedule(activityId, { date });
+        if (ignore) return;
         setSchedules(data);
-        if (data.length > 0) setSelectedTime(formatTimeOption(data[0]));
+        setSelectedTime(data.length > 0 ? formatTimeOption(data[0]) : '');
+        setReservations([]);
       } catch {
-        // 글로벌 인터셉터에서 토스트 처리, 상태는 초기화된 상태 유지
+        if (!ignore) {
+          setSchedules([]);
+          setSelectedTime('');
+          setReservations([]);
+        }
       }
     }
     loadSchedules();
-  }, [activityId, date]);
+    return () => {
+      ignore = true;
+    };
+  }, [activityId, date, refreshTrigger]);
 
   const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
   const selectedScheduleId = selectedSchedule?.scheduleId;
 
   useEffect(() => {
+    let ignore = false;
     async function loadReservations() {
       if (selectedScheduleId === undefined) {
         setReservations([]);
@@ -90,29 +101,21 @@ export const CalendarMyActivitiesModal = ({
           scheduleId: selectedScheduleId,
           status: activeTab,
         });
+        if (ignore) return;
         setReservations(data.reservations);
       } catch {
-        setReservations([]);
+        if (!ignore) setReservations([]);
       }
     }
     loadReservations();
-  }, [activityId, selectedScheduleId, activeTab]);
+    return () => {
+      ignore = true;
+    };
+  }, [activityId, selectedScheduleId, activeTab, refreshTrigger]);
 
-  const refreshAfterAction = async () => {
-    if (selectedScheduleId === undefined) return;
-    try {
-      const [updatedSchedules, updatedReservations] = await Promise.all([
-        getMyActivityReservedSchedule(activityId, { date }),
-        getMyActivityReservations(activityId, {
-          scheduleId: selectedScheduleId,
-          status: activeTab,
-        }),
-      ]);
-      setSchedules(updatedSchedules);
-      setReservations(updatedReservations.reservations);
-    } catch (error) {
-      console.error('Failed to refresh reservation data:', error);
-    }
+  const refreshAfterAction = () => {
+    setRefreshTrigger((prev) => prev + 1);
+    onReservationChange?.();
   };
 
   return (
@@ -204,7 +207,7 @@ export const CalendarMyActivitiesModal = ({
                               await patchMyActivityReservationStatus(activityId, reservation.id, {
                                 status: 'confirmed',
                               });
-                              await refreshAfterAction();
+                              refreshAfterAction();
                             },
                           })
                         }
@@ -215,7 +218,7 @@ export const CalendarMyActivitiesModal = ({
                               await patchMyActivityReservationStatus(activityId, reservation.id, {
                                 status: 'declined',
                               });
-                              await refreshAfterAction();
+                              refreshAfterAction();
                             },
                           })
                         }
@@ -232,9 +235,10 @@ export const CalendarMyActivitiesModal = ({
         isOpen={pendingAction !== null}
         onClose={() => setPendingAction(null)}
         onConfirm={async () => {
-          const isConfirmed = pendingAction?.type === 'confirmed';
+          if (!pendingAction) return;
+          const isConfirmed = pendingAction.type === 'confirmed';
           try {
-            await pendingAction?.execute();
+            await pendingAction.execute();
             showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
           } catch {
             showToast.error(
