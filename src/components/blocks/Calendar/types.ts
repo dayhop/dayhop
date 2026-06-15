@@ -18,7 +18,9 @@ export type CalendarProps = {
   onMonthChange?: (date: Date) => void;
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
+  renderDateExtra?: (dateInfo: CalendarDateInfo) => React.ReactNode;
   isDateDisabled?: (date: Date) => boolean;
+  isDateClickable?: (date: Date) => boolean;
   headerVariant?: CalendarHeaderVariant;
   className?: string;
   headerClassName?: string;
@@ -33,6 +35,9 @@ export type CalendarProps = {
   todayClassName?: string;
   selectedClassName?: string;
   holidayClassName?: string;
+  defaultClassName?: string;
+  pointClassName?: string;
+  isDatePoint?: (date: Date) => boolean;
 };
 
 export type CalendarHeaderProps = {

@@ -4,6 +4,7 @@ import Toast from '@/components/ui/Toast';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { pretendard } from '@/lib/fonts';
 import './globals.css';
+import AuthProvider from '@/providers/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'DayHOP',

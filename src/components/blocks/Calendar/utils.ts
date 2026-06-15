@@ -1,3 +1,9 @@
+export function isPastTime(date: string, endTime: string): boolean {
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = endTime.split(':').map(Number);
+  return new Date(year, month - 1, day, hour, minute) < new Date();
+}
+
 export const toLocalDateString = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
