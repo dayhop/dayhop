@@ -1,22 +1,22 @@
 'use client';
+import { User } from '@/types/api';
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import instance from '@/lib/api/instance';
 
-export default function AuthProvider({ children }: { children: React.ReactNode }) {
+interface AuthProviderProps {
+  children: React.ReactNode;
+  initialUser: User;
+}
+
+export default function AuthProvider({ children, initialUser }: AuthProviderProps) {
   const login = useAuthStore((state) => state.login);
 
   useEffect(() => {
-    const syncAuthState = async () => {
-      try {
-        const response = await instance.get('/user/me');
-        login(response.data);
-      } catch (error) {}
-    };
-
-    syncAuthState();
-  }, [login]);
+    if (initialUser) {
+      login(initialUser); // 서버에서 넘어온 정보로 스토어 동기화
+    }
+  }, [initialUser, login]);
 
   return <>{children}</>;
 }
