@@ -3,7 +3,7 @@
 import { SelectField } from '@/components/ui/SelectField';
 
 import MinusIcon from '@/assets/icon/MinusIcon.svg';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { ActivityScheduleInput } from '@/types/api';
 import { DateField } from '@/components/ui/AvailableSchedule/DateField';
 import { PlusButton } from '@/components/ui/AvailableSchedule/PlusButton';
@@ -11,10 +11,10 @@ import { showToast } from '@/utils/toast';
 import { TIME_LIST } from '@/constants/ReservationTimes';
 
 interface CreateTimeSlotFormProps {
-  setDateFormData: Dispatch<SetStateAction<ActivityScheduleInput[]>>;
+  onAddSchedule: (newDate: ActivityScheduleInput) => void;
 }
 
-export function CreateTimeSlotForm({ setDateFormData }: CreateTimeSlotFormProps) {
+export function CreateTimeSlotForm({ onAddSchedule }: CreateTimeSlotFormProps) {
   const [scheduleFormData, setScheduleFormData] = useState<ActivityScheduleInput>({
     date: '',
     startTime: '',
@@ -34,7 +34,7 @@ export function CreateTimeSlotForm({ setDateFormData }: CreateTimeSlotFormProps)
       showToast.error('등록할 날짜와 시간을 모두 선택해주세요');
       return;
     }
-    setDateFormData((prev) => [...prev, scheduleFormData]);
+    onAddSchedule(scheduleFormData);
     setScheduleFormData({ date: '', startTime: '', endTime: '' });
   };
 
