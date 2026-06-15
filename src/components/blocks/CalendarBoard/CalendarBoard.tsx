@@ -1,53 +1,81 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
-import { getMyActivities, getMyActivityReservationDashboard } from '@/lib/api/my-activities';
+import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
+import {
+  getMyActivityReservationDashboard,
+  getMyActivityReservedSchedule,
+} from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
-import { toLocalDateString } from '../Calendar/utils';
+import { isPastTime, toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 
-export const CalendarBoard = () => {
-  const [activityId, setActivityId] = useState<number | null>(null);
+interface CalendarBoardProps {
+  activityId: number;
+  wrapperClassName?: string;
+}
+
+export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
   const [refreshKey, setRefreshKey] = useState(0);
+  const holidays = useKoreanHolidays(currentMonth.getFullYear(), currentMonth.getMonth());
 
   useEffect(() => {
-    async function fetchActivities() {
-      try {
-        const data = await getMyActivities();
-        if (data.activities.length > 0) {
-          setActivityId(data.activities[0].id);
-        }
-      } catch {
-        // 글로벌 인터셉터에서 처리
-      }
-    }
-    fetchActivities();
-  }, []);
-
-  useEffect(() => {
-    if (activityId === null) return;
-
     let ignore = false;
 
     async function fetchDashboard() {
       try {
-        const data = await getMyActivityReservationDashboard(activityId!, {
+        const dashboard = await getMyActivityReservationDashboard(activityId, {
           year: String(currentMonth.getFullYear()),
           month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
         });
         if (ignore) return;
+
+        const datesWithReservations = dashboard.filter(
+          ({ reservations: r }) => r.pending > 0 || r.confirmed > 0 || r.completed > 0
+        );
+
+        // pending/confirmed가 있는 날짜만 스케줄 API 호출 (슬롯 수 카운트용)
+        const datesNeedingSchedules = datesWithReservations
+          .filter(({ reservations: r }) => r.pending > 0 || r.confirmed > 0)
+          .map(({ date }) => date);
+
+        const scheduleResults = await Promise.all(
+          datesNeedingSchedules.map((date) => getMyActivityReservedSchedule(activityId, { date }))
+        );
+        if (ignore) return;
+
         const map = new Map<string, ReservationCount>();
-        data.forEach(({ date, reservations: r }) => {
-          if (r.pending > 0 || r.confirmed > 0 || r.completed > 0) {
-            map.set(date, r);
+
+        // completed 뱃지: 대시보드 값 직접 사용
+        // (getMyActivityReservedSchedule은 완료된 슬롯을 반환하지 않으므로)
+        datesWithReservations.forEach(({ date, reservations: r }) => {
+          map.set(date, { pending: 0, confirmed: 0, completed: r.completed });
+        });
+
+        // pending/confirmed 뱃지: 시간이 지나지 않은 슬롯 수만 카운트
+        datesNeedingSchedules.forEach((date, i) => {
+          const slots = scheduleResults[i];
+          const counts = map.get(date)!;
+          slots.forEach((slot) => {
+            const isPast = isPastTime(date, slot.endTime);
+            if (!isPast && slot.count.pending > 0) counts.pending += 1;
+            if (!isPast && slot.count.confirmed > 0) counts.confirmed += 1;
+          });
+        });
+
+        // 모든 카운트가 0인 날짜 제거
+        map.forEach((counts, date) => {
+          if (counts.pending === 0 && counts.confirmed === 0 && counts.completed === 0) {
+            map.delete(date);
           }
         });
+
         setDateDataMap(map);
       } catch {
         // 글로벌 인터셉터에서 처리
@@ -60,8 +88,8 @@ export const CalendarBoard = () => {
     };
   }, [activityId, currentMonth, refreshKey]);
 
-  const isDateClickable = useMemo(
-    () => (date: Date) => dateDataMap.has(toLocalDateString(date)),
+  const isDateClickable = useCallback(
+    (date: Date) => dateDataMap.has(toLocalDateString(date)),
     [dateDataMap]
   );
 
@@ -85,10 +113,15 @@ export const CalendarBoard = () => {
       <Calendar
         value={selectedDate}
         onSelectDate={setSelectedDate}
-        onMonthChange={setCurrentMonth}
+        onMonthChange={(month) => {
+          setCurrentMonth(month);
+          setSelectedDate(undefined);
+        }}
+        holidays={holidays}
         isDateClickable={isDateClickable}
         renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
+        className={wrapperClassName}
         pointClassName="relative before:absolute before:top-[-2px] before:right-[-4px] before:h-1 before:w-1 before:rounded-full before:bg-[#FF2727] before:content-[''] md:before:top-[-5px] md:before:right-[-13px] md:before:h-[6px] md:before:w-[6px]"
         dayHeaderClassName="border-b border-border-default"
         dateClassName="border-b border-gray-50 [&:nth-last-child(-n+7)]:border-b-0"
@@ -97,7 +130,7 @@ export const CalendarBoard = () => {
         holidayClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
         defaultClassName="w-[18px] h-[18px] rounded-[2px] md:w-[22px] md:h-[22px] rounded-[4px]"
       />
-      {selectedDate && activityId !== null && (
+      {selectedDate && (
         <CalendarMyActivitiesModal
           activityId={activityId}
           date={toLocalDateString(selectedDate)}

@@ -8,6 +8,7 @@ import { SelectField } from '@/components/ui/SelectField';
 import { cn } from '@/utils/cn';
 import { showToast } from '@/utils/toast';
 import { ReservationItem } from './ReservationItem';
+import { isPastTime } from '../Calendar/utils';
 import {
   getMyActivityReservedSchedule,
   getMyActivityReservations,
@@ -63,6 +64,7 @@ export const CalendarMyActivitiesModal = ({
   } | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // 초기 로드: date/activityId 변경 시 스케줄 목록 리셋
   useEffect(() => {
     let ignore = false;
     async function loadSchedules() {
@@ -71,12 +73,10 @@ export const CalendarMyActivitiesModal = ({
         if (ignore) return;
         setSchedules(data);
         setSelectedTime(data.length > 0 ? formatTimeOption(data[0]) : '');
-        setReservations([]);
       } catch {
         if (!ignore) {
           setSchedules([]);
           setSelectedTime('');
-          setReservations([]);
         }
       }
     }
@@ -84,11 +84,34 @@ export const CalendarMyActivitiesModal = ({
     return () => {
       ignore = true;
     };
+  }, [activityId, date]);
+
+  // 승인/거절 후 슬롯별 카운트 갱신 (스케줄 목록은 유지)
+  useEffect(() => {
+    if (refreshTrigger === 0) return;
+    let ignore = false;
+    async function refreshScheduleCounts() {
+      try {
+        const data = await getMyActivityReservedSchedule(activityId, { date });
+        if (ignore) return;
+        setSchedules((prev) =>
+          prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
+        );
+      } catch {
+        // 글로벌 인터셉터에서 처리
+      }
+    }
+    refreshScheduleCounts();
+    return () => {
+      ignore = true;
+    };
   }, [activityId, date, refreshTrigger]);
 
   const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
   const selectedScheduleId = selectedSchedule?.scheduleId;
+  const isSchedulePast = selectedSchedule ? isPastTime(date, selectedSchedule.endTime) : false;
 
+  // 탭/스케줄/리프레시 변경 시 예약 목록 조회
   useEffect(() => {
     let ignore = false;
     async function loadReservations() {
@@ -200,6 +223,7 @@ export const CalendarMyActivitiesModal = ({
                         nickname={reservation.nickname}
                         headCount={reservation.headCount}
                         activeTab={activeTab}
+                        isPast={isSchedulePast}
                         onApprove={() =>
                           setPendingAction({
                             type: 'confirmed',
@@ -239,6 +263,7 @@ export const CalendarMyActivitiesModal = ({
           const isConfirmed = pendingAction.type === 'confirmed';
           try {
             await pendingAction.execute();
+            setActiveTab(isConfirmed ? 'confirmed' : 'declined');
             showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
           } catch {
             showToast.error(
