@@ -30,7 +30,7 @@ function extractServerMessage(error: unknown): string | null {
 }
 
 // 쿠키 관리를 위한 헬퍼 함수
-function getCookie(name: string): string | undefined {
+export function getCookie(name: string): string | undefined {
   if (typeof window === 'undefined') return undefined;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
