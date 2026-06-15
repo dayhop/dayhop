@@ -121,8 +121,12 @@ instance.interceptors.response.use(
       if (originalRequest._retry || originalRequest.url?.includes('/auth/tokens')) {
         if (typeof window !== 'undefined') {
           deleteCookie('accessToken');
-          showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = '/login';
+          const isAuthPage =
+            window.location.pathname === '/login' || window.location.pathname === '/signup';
+          if (!isAuthPage) {
+            showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }
@@ -166,8 +170,12 @@ instance.interceptors.response.use(
         processQueue(refreshError, null);
         if (typeof window !== 'undefined') {
           deleteCookie('accessToken');
-          showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = '/login';
+          const isAuthPage =
+            window.location.pathname === '/login' || window.location.pathname === '/signup';
+          if (!isAuthPage) {
+            showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(refreshError);
       } finally {
