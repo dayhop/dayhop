@@ -67,4 +67,13 @@
   --color-calendar-secondary: var(--color-gray-900);
   --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* 버튼 */
+  --color-primary-button-active: #0096cc;
+  --color-primary-button-hover: #00aee6;
+  --color-secondary-button-active: #cceeff;
+  --color-secondary-button-hover: #e5f3ff;
+  --color-kakao-button: #f7e600;
+  --color-kakao-button-hover: #ebd800;
+  --color-kakao-button-active: #d4c200;
 }

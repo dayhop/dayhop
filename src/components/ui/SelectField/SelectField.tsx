@@ -58,17 +58,17 @@ export function SelectField({
           onClick={handleClickDropdown}
           type="button"
           disabled={disabled}
-          className={`border-border-default flex h-13 w-full min-w-29 cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+          className={`border-border-default flex h-13 w-full min-w-29 items-center justify-between gap-3 rounded-2xl border bg-white px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <span
-            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} cursor-default font-medium`}
+            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} font-medium`}
           >
             {displayedMessage}
           </span>
           <ArrowDown />
         </button>
         {isOpen && (
-          <div className="border-border-default absolute z-50 mt-2 flex h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3">
+          <div className="border-border-default absolute z-50 mt-2 flex max-h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]">
             {list.map((item) => {
               return (
                 <Button
@@ -78,7 +78,7 @@ export function SelectField({
                   }}
                   key={item}
                   variant="text"
-                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${displayedMessage === item && 'bg-[#f2f9ff]'}`}
+                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 ${displayedMessage === item && 'bg-[#f2f9ff]'}`}
                 >
                   {item}
                 </Button>
