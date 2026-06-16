@@ -13,7 +13,7 @@ export async function proxy(request: NextRequest) {
   if (!accessToken && refreshToken) {
     try {
       //미들웨어에서는 fetch 함수 권장한다고 함, 토큰 재발급
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/tokens`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/tokens`, {
         method: 'POST',
         headers: {
           Cookie: `refreshToken=${refreshToken}`,
@@ -33,6 +33,7 @@ export async function proxy(request: NextRequest) {
 
         //리퀘스트 객체도 수정 -> 안해주면 현재 요청에서 401 오류날 것
         request.cookies.set('accessToken', data.accessToken);
+        return response;
       } else {
         //리프레쉬 토큰x 엑세스토큰x  -> 로그인으로 리다이렉트
         const response = NextResponse.redirect(new URL('/login', request.url));

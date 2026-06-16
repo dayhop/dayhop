@@ -3,18 +3,53 @@ import { ReservationStateBadge } from '@/components/ui/ReservationList';
 import { Reservation } from '@/lib/api/my-reservations/type';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
+import { ReviewFormModal } from '../ReviewForm';
 import { useState } from 'react';
+import { patchMyReservation } from '@/lib/api/my-reservations';
+import ConfirmModal from '@/components/ui/ConfirmModal';
+import { showToast } from '@/utils/toast';
 import defaultThumbnail from '@/assets/images/card-thumnail.png';
 
 interface ReservationCardProps {
   data: Reservation;
 }
 export function ReservationCard({ data }: ReservationCardProps) {
-  const { activity, startTime, endTime, date, totalPrice, status, headCount } = data;
+  const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [imgError, setImgError] = useState(false);
   const cardImg = imgError || !activity.bannerImageUrl ? defaultThumbnail : activity.bannerImageUrl;
+
+  // const handleClickReservationChange = (id: string) => {};
+
+  const handleClickReservationDelete = async (id: number) => {
+    const body = {
+      status: 'canceled' as const,
+    };
+    try {
+      await patchMyReservation({ reservationId: id }, body);
+      showToast.success('예약이 취소되었습니다.');
+    } catch {
+      showToast.error('예약 취소에 실패했습니다.');
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="mt-5 flex w-full max-w-160 min-w-82 flex-col gap-3">
+      {isReviewModalOpen && (
+        <ReviewFormModal reservation={data} onClose={() => setIsReviewModalOpen(false)} />
+      )}
+      {isDeleteModalOpen && (
+        <ConfirmModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          message="예약을 취소하시겠습니까?"
+          onConfirm={() => handleClickReservationDelete(id)}
+        />
+      )}
+
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
       <div className="flex h-37 w-full items-stretch lg:h-43">
         <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
@@ -49,6 +84,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
               <Button
                 size="sm"
                 className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
+                onClick={() => setIsReviewModalOpen(true)}
               >
                 후기 작성
               </Button>
@@ -70,13 +106,21 @@ export function ReservationCard({ data }: ReservationCardProps) {
           <Button size="sm" variant="secondary">
             예약 변경
           </Button>
-          <Button size="sm" className="bg-gray-50 text-gray-600">
+          <Button
+            size="sm"
+            className="bg-gray-50 text-gray-600"
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
             예약 취소
           </Button>
         </div>
       )}
       {status === 'completed' && (
-        <Button size="sm" className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden">
+        <Button
+          size="sm"
+          className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden"
+          onClick={() => setIsReviewModalOpen(true)}
+        >
           후기 작성
         </Button>
       )}
