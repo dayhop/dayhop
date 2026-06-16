@@ -41,6 +41,8 @@ const ProfileMenu = ({ onDeleteClick }: ProfileMenuProps) => {
 };
 
 export const ProfileImage = () => {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   const triggerEl = (
     <div className="relative">
       <Avatar size="lg" />
