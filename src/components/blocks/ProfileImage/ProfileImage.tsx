@@ -47,6 +47,13 @@ export const ProfileImage = () => {
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
+  const login = useAuthStore((state) => state.login);
+  const handleConfirmDelete = async () => {
+    const updateUser = await patchMyUser({ profileImageUrl: null });
+    login(updateUser);
+    setIsConfirmOpen(false);
+  };
+
   const triggerEl = (
     <div className="relative">
       <Avatar size="lg" src={user?.profileImageUrl ?? undefined} />
@@ -62,8 +69,8 @@ export const ProfileImage = () => {
 
       <ConfirmModal
         isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen}
-        onConfirm={() => {}}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
         message="프로필 이미지를 삭제하시겠습니까?"
       />
     </div>
