@@ -75,7 +75,7 @@ export const ProfileImage = () => {
 
   const triggerEl = (
     <div className="relative">
-      <Avatar size="lg" src={user?.profileImageUrl ?? undefined} />
+      <Avatar size="lg" src={previewUrl ?? user?.profileImageUrl ?? undefined} />
       <EditIcon2 className="absolute right-0 bottom-0 md:h-6 md:w-6 lg:h-7.5 lg:w-7.5" />
     </div>
   );
