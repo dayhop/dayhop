@@ -112,7 +112,12 @@ export const ProfileImage = () => {
 
       <ConfirmModal
         isOpen={isEditConfirmOpen}
-        onClose={() => setIsEditConfirmOpen(false)}
+        onClose={() => {
+          setIsEditConfirmOpen(false);
+          setPreviewUrl(null);
+          setPendingFile(null);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }}
         onConfirm={handleConfirmEdit}
         message="프로필 이미지를 변경하시겠습니까?"
       />
