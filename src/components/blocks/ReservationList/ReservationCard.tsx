@@ -3,14 +3,20 @@ import { ReservationStateBadge } from '@/components/ui/ReservationList';
 import { Reservation } from '@/lib/api/my-reservations/type';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
+import { ReviewFormModal } from '../ReviewForm';
+import { useState } from 'react';
 
 interface ReservationCardProps {
   data: Reservation;
 }
 export function ReservationCard({ data }: ReservationCardProps) {
   const { activity, startTime, endTime, date, totalPrice, status, headCount } = data;
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   return (
     <div className="mt-5 flex w-full max-w-160 min-w-82 flex-col gap-3">
+      {isReviewModalOpen && (
+        <ReviewFormModal reservation={data} onClose={() => setIsReviewModalOpen(false)} />
+      )}
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
       <div className="flex h-37 w-full items-stretch lg:h-43">
         <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
@@ -45,6 +51,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
               <Button
                 size="sm"
                 className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
+                onClick={() => setIsReviewModalOpen(true)}
               >
                 후기 작성
               </Button>
@@ -66,7 +73,11 @@ export function ReservationCard({ data }: ReservationCardProps) {
         </div>
       )}
       {status === 'completed' && (
-        <Button size="sm" className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden">
+        <Button
+          size="sm"
+          className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden"
+          onClick={() => setIsReviewModalOpen(true)}
+        >
           후기 작성
         </Button>
       )}
