@@ -8,11 +8,10 @@ type ActivityWithCoord = ActivityItem & { lat: number; lng: number };
 
 export function useKakaoMap() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const kakaoApiKey =
-    process.env.NEXT_PUBLIC_KAKAO_JS_API_KEY || process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
+  const kakaoApiKey = process.env.NEXT_PUBLIC_KAKAO_JS_API_KEY;
 
   const [sdkReady, setSdkReady] = useState(false);
-  const [loadError, setLoadError] = useState(false);
+  const [loadError, setLoadError] = useState(!kakaoApiKey);
   const [mapInstance, setMapInstance] = useState<kakao.maps.Map | null>(null);
   const [activities, setActivities] = useState<ActivityWithCoord[]>([]);
   const [visibleActivities, setVisibleActivities] = useState<ActivityWithCoord[]>([]);
@@ -68,6 +67,8 @@ export function useKakaoMap() {
     document.head.appendChild(script);
   }, [kakaoApiKey]);
 
+  const geocoderRef = useRef<kakao.maps.services.Geocoder | null>(null);
+
   // 주소 -> 좌표 지오코딩 헬퍼 함수
   const geocodeAddress = useCallback(
     (address: string): Promise<{ lat: number; lng: number } | null> => {
@@ -76,8 +77,10 @@ export function useKakaoMap() {
           resolve(null);
           return;
         }
-        const geocoder = new window.kakao.maps.services.Geocoder();
-        geocoder.addressSearch(address, (result, status) => {
+        if (!geocoderRef.current) {
+          geocoderRef.current = new window.kakao.maps.services.Geocoder();
+        }
+        geocoderRef.current.addressSearch(address, (result, status) => {
           if (status === window.kakao.maps.services.Status.OK && result[0]) {
             resolve({
               lat: parseFloat(result[0].y),
@@ -169,6 +172,12 @@ export function useKakaoMap() {
     } else {
       lastSearchedCenter.current = { lat: defaultLat, lng: defaultLng };
     }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.kakaoMapInstance = undefined;
+      }
+    };
   }, [sdkReady, mapInstance]);
 
   // 현재 지도 범위 내(Bounds) 마커들 필터링 계산 함수
@@ -242,6 +251,11 @@ export function useKakaoMap() {
         },
         () => {
           alert('위치 권한이 거부되었거나 위치 정보를 가져올 수 없습니다.');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
         }
       );
     }

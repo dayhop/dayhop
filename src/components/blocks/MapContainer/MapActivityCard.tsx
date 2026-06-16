@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import type { ActivityItem } from '@/types/api';
 
 import { StarRating } from '@/components/ui/StarRating';
@@ -106,11 +107,13 @@ export function MapActivityCard({
             className="relative aspect-square w-32 shrink-0 cursor-pointer overflow-hidden rounded-xl bg-gray-100 md:w-36"
             onClick={() => router.push(`/activity/${selectedActivity.id}`)}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={selectedActivity.bannerImageUrl}
               alt={selectedActivity.title}
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 128px, 144px"
+              priority
             />
           </div>
 

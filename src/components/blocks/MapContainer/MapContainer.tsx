@@ -35,7 +35,7 @@ export function MapContainer() {
     selectedCategory,
     selectedActivity,
     onSelectActivity: setSelectedActivity,
-    zoomLevel,
+    isClustered: zoomLevel > 5,
     userLocation,
   });
 

@@ -11,7 +11,7 @@ interface UseMapMarkersParams {
   selectedCategory: ActivityCategory | '전체';
   selectedActivity: ActivityWithCoord | null;
   onSelectActivity: (activity: ActivityWithCoord | null) => void;
-  zoomLevel: number;
+  isClustered: boolean;
   userLocation: { lat: number; lng: number } | null;
 }
 
@@ -21,7 +21,7 @@ export function useMapMarkers({
   selectedCategory,
   selectedActivity,
   onSelectActivity,
-  zoomLevel,
+  isClustered,
   userLocation,
 }: UseMapMarkersParams) {
   const markersRef = useRef<kakao.maps.CustomOverlay[]>([]);
@@ -62,7 +62,7 @@ export function useMapMarkers({
       };
     } = {};
 
-    if (zoomLevel <= 5) {
+    if (!isClustered) {
       // 줌 레벨이 5 이하로 충분히 가까워지면 그룹화하지 않고, 동일 좌표의 경우 둥글게 퍼지도록 오프셋 적용
       Object.keys(coordGroups).forEach((coordKey) => {
         const list = coordGroups[coordKey];
@@ -209,7 +209,7 @@ export function useMapMarkers({
         }
       }
     });
-  }, [mapInstance, activities, selectedCategory, selectedActivity, zoomLevel, onSelectActivity]);
+  }, [mapInstance, activities, selectedCategory, selectedActivity, isClustered, onSelectActivity]);
 
   // 2. 사용자 위치 마커 표시 및 관리
   useEffect(() => {
