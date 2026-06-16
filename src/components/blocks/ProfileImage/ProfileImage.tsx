@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Popover, usePopover } from '@/components/ui/Popover';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
-import { patchMyUser } from '@/lib/api/users';
+import { patchMyUser, postMyUserProfile } from '@/lib/api/users';
 import { Avatar } from '@/components/ui/Avatar';
 import EditIcon2 from '@/assets/icon/EditIcon2.svg';
 import EditIcon from '@/assets/icon/EditIcon.svg';
@@ -61,6 +61,16 @@ export const ProfileImage = () => {
     setIsConfirmOpen(false);
   };
 
+  const handleConfirmEdit = async () => {
+    if (!pendingFile) return;
+    const { profileImageUrl } = await postMyUserProfile({ image: pendingFile });
+    const updatedUser = await patchMyUser({ profileImageUrl });
+    login(updatedUser);
+    setPreviewUrl(null);
+    setPendingFile(null);
+    setIsEditConfirmOpen(false);
+  };
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const triggerEl = (
@@ -98,6 +108,13 @@ export const ProfileImage = () => {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
         message="프로필 이미지를 삭제하시겠습니까?"
+      />
+
+      <ConfirmModal
+        isOpen={isEditConfirmOpen}
+        onClose={() => setIsEditConfirmOpen(false)}
+        onConfirm={handleConfirmEdit}
+        message="프로필 이미지를 변경하시겠습니까?"
       />
     </div>
   );
