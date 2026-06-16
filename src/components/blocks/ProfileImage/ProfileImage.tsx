@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Popover, usePopover } from '@/components/ui/Popover';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -54,6 +54,8 @@ export const ProfileImage = () => {
     setIsConfirmOpen(false);
   };
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const triggerEl = (
     <div className="relative">
       <Avatar size="lg" src={user?.profileImageUrl ?? undefined} />
@@ -66,6 +68,8 @@ export const ProfileImage = () => {
       <Popover trigger={triggerEl} ariaLabel="메뉴 열기">
         <ProfileMenu onDeleteClick={() => setIsConfirmOpen(true)} />
       </Popover>
+
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
 
       <ConfirmModal
         isOpen={isConfirmOpen}
