@@ -1,0 +1,34 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+
+import { ActivityCard } from './ActivityCard';
+
+import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
+
+const mockActivity: ActivityItem = {
+  id: 1,
+  userId: 1,
+  title: '도심 속 한강 요트 투어',
+  description: '한강에서 즐기는 프리미엄 요트 체험',
+  category: '투어' as ActivityCategory,
+  price: 45000,
+  address: '서울특별시 영등포구',
+  bannerImageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
+  rating: 4.8,
+  reviewCount: 128,
+  createdAt: '2025-06-01T00:00:00.000Z',
+  updatedAt: '2025-06-01T00:00:00.000Z',
+};
+
+const meta = {
+  title: 'UI/ActivityCard',
+  component: ActivityCard,
+  args: {
+    activity: mockActivity,
+  },
+} satisfies Meta<typeof ActivityCard>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
