@@ -4,11 +4,15 @@ interface ImgLimitProps {
 }
 
 export function ImgLimit({ type, currentAdd }: ImgLimitProps) {
+  const LIMIT = type === 'banner' ? 1 : 4;
+
   return (
-    <div className="flex flex-col">
+    <div
+      className={`ml-3 flex text-xs ${currentAdd === LIMIT ? 'text-status-danger' : 'text-text-tertiary'}`}
+    >
       <div>{currentAdd}</div>
       <div>/</div>
-      <div>{type === 'banner' ? '1' : '4'}</div>
+      <div>{LIMIT}</div>
     </div>
   );
 }

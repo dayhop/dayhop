@@ -109,7 +109,7 @@ export default function ActivityAddPage() {
       <DateForm ref={dateRef} />
       <ImgUpload mode="banner" ref={bannerRef} />
       <ImgUpload mode="detail" ref={detailRef} />
-      <Button type="submit" size="sm" className="mx-auto w-30">
+      <Button type="submit" size="md" className="mx-auto w-40">
         등록하기
       </Button>
     </form>

@@ -1,5 +1,6 @@
 'use client';
 
+import { ImgLimit } from '@/components/ui/ActivityAdd/ImgLimit';
 import { PreviewImg } from '@/components/ui/ActivityAdd/PreviewImg';
 import { UploadImg } from '@/components/ui/ActivityAdd/UploadImg';
 import { Ref, useImperativeHandle, useState } from 'react';
@@ -23,7 +24,11 @@ export function ImgUpload({ mode, ref }: ImgUploadProps) {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div>{mode === 'banner' ? '배너 이미지 등록' : '소개 이미지 등록'}</div>
+      <div className="flex items-center">
+        {mode === 'banner' ? '배너 이미지 등록' : '소개 이미지 등록'}
+        <ImgLimit type={mode} currentAdd={imgFiles.length} />
+      </div>
+
       <div className="flex gap-3">
         {imgFiles.length < LIMIT && (
           <UploadImg onFileSelect={(newFile: File) => setImgFiles((prev) => [...prev, newFile])} />
