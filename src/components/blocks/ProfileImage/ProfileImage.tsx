@@ -50,6 +50,8 @@ export const ProfileImage = () => {
   const user = useAuthStore((state) => state.user);
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const login = useAuthStore((state) => state.login);
   const handleConfirmDelete = async () => {
@@ -76,7 +78,18 @@ export const ProfileImage = () => {
         />
       </Popover>
 
-      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          setPendingFile(file);
+          setPreviewUrl(URL.createObjectURL(file));
+        }}
+      />
 
       <ConfirmModal
         isOpen={isConfirmOpen}
