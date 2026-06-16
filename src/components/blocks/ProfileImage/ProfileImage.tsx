@@ -9,6 +9,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import EditIcon2 from '@/assets/icon/EditIcon2.svg';
 import EditIcon from '@/assets/icon/EditIcon.svg';
 import DeleteIcon from '@/assets/icon/DeleteIcon.svg';
+import { showToast } from '@/utils/toast';
 
 interface ProfileMenuProps {
   onDeleteClick: () => void;
@@ -56,22 +57,39 @@ export const ProfileImage = () => {
 
   const login = useAuthStore((state) => state.login);
   const handleConfirmDelete = async () => {
-    const updateUser = await patchMyUser({ profileImageUrl: null });
-    login(updateUser);
-    setIsConfirmOpen(false);
+    try {
+      const updateUser = await patchMyUser({ profileImageUrl: null });
+      login(updateUser);
+      setIsConfirmOpen(false);
+    } catch {
+      showToast.error('프로필 이미지 삭제에 실패했습니다.');
+      setIsConfirmOpen(false);
+    }
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCancelEdit = () => {
+    setIsEditConfirmOpen(false);
+    setPreviewUrl(null);
+    setPendingFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleConfirmEdit = async () => {
     if (!pendingFile) return;
-    const { profileImageUrl } = await postMyUserProfile({ image: pendingFile });
-    const updatedUser = await patchMyUser({ profileImageUrl });
-    login(updatedUser);
-    setPreviewUrl(null);
-    setPendingFile(null);
-    setIsEditConfirmOpen(false);
+    try {
+      const { profileImageUrl } = await postMyUserProfile({ image: pendingFile });
+      const updatedUser = await patchMyUser({ profileImageUrl });
+      login(updatedUser);
+      setPreviewUrl(null);
+      setPendingFile(null);
+      setIsEditConfirmOpen(false);
+    } catch {
+      showToast.error('프로필 이미지 변경에 실패했습니다.');
+      handleCancelEdit();
+    }
   };
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const triggerEl = (
     <div className="relative">
@@ -112,12 +130,7 @@ export const ProfileImage = () => {
 
       <ConfirmModal
         isOpen={isEditConfirmOpen}
-        onClose={() => {
-          setIsEditConfirmOpen(false);
-          setPreviewUrl(null);
-          setPendingFile(null);
-          if (fileInputRef.current) fileInputRef.current.value = '';
-        }}
+        onClose={handleCancelEdit}
         onConfirm={handleConfirmEdit}
         message="프로필 이미지를 변경하시겠습니까?"
       />
