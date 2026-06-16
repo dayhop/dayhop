@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { postOauthSignIn, postOauthSignUp } from '@/lib/api/oauth';
+import { postOauthSignIn } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { REDIRECT_URI } from '../../components/Oauth';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function OauthPage() {
   const ref = useRef(false);
+  const { login } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
@@ -22,6 +24,7 @@ export default function OauthPage() {
     if (response.accessToken || response.refreshToken) {
       router.push('/');
       showToast.success(response.user.nickname + '님 반갑습니다.');
+      login(response.user);
     } else {
       router.push(`/oauth/signup?code=${code}`);
     }

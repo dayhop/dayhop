@@ -7,8 +7,10 @@ import { useState } from 'react';
 import { REDIRECT_URI } from '../../../components/Oauth';
 import { postOauthSignUp } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function KakaoSignUpPage() {
+  const { login } = useAuthStore();
   const router = useRouter();
   const [nickname, setNickname] = useState<string>('');
 
@@ -25,6 +27,7 @@ export default function KakaoSignUpPage() {
         token: token,
       });
       showToast.success(response.user.nickname + '님 반갑습니다.');
+      login(response.user);
       router.push('/');
     } catch {
       router.push('/signup');
