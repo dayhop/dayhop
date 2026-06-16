@@ -1,20 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
 import { AuthField } from '../AuthField/AuthField';
 
-import { postLogin } from '@/lib/api/auth';
-import { validateEmail, validatePassword } from '@/utils/validate';
-
-import { saveToken } from '@/actions/auth';
-import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
+import { postLogin } from '@/lib/api/auth';
+import { showToast } from '@/utils/toast';
+import { validateEmail, validatePassword } from '@/utils/validate';
 
 export function LoginForm() {
   const router = useRouter();
+
   const { login } = useAuthStore();
   const [errorMessage, setErrorMessage] = useState({
     email: '',
@@ -27,7 +26,7 @@ export function LoginForm() {
   });
 
   const validateField = (id: string, value: string) => {
-    if (!value || !id) return;
+    if (!id) return;
     let errorMessage = '';
     switch (id) {
       case 'email':
@@ -56,11 +55,10 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await postLogin(formData);
-      await saveToken(res.accessToken, res.refreshToken);
-      login(res.user);
-      showToast.success(`${res.user.nickname} 님 반갑습니다. `);
+      const result = await postLogin(formData);
+      showToast.success(`${result.user?.nickname} 님 반갑습니다.`);
       router.push('/');
+      login(result.user);
     } catch {}
   };
 
