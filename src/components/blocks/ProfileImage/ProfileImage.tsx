@@ -50,6 +50,7 @@ export const ProfileImage = () => {
   const user = useAuthStore((state) => state.user);
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isEditConfirmOpen, setIsEditConfirmOpen] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -88,6 +89,7 @@ export const ProfileImage = () => {
           if (!file) return;
           setPendingFile(file);
           setPreviewUrl(URL.createObjectURL(file));
+          setIsEditConfirmOpen(true);
         }}
       />
 
