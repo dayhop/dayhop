@@ -9,10 +9,11 @@ interface OAuthProp {
 }
 
 const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
-export const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
-const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+export const REDIRECT_LOGIN_URI = process.env.NEXT_PUBLIC_KAKAO_LOGIN_REDIRECT_URI;
+export const REDIRECT_SIGNUP_URI = process.env.NEXT_PUBLIC_KAKAO_SIGNUP_REDIRECT_URI;
 
 export function OAuth({ type }: OAuthProp) {
+  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${type === 'login' ? REDIRECT_LOGIN_URI : REDIRECT_SIGNUP_URI}&response_type=code`;
   const handleClickKakaoLogin = () => {
     window.location.href = kakaoURL;
   };

@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { REDIRECT_URI } from '../../../components/Oauth';
+
 import { postOauthSignUp } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
+import { REDIRECT_SIGNUP_URI } from '@/app/(auth)/components/Oauth';
 
 export default function KakaoSignUpPage() {
   const { login } = useAuthStore();
@@ -15,23 +16,27 @@ export default function KakaoSignUpPage() {
   const [nickname, setNickname] = useState<string>('');
 
   const params = useSearchParams();
-  const token = sessionStorage.getItem('oauth_code');
+  const token = params.get('code');
 
   const handleClickSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!token) {
+      showToast.error('유효하지 않은 접근입니다.');
+      router.push('/signup');
+      return;
+    }
     try {
-      if (!token) return;
-
       const response = await postOauthSignUp('kakao', {
         nickname: nickname,
-        redirectUri: REDIRECT_URI,
+        redirectUri: REDIRECT_SIGNUP_URI,
         token: token,
       });
       showToast.success(response.user.nickname + '님 반갑습니다.');
       login(response.user);
       router.push('/');
-    } catch {
-      router.push('/signup');
+    } catch (e) {
+      showToast.error('이미 등록된 사용자입니다. 로그인해주세요');
+      router.push('/login');
     }
   };
   return (

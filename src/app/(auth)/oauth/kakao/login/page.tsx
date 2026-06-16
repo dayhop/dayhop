@@ -3,8 +3,8 @@ import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { postOauthSignIn } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
-import { REDIRECT_URI } from '../../components/Oauth';
 import { useAuthStore } from '@/store/useAuthStore';
+import { REDIRECT_LOGIN_URI } from '../../../components/Oauth';
 
 export default function OauthPage() {
   const ref = useRef(false);
@@ -16,7 +16,7 @@ export default function OauthPage() {
   const handleAuth = async () => {
     if (!code) return;
     const body = {
-      redirectUri: REDIRECT_URI,
+      redirectUri: REDIRECT_LOGIN_URI,
       token: code,
     };
 
@@ -25,9 +25,6 @@ export default function OauthPage() {
       router.push('/');
       showToast.success(response.user.nickname + '님 반갑습니다.');
       login(response.user);
-    } else {
-      sessionStorage.setItem('oauth_code', code);
-      router.push(`/oauth/signup`);
     }
   };
 
