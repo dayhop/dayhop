@@ -84,6 +84,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
                 <Button
                   size="sm"
                   className="bg-gray-50 px-2.5 py-1.5 whitespace-nowrap text-gray-600"
+                  onClick={() => setIsDeleteModalOpen(true)}
                 >
                   예약취소
                 </Button>
