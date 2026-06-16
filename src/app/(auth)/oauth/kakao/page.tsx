@@ -26,7 +26,8 @@ export default function OauthPage() {
       showToast.success(response.user.nickname + '님 반갑습니다.');
       login(response.user);
     } else {
-      router.push(`/oauth/signup?code=${code}`);
+      sessionStorage.setItem('oauth_code', code);
+      router.push(`/oauth/signup`);
     }
   };
 

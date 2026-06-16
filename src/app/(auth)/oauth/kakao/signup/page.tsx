@@ -15,12 +15,13 @@ export default function KakaoSignUpPage() {
   const [nickname, setNickname] = useState<string>('');
 
   const params = useSearchParams();
-  const token = params.get('code');
+  const token = sessionStorage.getItem('oauth_code');
 
   const handleClickSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (!token) return;
+
       const response = await postOauthSignUp('kakao', {
         nickname: nickname,
         redirectUri: REDIRECT_URI,
