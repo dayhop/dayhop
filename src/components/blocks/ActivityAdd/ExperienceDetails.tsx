@@ -13,7 +13,9 @@ export function ExperienceDetail() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2.5">
-        <label htmlFor="name">제목</label>
+        <label htmlFor="name" className="font-bold">
+          제목
+        </label>
         <Input name="title" placeholder="제목을 입력해주세요" />
       </div>
       <SelectField
@@ -26,12 +28,16 @@ export function ExperienceDetail() {
       <input type="hidden" name="category" value={categotySelected} />
       <Textarea label="설명" name="description" />
       <div className="flex flex-col gap-2.5">
-        <label htmlFor="price">가격</label>
+        <label htmlFor="price" className="font-bold">
+          가격
+        </label>
         <Input name="price" placeholder="체험 금액을 입력해주세요" />
       </div>
       <div className="flex flex-col gap-2.5">
-        <label htmlFor="address">주소</label>
-        <AddressForm name="address" />
+        <label htmlFor="address" className="font-bold">
+          주소
+        </label>
+        <AddressForm />
       </div>
     </div>
   );

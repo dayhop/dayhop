@@ -119,7 +119,7 @@ export default function ActivityAddPage() {
         </Modal>
       )}
       <form className="flex flex-col justify-center gap-6" onSubmit={handleSubmit}>
-        <div>내 체험 등록</div>
+        <div className="py-2.5 text-lg font-bold">내 체험 등록</div>
         <ExperienceDetail />
         <DateForm ref={dateRef} />
         <ImgUpload mode="banner" ref={bannerRef} />

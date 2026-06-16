@@ -24,7 +24,7 @@ export function ImgUpload({ mode, ref }: ImgUploadProps) {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="flex items-center">
+      <div className="flex items-center font-bold">
         {mode === 'banner' ? '배너 이미지 등록' : '소개 이미지 등록'}
         <ImgLimit type={mode} currentAdd={imgFiles.length} />
       </div>
