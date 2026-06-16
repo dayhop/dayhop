@@ -10,8 +10,10 @@ import { validateEmail, validatePassword } from '@/utils/validate';
 
 import { saveToken } from '@/actions/auth';
 import { showToast } from '@/utils/toast';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function LoginForm() {
+  const { login } = useAuthStore();
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     password: '',
@@ -54,6 +56,7 @@ export function LoginForm() {
     try {
       const res = await postLogin(formData);
       await saveToken(res.accessToken, res.refreshToken);
+      login(res.user);
       showToast.success(`${res.user.nickname} 님 반갑습니다. `);
     } catch {}
   };

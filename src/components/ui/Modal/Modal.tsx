@@ -1,16 +1,23 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { cn } from '@/utils/cn';
 
 interface ModalProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  overlayClassName?: string;
   className?: string;
   onClose?: () => void;
   ariaLabel?: string;
 }
 
-export const Modal = ({ children, className = '', onClose, ariaLabel }: ModalProps) => {
+export const Modal = ({
+  children,
+  overlayClassName,
+  className,
+  onClose,
+  ariaLabel,
+}: ModalProps) => {
   useEffect(() => {
     if (!onClose) return;
 
@@ -27,7 +34,10 @@ export const Modal = ({ children, className = '', onClose, ariaLabel }: ModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]"
+      className={cn(
+        'bg-overlay fixed inset-0 z-50 flex items-center justify-center',
+        overlayClassName
+      )}
       onClick={onClose}
     >
       <div

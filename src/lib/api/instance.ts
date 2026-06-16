@@ -30,7 +30,7 @@ function extractServerMessage(error: unknown): string | null {
 }
 
 // 쿠키 관리를 위한 헬퍼 함수
-function getCookie(name: string): string | undefined {
+export function getCookie(name: string): string | undefined {
   if (typeof window === 'undefined') return undefined;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -121,8 +121,12 @@ instance.interceptors.response.use(
       if (originalRequest._retry || originalRequest.url?.includes('/auth/tokens')) {
         if (typeof window !== 'undefined') {
           deleteCookie('accessToken');
-          showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = '/login';
+          const isAuthPage =
+            window.location.pathname === '/login' || window.location.pathname === '/signup';
+          if (!isAuthPage) {
+            showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }
@@ -166,8 +170,12 @@ instance.interceptors.response.use(
         processQueue(refreshError, null);
         if (typeof window !== 'undefined') {
           deleteCookie('accessToken');
-          showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = '/login';
+          const isAuthPage =
+            window.location.pathname === '/login' || window.location.pathname === '/signup';
+          if (!isAuthPage) {
+            showToast.error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(refreshError);
       } finally {
