@@ -61,6 +61,7 @@ export const ProfileImage = () => {
       const updateUser = await patchMyUser({ profileImageUrl: null });
       login(updateUser);
       setIsConfirmOpen(false);
+      showToast.success('프로필 이미지가 삭제되었습니다.');
     } catch {
       showToast.error('프로필 이미지 삭제에 실패했습니다.');
       setIsConfirmOpen(false);
@@ -71,6 +72,7 @@ export const ProfileImage = () => {
 
   const handleCancelEdit = () => {
     setIsEditConfirmOpen(false);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setPendingFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -82,9 +84,12 @@ export const ProfileImage = () => {
       const { profileImageUrl } = await postMyUserProfile({ image: pendingFile });
       const updatedUser = await patchMyUser({ profileImageUrl });
       login(updatedUser);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       setPendingFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
       setIsEditConfirmOpen(false);
+      showToast.success('프로필 이미지가 변경되었습니다.');
     } catch {
       showToast.error('프로필 이미지 변경에 실패했습니다.');
       handleCancelEdit();
