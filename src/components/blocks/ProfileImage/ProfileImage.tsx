@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Popover, usePopover } from '@/components/ui/Popover';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { Avatar } from '@/components/ui/Avatar';
@@ -41,11 +42,11 @@ const ProfileMenu = ({ onDeleteClick }: ProfileMenuProps) => {
 };
 
 export const ProfileImage = () => {
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const user = useAuthStore((state) => state.user);
 
   const triggerEl = (
     <div className="relative">
-      <Avatar size="lg" />
+      <Avatar size="lg" src={user?.profileImageUrl ?? undefined} />
       <EditIcon2 className="absolute right-0 bottom-0 md:h-6 md:w-6 lg:h-7.5 lg:w-7.5" />
     </div>
   );
