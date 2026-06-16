@@ -107,7 +107,13 @@ export const ProfileImage = () => {
     <div>
       <Popover trigger={triggerEl} ariaLabel="메뉴 열기">
         <ProfileMenu
-          onDeleteClick={() => setIsConfirmOpen(true)}
+          onDeleteClick={() => {
+            if (!user?.profileImageUrl) {
+              showToast.error('삭제할 프로필 이미지가 없습니다.');
+              return;
+            }
+            setIsConfirmOpen(true);
+          }}
           onEditClick={() => fileInputRef.current?.click()}
         />
       </Popover>
