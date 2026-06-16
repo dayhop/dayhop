@@ -12,9 +12,10 @@ import DeleteIcon from '@/assets/icon/DeleteIcon.svg';
 
 interface ProfileMenuProps {
   onDeleteClick: () => void;
+  onEditClick: () => void;
 }
 
-const ProfileMenu = ({ onDeleteClick }: ProfileMenuProps) => {
+const ProfileMenu = ({ onDeleteClick, onEditClick }: ProfileMenuProps) => {
   const { close } = usePopover();
 
   return (
@@ -22,7 +23,10 @@ const ProfileMenu = ({ onDeleteClick }: ProfileMenuProps) => {
       <button
         type="button"
         className="relative flex cursor-pointer items-center gap-2.25 rounded-md px-3 py-2.5 text-base font-medium whitespace-nowrap text-gray-700 transition-colors hover:bg-[rgba(237,238,242,0.5)]"
-        onClick={close}
+        onClick={() => {
+          close();
+          onEditClick();
+        }}
       >
         <EditIcon />
         수정하기
@@ -66,7 +70,10 @@ export const ProfileImage = () => {
   return (
     <div>
       <Popover trigger={triggerEl} ariaLabel="메뉴 열기">
-        <ProfileMenu onDeleteClick={() => setIsConfirmOpen(true)} />
+        <ProfileMenu
+          onDeleteClick={() => setIsConfirmOpen(true)}
+          onEditClick={() => fileInputRef.current?.click()}
+        />
       </Popover>
 
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
