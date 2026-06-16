@@ -11,10 +11,14 @@ interface AuthProviderProps {
 
 export default function AuthProvider({ children, initialUser }: AuthProviderProps) {
   const login = useAuthStore((state) => state.login);
+  const setIsLoading = useAuthStore((state) => state.setIsLoading);
 
   useEffect(() => {
     if (initialUser) {
-      login(initialUser); // 서버에서 넘어온 정보로 스토어 동기화
+      login(initialUser);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
     }
   }, [initialUser, login]);
 
