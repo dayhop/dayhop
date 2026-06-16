@@ -4,6 +4,7 @@ import { Reservation } from '@/lib/api/my-reservations/type';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
 import { ReviewFormModal } from '../ReviewForm';
+import { ScheduleChangeModal } from './ScheduleChangeModal';
 import { useState } from 'react';
 import { patchMyReservation } from '@/lib/api/my-reservations';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -17,10 +18,9 @@ export function ReservationCard({ data }: ReservationCardProps) {
   const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
   const [imgError, setImgError] = useState(false);
   const cardImg = imgError || !activity.bannerImageUrl ? defaultThumbnail : activity.bannerImageUrl;
-
-  // const handleClickReservationChange = (id: string) => {};
 
   const handleClickReservationDelete = async (id: number) => {
     const body = {
@@ -38,6 +38,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
 
   return (
     <div className="mt-5 flex w-full max-w-160 min-w-82 flex-col gap-3">
+      {/*모달*/}
       {isReviewModalOpen && (
         <ReviewFormModal reservation={data} onClose={() => setIsReviewModalOpen(false)} />
       )}
@@ -47,6 +48,13 @@ export function ReservationCard({ data }: ReservationCardProps) {
           onClose={() => setIsDeleteModalOpen(false)}
           message="예약을 취소하시겠습니까?"
           onConfirm={() => handleClickReservationDelete(id)}
+        />
+      )}
+      {isChangeModalOpen && (
+        <ScheduleChangeModal
+          isOpen={isChangeModalOpen}
+          onClose={() => setIsChangeModalOpen(false)}
+          reservation={data}
         />
       )}
 
@@ -69,6 +77,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
                 <Button
                   size="sm"
                   className="border-bg-surface border bg-white px-2.5 whitespace-nowrap text-gray-600"
+                  onClick={() => setIsChangeModalOpen(true)}
                 >
                   예약변경
                 </Button>
@@ -103,7 +112,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
       </div>
       {status === 'pending' && (
         <div className="flex w-full gap-3 lg:hidden">
-          <Button size="sm" variant="secondary">
+          <Button size="sm" variant="secondary" onClick={() => setIsChangeModalOpen(true)}>
             예약 변경
           </Button>
           <Button
