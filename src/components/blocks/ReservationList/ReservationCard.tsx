@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { patchMyReservation } from '@/lib/api/my-reservations';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { showToast } from '@/utils/toast';
+import defaultThumbnail from '@/assets/images/card-thumnail.png';
 
 interface ReservationCardProps {
   data: Reservation;
@@ -16,6 +17,8 @@ export function ReservationCard({ data }: ReservationCardProps) {
   const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [imgError, setImgError] = useState(false);
+  const cardImg = imgError || !activity.bannerImageUrl ? defaultThumbnail : activity.bannerImageUrl;
 
   // const handleClickReservationChange = (id: string) => {};
 
@@ -89,7 +92,13 @@ export function ReservationCard({ data }: ReservationCardProps) {
           </div>
         </div>
         <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
-          <Image src={activity.bannerImageUrl} alt="배너 이미지" fill className="object-cover" />
+          <Image
+            src={cardImg}
+            alt="배너 이미지"
+            fill
+            className="object-cover"
+            onError={() => setImgError(true)}
+          />
         </div>
       </div>
       {status === 'pending' && (
