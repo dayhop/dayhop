@@ -58,6 +58,13 @@ export const ProfileImage = () => {
       <Popover trigger={triggerEl} ariaLabel="메뉴 열기">
         <ProfileMenu onDeleteClick={() => setIsConfirmOpen(true)} />
       </Popover>
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen}
+        onConfirm={() => {}}
+        message="프로필 이미지를 삭제하시겠습니까?"
+      />
     </div>
   );
 };
