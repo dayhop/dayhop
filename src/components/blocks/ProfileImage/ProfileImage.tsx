@@ -44,6 +44,8 @@ const ProfileMenu = ({ onDeleteClick }: ProfileMenuProps) => {
 export const ProfileImage = () => {
   const user = useAuthStore((state) => state.user);
 
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   const triggerEl = (
     <div className="relative">
       <Avatar size="lg" src={user?.profileImageUrl ?? undefined} />
@@ -54,7 +56,7 @@ export const ProfileImage = () => {
   return (
     <div>
       <Popover trigger={triggerEl} ariaLabel="메뉴 열기">
-        <ProfileMenu onDeleteClick={() => {}} />
+        <ProfileMenu onDeleteClick={() => setIsConfirmOpen(true)} />
       </Popover>
     </div>
   );
