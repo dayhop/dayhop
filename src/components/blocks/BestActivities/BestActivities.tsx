@@ -36,5 +36,5 @@ export function BestActivities({ items }: BestActivitiesProps) {
 
   if (!activities.length) return null;
 
-  return <ActivityCardContainer activitiesList={activities} title="🛼 인기 게시물" />;
+  return <ActivityCardContainer activitiesList={activities} title="🛼 인기 체험" />;
 }
