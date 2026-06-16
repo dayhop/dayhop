@@ -49,13 +49,15 @@ const ProfileMenu = ({ onDeleteClick, onEditClick }: ProfileMenuProps) => {
 
 export const ProfileImage = () => {
   const user = useAuthStore((state) => state.user);
+  const login = useAuthStore((state) => state.login);
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isEditConfirmOpen, setIsEditConfirmOpen] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const login = useAuthStore((state) => state.login);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleConfirmDelete = async () => {
     try {
       const updateUser = await patchMyUser({ profileImageUrl: null });
@@ -67,8 +69,6 @@ export const ProfileImage = () => {
       setIsConfirmOpen(false);
     }
   };
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCancelEdit = () => {
     setIsEditConfirmOpen(false);
