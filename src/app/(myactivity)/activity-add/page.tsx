@@ -4,6 +4,7 @@ import { DateForm, DateFormRef } from '@/components/blocks/ActivityAdd/DateForm'
 import { ExperienceDetail } from '@/components/blocks/ActivityAdd/ExperienceDetails';
 import { ImgUpload, ImgUploadRef } from '@/components/blocks/ActivityAdd/ImgUploader';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { postActivities, postActivitiesImage } from '@/lib/api/activities';
 import {
   ActivityCategory,
@@ -11,12 +12,15 @@ import {
   PostActivitiesData,
 } from '@/lib/api/activities/type';
 import { showToast } from '@/utils/toast';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 export default function ActivityAddPage() {
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
   const detailRef = useRef<ImgUploadRef>(null);
+
+  //모달
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const validateFormField = (
     title: string,
@@ -95,23 +99,35 @@ export default function ActivityAddPage() {
         subImageUrls,
       };
 
-      const response = await postActivities(submitData);
-      console.log(response);
-      showToast.success('체험 등록이 완료되었습니다.');
+      await postActivities(submitData);
+      setIsOpen(true);
+      // showToast.success('체험 등록이 완료되었습니다.');
+      //TODO: 추가된 체험으로 이동하는 로직 추가
     } catch {
       showToast.error('체험 등록에 실패했습니다.');
+      //TODO 마이 페이지의 체험 관리 페이지로 이동
     }
   };
   return (
-    <form className="flex flex-col justify-center gap-6" onSubmit={handleSubmit}>
-      <div>내 체험 등록</div>
-      <ExperienceDetail />
-      <DateForm ref={dateRef} />
-      <ImgUpload mode="banner" ref={bannerRef} />
-      <ImgUpload mode="detail" ref={detailRef} />
-      <Button type="submit" size="md" className="mx-auto w-40">
-        등록하기
-      </Button>
-    </form>
+    <div>
+      {isOpen && (
+        <Modal onClose={() => setIsOpen(false)} className="min-w-80">
+          <div className="flex flex-col gap-4">
+            <p>체험 등록이 완료되었습니다.</p>
+            <Button onClick={() => setIsOpen(false)}>확인</Button>
+          </div>
+        </Modal>
+      )}
+      <form className="flex flex-col justify-center gap-6" onSubmit={handleSubmit}>
+        <div>내 체험 등록</div>
+        <ExperienceDetail />
+        <DateForm ref={dateRef} />
+        <ImgUpload mode="banner" ref={bannerRef} />
+        <ImgUpload mode="detail" ref={detailRef} />
+        <Button type="submit" size="md" className="mx-auto w-40">
+          등록하기
+        </Button>
+      </form>
+    </div>
   );
 }
