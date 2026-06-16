@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Popover, usePopover } from '@/components/ui/Popover';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { patchMyUser } from '@/lib/api/users';
 import { Avatar } from '@/components/ui/Avatar';
 import EditIcon2 from '@/assets/icon/EditIcon2.svg';
 import EditIcon from '@/assets/icon/EditIcon.svg';
