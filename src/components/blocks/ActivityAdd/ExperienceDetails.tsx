@@ -1,5 +1,6 @@
 'use client';
 
+import AddressForm from '@/components/ui/ActivityAdd/AddressForm';
 import Input from '@/components/ui/Input';
 import { SelectField } from '@/components/ui/SelectField';
 import { Textarea } from '@/components/ui/Textarea';
@@ -29,8 +30,8 @@ export function ExperienceDetail() {
         <Input name="price" placeholder="체험 금액을 입력해주세요" />
       </div>
       <div className="flex flex-col gap-2.5">
-        <label htmlFor="adress">주소</label>
-        <Input name="address" placeholder="주소를 입력해주세요" />
+        <label htmlFor="address">주소</label>
+        <AddressForm name="address" />
       </div>
     </div>
   );
