@@ -25,5 +25,16 @@ export const SettingsForm = () => {
     confirmPassword: '',
   });
 
+  const handleEditStart = () => {
+    setFormData({ nickname: user?.nickname ?? '', newPassword: '', confirmPassword: '' });
+    setIsEditMode(true);
+  };
+
+  const handleEditCancel = () => {
+    setFormData({ nickname: '', newPassword: '', confirmPassword: '' });
+    setErrors({ newPassword: '', confirmPassword: '' });
+    setIsEditMode(false);
+  };
+
   return <></>;
 };
