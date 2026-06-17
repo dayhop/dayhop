@@ -9,46 +9,59 @@ import { Button } from '@/components/ui/Button';
 import { PasswordConfirmModal } from '../PasswordConfirmModal';
 import { showToast } from '@/utils/toast';
 
+const INITIAL_FORM = { nickname: '', newPassword: '', confirmPassword: '' };
+const INITIAL_ERRORS = { newPassword: '', confirmPassword: '' };
+
 export const SettingsForm = () => {
   const user = useAuthStore((state) => state.user);
   const login = useAuthStore((state) => state.login);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    nickname: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-  const [errors, setErrors] = useState({
-    newPassword: '',
-    confirmPassword: '',
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [errors, setErrors] = useState(INITIAL_ERRORS);
+
+  const handleChange =
+    (field: keyof typeof INITIAL_FORM) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    };
 
   const handleEditStart = () => {
-    setFormData({ nickname: user?.nickname ?? '', newPassword: '', confirmPassword: '' });
+    setFormData({ ...INITIAL_FORM, nickname: user?.nickname ?? '' });
     setIsEditMode(true);
   };
 
   const handleEditCancel = () => {
-    setFormData({ nickname: '', newPassword: '', confirmPassword: '' });
-    setErrors({ newPassword: '', confirmPassword: '' });
+    setFormData(INITIAL_FORM);
+    setErrors(INITIAL_ERRORS);
     setIsEditMode(false);
   };
 
+  const handleNewPasswordBlur = () => {
+    setErrors((prev) => ({
+      ...prev,
+      newPassword:
+        formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '',
+    }));
+  };
+
+  const handleConfirmPasswordBlur = () => {
+    setErrors((prev) => ({
+      ...prev,
+      confirmPassword:
+        formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '',
+    }));
+  };
+
   const handleSaveClick = () => {
-    const newErrors = { newPassword: '', confirmPassword: '' };
-
-    if (formData.newPassword && formData.newPassword.length < 8) {
-      newErrors.newPassword = '8자 이상 입력해주세요.';
-    }
-    if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
-    }
-
+    const newErrors = {
+      newPassword:
+        formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '',
+      confirmPassword:
+        formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '',
+    };
     setErrors(newErrors);
     if (newErrors.newPassword || newErrors.confirmPassword) return;
-
     setIsPasswordModalOpen(true);
   };
 
@@ -62,7 +75,7 @@ export const SettingsForm = () => {
       login(updatedUser);
       setIsPasswordModalOpen(false);
       setIsEditMode(false);
-      setFormData({ nickname: '', newPassword: '', confirmPassword: '' });
+      setFormData(INITIAL_FORM);
       showToast.success('수정되었습니다.');
     } catch {
       showToast.error('수정에 실패했습니다.');
@@ -77,7 +90,7 @@ export const SettingsForm = () => {
         <Input
           value={isEditMode ? formData.nickname : (user?.nickname ?? '')}
           disabled={!isEditMode}
-          onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+          onChange={handleChange('nickname')}
         />
       </div>
 
@@ -95,14 +108,8 @@ export const SettingsForm = () => {
           disabled={!isEditMode}
           isWarning={!!errors.newPassword}
           warningText={errors.newPassword}
-          onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-          onBlur={() => {
-            if (formData.newPassword && formData.newPassword.length < 8) {
-              setErrors((prev) => ({ ...prev, newPassword: '8자 이상 입력해주세요.' }));
-            } else {
-              setErrors((prev) => ({ ...prev, newPassword: '' }));
-            }
-          }}
+          onChange={handleChange('newPassword')}
+          onBlur={handleNewPasswordBlur}
         />
       </div>
 
@@ -115,14 +122,8 @@ export const SettingsForm = () => {
           disabled={!isEditMode}
           isWarning={!!errors.confirmPassword}
           warningText={errors.confirmPassword}
-          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-          onBlur={() => {
-            if (formData.newPassword !== formData.confirmPassword) {
-              setErrors((prev) => ({ ...prev, confirmPassword: '비밀번호가 일치하지 않습니다.' }));
-            } else {
-              setErrors((prev) => ({ ...prev, confirmPassword: '' }));
-            }
-          }}
+          onChange={handleChange('confirmPassword')}
+          onBlur={handleConfirmPasswordBlur}
         />
       </div>
 
