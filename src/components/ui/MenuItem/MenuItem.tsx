@@ -13,8 +13,8 @@ export const MenuItem = ({ children, Icon, href, selected = false }: MenuItemPro
     <Link
       href={href}
       className={cn(
-        'hover:bg-primary-100 inline-flex h-13.5 w-full items-center gap-2 rounded-2xl bg-white px-5 font-medium text-gray-600',
-        selected && 'bg-primary-100 text-black md:h-12 lg:h-13.5'
+        'hover:bg-primary-100 inline-flex h-13.5 w-full items-center gap-2 rounded-2xl bg-white px-5 font-medium text-gray-600 md:h-12 lg:h-13.5',
+        selected && 'bg-primary-100 text-black'
       )}
     >
       {Icon && (
