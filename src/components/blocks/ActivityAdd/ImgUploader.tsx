@@ -28,7 +28,6 @@ export function ImgUpload({ mode, ref }: ImgUploadProps) {
         {mode === 'banner' ? '배너 이미지 등록' : '소개 이미지 등록'}
         <ImgLimit type={mode} currentAdd={imgFiles.length} />
       </div>
-
       <div className="flex gap-3">
         {imgFiles.length < LIMIT && (
           <UploadImg onFileSelect={(newFile: File) => setImgFiles((prev) => [...prev, newFile])} />
