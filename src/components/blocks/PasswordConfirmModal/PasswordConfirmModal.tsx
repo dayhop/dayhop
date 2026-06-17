@@ -5,6 +5,12 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 
-export const PasswordConfirmModal = () => {
+interface PasswordConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (password: string) => Promise<void>;
+}
+
+export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordConfirmModalProps) => {
   return <></>;
 };
