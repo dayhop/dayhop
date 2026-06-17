@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { CATEGORY_LIST } from '@/constants/categoty-list';
 import { useState } from 'react';
 
-export function ExperienceDetail({ data }) {
+export function ExperienceDetail() {
   const [categotySelected, setCategotySelected] = useState<string>('');
 
   return (
