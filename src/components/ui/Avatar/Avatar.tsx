@@ -15,13 +15,13 @@ type AvatarProps = {
 const avatarSizeClassName = {
   sm: 'h-5 w-5 md:h-6 md:w-6',
   md: 'h-[30px] w-[30px]',
-  lg: 'h-[70px] w-[70px] md:h-[120px] md:w-[120px]',
+  lg: 'h-[120px] w-[120px] md:h-[70px] md:w-[70px] lg:h-[120px] lg:w-[120px]',
 };
 
 const avatarSizes = {
   sm: '(min-width: 768px) 24px, 20px',
   md: '30px',
-  lg: '(min-width: 768px) 120px, 70px',
+  lg: '(min-width: 1024px) 120px, (min-width: 768px) 70px, 120px',
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
