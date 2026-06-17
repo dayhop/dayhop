@@ -36,5 +36,39 @@ export const SettingsForm = () => {
     setIsEditMode(false);
   };
 
+  const handleSaveClick = () => {
+    const newErrors = { newPassword: '', confirmPassword: '' };
+
+    if (formData.newPassword && formData.newPassword.length < 8) {
+      newErrors.newPassword = '8자 이상 입력해주세요.';
+    }
+    if (formData.newPassword !== formData.confirmPassword) {
+      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
+    }
+
+    setErrors(newErrors);
+    if (newErrors.newPassword || newErrors.confirmPassword) return;
+
+    setIsPasswordModalOpen(true);
+  };
+
+  const handlePasswordConfirm = async (password: string) => {
+    await postLogin({ email: user?.email ?? '', password });
+    try {
+      const updatedUser = await patchMyUser({
+        nickname: formData.nickname || undefined,
+        newPassword: formData.newPassword || undefined,
+      });
+      login(updatedUser);
+      setIsPasswordModalOpen(false);
+      setIsEditMode(false);
+      setFormData({ nickname: '', newPassword: '', confirmPassword: '' });
+      showToast.success('수정되었습니다.');
+    } catch {
+      showToast.error('수정에 실패했습니다.');
+      setIsPasswordModalOpen(false);
+    }
+  };
+
   return <></>;
 };
