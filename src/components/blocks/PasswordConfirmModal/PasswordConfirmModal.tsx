@@ -36,5 +36,7 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
     }
   };
 
+  if (!isOpen) return null;
+
   return <></>;
 };
