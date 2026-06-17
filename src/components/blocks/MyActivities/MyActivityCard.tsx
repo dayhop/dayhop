@@ -6,9 +6,11 @@ import type { ActivityItem } from '@/types/api';
 
 interface MyActivityCardProps {
   activity: ActivityItem;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export const MyActivityCard = ({ activity }: MyActivityCardProps) => {
+export const MyActivityCard = ({ activity, onEdit, onDelete }: MyActivityCardProps) => {
   return (
     <div className="shadow-card flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
       <div className="flex min-w-0 flex-col gap-1.5">
@@ -23,6 +25,7 @@ export const MyActivityCard = ({ activity }: MyActivityCardProps) => {
             variant="secondary"
             size="sm"
             className="w-auto px-3 text-[13px] whitespace-nowrap hover:bg-gray-50 active:bg-gray-100"
+            onClick={onEdit}
           >
             수정하기
           </Button>
@@ -30,6 +33,7 @@ export const MyActivityCard = ({ activity }: MyActivityCardProps) => {
             variant="secondary"
             size="sm"
             className="w-auto px-3 text-[13px] whitespace-nowrap hover:bg-gray-50 active:bg-gray-100"
+            onClick={onDelete}
           >
             삭제하기
           </Button>
