@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Popover, usePopover } from '@/components/ui/Popover';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -74,9 +74,14 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   const handleCancelEdit = () => {
     setIsEditConfirmOpen(false);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setPendingFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -88,7 +93,6 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
       const { profileImageUrl } = await postMyUserProfile({ image: pendingFile });
       const updatedUser = await patchMyUser({ profileImageUrl });
       login(updatedUser);
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       setPendingFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
