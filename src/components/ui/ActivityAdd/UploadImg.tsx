@@ -10,7 +10,6 @@ export function UploadImg({ onFileSelect }: UploadImgProp) {
     const file = e.target.files?.[0];
     if (!file) return;
     onFileSelect(file);
-    console.log(file.name);
   };
 
   return (

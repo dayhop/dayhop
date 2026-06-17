@@ -3,7 +3,7 @@
 import { ImgLimit } from '@/components/ui/ActivityAdd/ImgLimit';
 import { PreviewImg } from '@/components/ui/ActivityAdd/PreviewImg';
 import { UploadImg } from '@/components/ui/ActivityAdd/UploadImg';
-import { Ref, useImperativeHandle, useState } from 'react';
+import { Ref, useEffect, useImperativeHandle, useState } from 'react';
 
 interface ImgUploadProps {
   mode: 'banner' | 'detail';

@@ -16,7 +16,6 @@ export default function AddressForm() {
       zonecode: data.zonecode,
       address: data.address,
     });
-    console.log(addressData);
     setIsOpen(false);
   };
 

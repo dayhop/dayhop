@@ -101,11 +101,10 @@ export default function ActivityAddPage() {
 
       await postActivities(submitData);
       setIsOpen(true);
-      // showToast.success('체험 등록이 완료되었습니다.');
+      showToast.success('체험 등록이 완료되었습니다.');
       //TODO: 추가된 체험으로 이동하는 로직 추가
     } catch {
       showToast.error('체험 등록에 실패했습니다.');
-      //TODO 마이 페이지의 체험 관리 페이지로 이동
     }
   };
   return (

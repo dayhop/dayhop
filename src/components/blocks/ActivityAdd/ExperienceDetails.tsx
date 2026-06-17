@@ -16,7 +16,7 @@ export function ExperienceDetail() {
         <label htmlFor="name" className="font-bold">
           제목
         </label>
-        <Input name="title" placeholder="제목을 입력해주세요" />
+        <Input type="number" min="0" name="title" placeholder="제목을 입력해주세요" />
       </div>
       <SelectField
         label="카테고리"
