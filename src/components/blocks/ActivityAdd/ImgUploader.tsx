@@ -35,10 +35,14 @@ export function ImgUpload({ mode, ref, initialUrls }: ImgUploadProps) {
     imageToObjects();
   }, [initialUrls]);
 
-  useImperativeHandle(ref, () => ({
-    getValues: () => images.filter((img) => !!img.file).map((img) => img.file!),
-    getCurrentUrls: () => images.map((img) => img.url),
-  }));
+  useImperativeHandle(
+    ref,
+    () => ({
+      getValues: () => images.filter((img) => !!img.file).map((img) => img.file!),
+      getCurrentUrls: () => images.map((img) => img.url),
+    }),
+    [images]
+  );
 
   const handleFileSelect = (newFile: File) => {
     const newImage: ImageItem = {

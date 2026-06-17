@@ -15,7 +15,6 @@ interface ActivityDetailProps {
 export function ExperienceDetail({ data }: ActivityDetailProps) {
   const { title, category, description, address, price } = data || {};
   const [categotySelected, setCategotySelected] = useState<string>(category || '');
-  console.log(data);
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2.5">
