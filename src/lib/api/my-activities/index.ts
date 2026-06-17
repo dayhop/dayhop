@@ -1,12 +1,14 @@
+'use server';
+
 import { AxiosRequestConfig } from 'axios';
 import * as T from './type';
-import instance from '../instance';
+import { serverInstance } from '../instance';
 
 export async function getMyActivities(
   params?: T.GetMyActivitiesParams,
   config?: AxiosRequestConfig
 ): Promise<T.GetMyActivitiesResponse> {
-  const response = await instance.get<T.GetMyActivitiesResponse>('/my-activities', {
+  const response = await serverInstance.get<T.GetMyActivitiesResponse>('/my-activities', {
     params,
     ...config,
   });
@@ -18,7 +20,7 @@ export async function getMyActivityReservationDashboard(
   params: T.GetMyActivityReservationDashboardParams,
   config?: AxiosRequestConfig
 ): Promise<T.GetMyActivityReservationDashboardResponse[]> {
-  const response = await instance.get<T.GetMyActivityReservationDashboardResponse[]>(
+  const response = await serverInstance.get<T.GetMyActivityReservationDashboardResponse[]>(
     `/my-activities/${activityId}/reservation-dashboard`,
     {
       params,
@@ -33,7 +35,7 @@ export async function getMyActivityReservedSchedule(
   params: T.GetMyActivityReservedScheduleParams,
   config?: AxiosRequestConfig
 ): Promise<T.GetMyActivityReservedScheduleResponse[]> {
-  const response = await instance.get<T.GetMyActivityReservedScheduleResponse[]>(
+  const response = await serverInstance.get<T.GetMyActivityReservedScheduleResponse[]>(
     `/my-activities/${activityId}/reserved-schedule`,
     {
       params,
@@ -48,7 +50,7 @@ export async function getMyActivityReservations(
   params: T.GetMyActivityReservationsParams,
   config?: AxiosRequestConfig
 ): Promise<T.GetMyActivityReservationsResponse> {
-  const response = await instance.get<T.GetMyActivityReservationsResponse>(
+  const response = await serverInstance.get<T.GetMyActivityReservationsResponse>(
     `/my-activities/${activityId}/reservations`,
     {
       params,
@@ -64,7 +66,7 @@ export async function patchMyActivityReservationStatus(
   body: T.PatchMyActivityReservationStatusRequest,
   config?: AxiosRequestConfig
 ): Promise<T.PatchMyActivityReservationStatusResponse> {
-  const response = await instance.patch<T.PatchMyActivityReservationStatusResponse>(
+  const response = await serverInstance.patch<T.PatchMyActivityReservationStatusResponse>(
     `/my-activities/${activityId}/reservations/${reservationId}`,
     body,
     config
@@ -76,7 +78,7 @@ export async function deleteMyActivity(
   activityId: number,
   config?: AxiosRequestConfig
 ): Promise<void> {
-  await instance.delete(`/my-activities/${activityId}`, config);
+  await serverInstance.delete(`/my-activities/${activityId}`, config);
 }
 
 export async function patchMyActivity(
@@ -84,7 +86,7 @@ export async function patchMyActivity(
   body: T.PatchMyActivityRequest,
   config?: AxiosRequestConfig
 ): Promise<T.PatchMyActivityResponse> {
-  const response = await instance.patch<T.PatchMyActivityResponse>(
+  const response = await serverInstance.patch<T.PatchMyActivityResponse>(
     `/my-activities/${activityId}`,
     body,
     config
