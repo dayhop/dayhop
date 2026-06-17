@@ -14,7 +14,7 @@ interface ActivityDetailProps {
 
 export function ExperienceDetail({ data }: ActivityDetailProps) {
   const { title, category, description, address, price } = data || {};
-  const [categotySelected, setCategotySelected] = useState<string>(category || '');
+  const [categorySelected, setCategorySelected] = useState<string>(category || '');
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2.5">
@@ -27,10 +27,10 @@ export function ExperienceDetail({ data }: ActivityDetailProps) {
         label="카테고리"
         defaultMessage="카테고리를 선택해주세요"
         list={CATEGORY_LIST}
-        onSelectOption={setCategotySelected}
-        selectedOption={categotySelected}
+        onSelectOption={setCategorySelected}
+        selectedOption={categorySelected}
       />
-      <input type="hidden" name="category" value={categotySelected} />
+      <input type="hidden" name="category" value={categorySelected} />
       <Textarea label="설명" name="description" defaultValue={description} />
       <div className="flex flex-col gap-2.5">
         <label htmlFor="price" className="font-bold">

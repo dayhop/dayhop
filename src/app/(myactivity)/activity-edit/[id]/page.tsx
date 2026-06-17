@@ -98,16 +98,22 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     const detailUploadResponse = await Promise.all(detailUploadPromise);
 
     try {
+      let bannerImageUrl = initData.bannerImageUrl;
+      if (bannerFile[0]) {
+        const bannerUpload = await postActivitiesImage(bannerFile[0]);
+        bannerImageUrl = bannerUpload.activityImageUrl;
+      }
+
+      const detailUploadPromise = detailFiles.map((file) => postActivitiesImage(file));
+      const detailUploadResponse = await Promise.all(detailUploadPromise);
+      const subImageUrlsToAdd = detailUploadResponse.map((res) => res.activityImageUrl);
+
       //초기 데이터랑 비교 후 세팅 : 지워진 건 초기에는 있고, 현재에는 없고
-      const currentUrls = detailUploadResponse.map((res) => res.activityImageUrl);
+      const currentDetailUrls = detailUploadResponse.map((res) => res.activityImageUrl);
 
       const subImageIdsToRemove = initData.subImages
-        .filter((initdata) => !currentUrls.includes(initdata.imageUrl))
+        .filter((img) => !currentDetailUrls.includes(img.imageUrl))
         .map((img) => img.id);
-
-      const subImageUrlsToAdd = currentUrls.filter(
-        (url) => !initData.subImages.some((sub) => sub.imageUrl === url)
-      );
 
       const schedulesToAdd = schedules.filter(
         (s) =>
@@ -134,7 +140,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
         description,
         address,
         price,
-        bannerImageUrl: bannerUpload.activityImageUrl,
+        bannerImageUrl,
         subImageIdsToRemove,
         subImageUrlsToAdd,
         scheduleIdsToRemove,
@@ -161,7 +167,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
       }
     };
     getInitData();
-  }, []);
+  }, [id]);
 
   return (
     <div>
