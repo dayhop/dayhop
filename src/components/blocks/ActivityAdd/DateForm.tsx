@@ -4,6 +4,7 @@ import { useState, useImperativeHandle, type Ref } from 'react';
 import { CreateTimeSlotForm } from './CreateTimeSlotForm';
 import { AddedTimeSlotForm } from './AddedTimeSlotForm';
 import { ActivityScheduleInput } from '@/types/api';
+import { showToast } from '@/utils/toast';
 
 export interface DateFormRef {
   getValues: () => ActivityScheduleInput[];
@@ -21,6 +22,18 @@ export function DateForm({ ref }: { ref?: Ref<DateFormRef> }) {
   }));
 
   const handleAddSchedule = (newData: ActivityScheduleInput) => {
+    //중복 검사
+    const isDuplicate = schedules.some(
+      (schedule) =>
+        schedule.date === newData.date &&
+        schedule.startTime === newData.startTime &&
+        schedule.endTime === newData.endTime
+    );
+
+    if (isDuplicate) {
+      showToast.error('이미 등록된 시간대입니다.');
+      return;
+    }
     setSchedules((prev) => [...prev, { ...newData, id: crypto.randomUUID() }]);
   };
 
@@ -30,6 +43,19 @@ export function DateForm({ ref }: { ref?: Ref<DateFormRef> }) {
   };
 
   const handleUpdateSchedule = (newData: ScheduleItem) => {
+    //중복 검사
+    const isDuplicate = schedules.some(
+      (schedule) =>
+        schedule.id !== newData.id &&
+        schedule.date === newData.date &&
+        schedule.startTime === newData.startTime &&
+        schedule.endTime === newData.endTime
+    );
+
+    if (isDuplicate) {
+      showToast.error('이미 등록된 시간대입니다.');
+      return;
+    }
     setSchedules((prev) => prev.map((item) => (item.id === newData.id ? newData : item)));
   };
 
