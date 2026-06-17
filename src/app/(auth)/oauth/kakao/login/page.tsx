@@ -14,28 +14,32 @@ function KakaoLogin() {
   const code = searchParams.get('code');
 
   const handleAuth = async () => {
-    if (!code) return;
+    if (!code) {
+      showToast.error('유효하지 않은 토큰입니다.');
+      router.push('/login');
+      return;
+    }
     const body = {
       redirectUri: REDIRECT_LOGIN_URI,
       token: code,
     };
-
-    const response = await postOauthSignIn('kakao', body);
-    if (response.accessToken || response.refreshToken) {
-      router.push('/');
-      showToast.success(response.user.nickname + '님 반갑습니다.');
-      login(response.user);
+    try {
+      const response = await postOauthSignIn('kakao', body);
+      if (response.accessToken || response.refreshToken) {
+        router.push('/');
+        showToast.success(response.user.nickname + '님 반갑습니다.');
+        login(response.user);
+      }
+    } catch (e) {
+      showToast.error('로그인에 실패했습니다. 다시 시도해주세요.');
+      router.push('/login');
     }
   };
 
   useEffect(() => {
     if (ref.current) return;
     ref.current = true;
-    try {
-      handleAuth();
-    } catch (e) {
-      console.error(e);
-    }
+    handleAuth();
   }, [code, router]);
 
   return <div>카카오 로그인 중... 잠시만 기다려주세요.</div>;
