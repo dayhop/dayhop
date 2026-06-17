@@ -70,5 +70,70 @@ export const SettingsForm = () => {
     }
   };
 
-  return <></>;
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2.5">
+        <label className="text-text-primary text-base font-medium">닉네임</label>
+        <Input
+          value={isEditMode ? formData.nickname : (user?.nickname ?? '')}
+          disabled={!isEditMode}
+          onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        <label className="text-text-primary text-base font-medium">이메일</label>
+        <Input value={user?.email ?? ''} disabled />
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        <label className="text-text-primary text-base font-medium">새 비밀번호</label>
+        <Input
+          type="password"
+          placeholder="새 비밀번호를 입력해 주세요"
+          value={formData.newPassword}
+          disabled={!isEditMode}
+          isWarning={!!errors.newPassword}
+          warningText={errors.newPassword}
+          onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2.5">
+        <label className="text-text-primary text-base font-medium">비밀번호 확인</label>
+        <Input
+          type="password"
+          placeholder="비밀번호를 한 번 더 입력해 주세요"
+          value={formData.confirmPassword}
+          disabled={!isEditMode}
+          isWarning={!!errors.confirmPassword}
+          warningText={errors.confirmPassword}
+          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+        />
+      </div>
+
+      <div className="flex justify-center gap-2">
+        {isEditMode ? (
+          <>
+            <Button variant="secondary" onClick={handleEditCancel} className="w-32 p-0">
+              취소
+            </Button>
+            <Button variant="primary" onClick={handleSaveClick} className="w-32 p-0">
+              저장하기
+            </Button>
+          </>
+        ) : (
+          <Button variant="primary" onClick={handleEditStart} className="w-32 p-0">
+            수정하기
+          </Button>
+        )}
+      </div>
+
+      <PasswordConfirmModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        onConfirm={handlePasswordConfirm}
+      />
+    </div>
+  );
 };
