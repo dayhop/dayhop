@@ -6,7 +6,7 @@ import { getMyUser } from '@/lib/api/users';
 import { ActivityItem } from '@/types/api';
 import { useEffect, useState } from 'react';
 
-export function UserFitActivities() {
+export function UserClickMostActivities() {
   const [activitiesList, setActivitiesList] = useState<ActivityItem[]>([]);
   const [nickname, setNickname] = useState<string>('');
 
@@ -15,7 +15,9 @@ export function UserFitActivities() {
 
     const fetchActivities = async () => {
       const userClickActicities = localStorage.getItem('useActivity');
+      console.log(userClickActicities);
       if (!userClickActicities) return;
+
       const list = JSON.parse(userClickActicities).clicks;
       const userfitList = Object.entries(list)
         .sort(([, a], [, b]) => (b as number) - (a as number))
@@ -24,6 +26,7 @@ export function UserFitActivities() {
       const data = await Promise.all(
         userfitList.map((activityId) => getActivity(Number(activityId)))
       );
+
       setActivitiesList(data);
     };
 
@@ -33,12 +36,16 @@ export function UserFitActivities() {
     };
 
     fetchActivities();
-    getNickname();
+    try {
+      getNickname();
+    } catch {}
   }, []);
+
+  const name = nickname || '회원';
 
   return (
     <div>
-      <ActivityCardContainer title={`${nickname}님에게 딱 맞는!`} activitiesList={activitiesList} />
+      <ActivityCardContainer title={`${name}님이 자주 찾는 체험`} activitiesList={activitiesList} />
     </div>
   );
 }
