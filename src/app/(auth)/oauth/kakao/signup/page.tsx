@@ -3,17 +3,18 @@
 import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 
 import { postOauthSignUp } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { REDIRECT_SIGNUP_URI } from '@/app/(auth)/components/Oauth';
 
-export default function KakaoSignUpPage() {
+function KakaoSignUpForm() {
   const { login } = useAuthStore();
   const router = useRouter();
   const [nickname, setNickname] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const params = useSearchParams();
   const token = params.get('code');
@@ -23,6 +24,10 @@ export default function KakaoSignUpPage() {
     if (!token) {
       showToast.error('유효하지 않은 접근입니다.');
       router.push('/signup');
+      return;
+    }
+    if (!nickname.trim()) {
+      setErrorMessage('닉네임을 입력해주세요');
       return;
     }
     try {
@@ -43,6 +48,7 @@ export default function KakaoSignUpPage() {
     <form className="mx-auto mt-50 flex max-w-100 flex-col gap-3" onSubmit={handleClickSignup}>
       <label htmlFor="name">닉네임</label>
       <Input
+        warningText={errorMessage}
         id="name"
         placeholder="닉네임을 입력해주세요"
         value={nickname}
@@ -55,5 +61,13 @@ export default function KakaoSignUpPage() {
         <Button type="submit">회원가입하기</Button>
       </div>
     </form>
+  );
+}
+
+export default function KakaoSignUpPage() {
+  return (
+    <Suspense fallback={<div>페이지를 불러오는 중입니다...</div>}>
+      <KakaoSignUpForm />
+    </Suspense>
   );
 }

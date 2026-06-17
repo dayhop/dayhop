@@ -1,12 +1,12 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { postOauthSignIn } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { REDIRECT_LOGIN_URI } from '../../../components/Oauth';
 
-export default function OauthPage() {
+function KakaoLogin() {
   const ref = useRef(false);
   const { login } = useAuthStore();
   const router = useRouter();
@@ -39,4 +39,12 @@ export default function OauthPage() {
   }, [code, router]);
 
   return <div>카카오 로그인 중... 잠시만 기다려주세요.</div>;
+}
+
+export default function OauthPage() {
+  return (
+    <Suspense fallback={<div>카카오 로그인 정보를 불러오는 중입니다...</div>}>
+      <KakaoLogin />
+    </Suspense>
+  );
 }
