@@ -22,5 +22,19 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
     onClose();
   };
 
+  const handleConfirm = async () => {
+    if (!password) return;
+    setIsLoading(true);
+    try {
+      await onConfirm(password);
+      setPassword('');
+      setErrorMessage('');
+    } catch {
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return <></>;
 };
