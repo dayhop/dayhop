@@ -1,4 +1,5 @@
-import instance from '../instance';
+'use server';
+import { serverInstance } from '../instance';
 import * as T from './type';
 
 export const getMyReservations = async ({
@@ -6,7 +7,7 @@ export const getMyReservations = async ({
   size,
   status,
 }: T.GetMyReservationsParams): Promise<T.GetMyReservationsResponse> => {
-  const { data } = await instance.get<T.GetMyReservationsResponse>('/my-reservations', {
+  const { data } = await serverInstance.get<T.GetMyReservationsResponse>('/my-reservations', {
     params: { cursorId, size, status },
   });
   return data;
@@ -16,7 +17,7 @@ export const patchMyReservation = async (
   { reservationId }: T.PatchMyReservationParams,
   body: T.PatchMyReservationBody
 ): Promise<T.PatchMyReservationResponse> => {
-  const { data } = await instance.patch<T.PatchMyReservationResponse>(
+  const { data } = await serverInstance.patch<T.PatchMyReservationResponse>(
     `/my-reservations/${reservationId}`,
     body
   );
@@ -27,7 +28,7 @@ export const patchMyReservationApplication = async (
   { reservationId }: T.PatchMyReservationParams,
   body: T.PatchMyReservationApplicationBody
 ): Promise<T.PatchMyReservationApplicationResponse> => {
-  const { data } = await instance.patch<T.PatchMyReservationApplicationResponse>(
+  const { data } = await serverInstance.patch<T.PatchMyReservationApplicationResponse>(
     `/my-reservations/${reservationId}/application`,
     body
   );
@@ -38,7 +39,7 @@ export const postMyReservationReview = async (
   { reservationId }: T.PostMyReservationReviewParams,
   body: T.PostMyReservationReviewBody
 ): Promise<T.PostMyReservationReviewResponse> => {
-  const { data } = await instance.post<T.PostMyReservationReviewResponse>(
+  const { data } = await serverInstance.post<T.PostMyReservationReviewResponse>(
     `/my-reservations/${reservationId}/reviews`,
     body
   );
