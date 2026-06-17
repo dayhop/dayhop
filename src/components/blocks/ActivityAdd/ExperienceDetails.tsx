@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { CATEGORY_LIST } from '@/constants/categoty-list';
 import { useState } from 'react';
 
-export function ExperienceDetail() {
+export function ExperienceDetail({ data }) {
   const [categotySelected, setCategotySelected] = useState<string>('');
 
   return (
@@ -16,7 +16,7 @@ export function ExperienceDetail() {
         <label htmlFor="name" className="font-bold">
           제목
         </label>
-        <Input type="number" min="0" name="title" placeholder="제목을 입력해주세요" />
+        <Input name="title" placeholder="제목을 입력해주세요" />
       </div>
       <SelectField
         label="카테고리"
@@ -31,7 +31,7 @@ export function ExperienceDetail() {
         <label htmlFor="price" className="font-bold">
           가격
         </label>
-        <Input name="price" placeholder="체험 금액을 입력해주세요" />
+        <Input name="price" type="number" min="0" placeholder="체험 금액을 입력해주세요" />
       </div>
       <div className="flex flex-col gap-2.5">
         <label htmlFor="address" className="font-bold">
