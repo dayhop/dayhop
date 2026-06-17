@@ -28,6 +28,15 @@ serverInstance.interceptors.response.use(
       !originalRequest._retry &&
       !originalRequest.url?.includes('/auth/tokens')
     ) {
+      const cookieStore = await cookies();
+
+      //리프레쉬 토큰도 없으면 바로 에러
+      const hasRefreshToken = cookieStore.has('refreshToken');
+
+      if (!hasRefreshToken) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
       try {
         await postRefreshToken();
