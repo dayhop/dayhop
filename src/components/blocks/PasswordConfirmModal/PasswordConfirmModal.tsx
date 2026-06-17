@@ -16,5 +16,11 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleClose = () => {
+    setPassword('');
+    setErrorMessage('');
+    onClose();
+  };
+
   return <></>;
 };
