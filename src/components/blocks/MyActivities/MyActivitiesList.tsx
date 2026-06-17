@@ -1,26 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { MyActivityCard } from './MyActivityCard';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
-import { deleteMyActivity } from '@/lib/api/my-activities';
+import { deleteMyActivity, getMyActivities } from '@/lib/api/my-activities';
 import { showToast } from '@/utils/toast';
 import type { ActivityItem } from '@/types/api';
 
 interface MyActivitiesListProps {
   activities: ActivityItem[];
+  cursorId: number | null;
 }
 
-export const MyActivitiesList = ({ activities }: MyActivitiesListProps) => {
+export const MyActivitiesList = ({
+  activities: initialActivities,
+  cursorId: initialCursorId,
+}: MyActivitiesListProps) => {
   const router = useRouter();
+  const [activities, setActivities] = useState(initialActivities);
+  const [cursorId, setCursorId] = useState(initialCursorId);
+  const [isLoading, setIsLoading] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!cursorId) return;
+
+    const observer = new IntersectionObserver(
+      async ([entry]) => {
+        if (!entry.isIntersecting || isLoading) return;
+        setIsLoading(true);
+        const { activities: next, cursorId: nextCursor } = await getMyActivities({ cursorId });
+        setActivities((prev) => [...prev, ...next]);
+        setCursorId(nextCursor);
+        setIsLoading(false);
+      },
+      { threshold: 0.5 }
+    );
+
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [cursorId, isLoading]);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTargetId) return;
     await deleteMyActivity(deleteTargetId);
+    setActivities((prev) => prev.filter((a) => a.id !== deleteTargetId));
     showToast.success('체험이 삭제되었습니다.');
-    router.refresh();
     setDeleteTargetId(null);
   };
 
@@ -38,11 +65,13 @@ export const MyActivitiesList = ({ activities }: MyActivitiesListProps) => {
         ))}
       </ul>
 
+      {cursorId && <div ref={observerRef} className="h-4" />}
+
       <ConfirmModal
         isOpen={!!deleteTargetId}
         onClose={() => setDeleteTargetId(null)}
         onConfirm={handleDeleteConfirm}
-        message={`체험을 삭제하시겠습니까?`}
+        message="체험을 삭제하시겠습니까?"
         confirmText="삭제"
         cancelText="취소"
       />

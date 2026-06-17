@@ -40,7 +40,13 @@ export const MyActivityCard = ({ activity, onEdit, onDelete }: MyActivityCardPro
         </div>
       </div>
       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl">
-        <Image src={activity.bannerImageUrl} alt={activity.title} fill className="object-cover" />
+        <Image
+          src={activity.bannerImageUrl}
+          alt={activity.title}
+          fill
+          sizes="96px"
+          className="object-cover"
+        />
       </div>
     </div>
   );
