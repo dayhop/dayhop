@@ -14,16 +14,13 @@ import {
 import { patchMyActivity } from '@/lib/api/my-activities';
 import { PatchMyActivityRequest } from '@/lib/api/my-activities/type';
 import { showToast } from '@/utils/toast';
-
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 
 interface EditPageProps {
-  params: {
-    id: number;
-  };
+  params: Promise<{ id: number }>;
 }
 export default function ActivityEditPage({ params }: EditPageProps) {
-  const { id } = params;
+  const { id } = use(params);
 
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
