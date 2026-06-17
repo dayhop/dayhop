@@ -12,6 +12,13 @@ import { showToast } from '@/utils/toast';
 const INITIAL_FORM = { nickname: '', newPassword: '', confirmPassword: '' };
 const INITIAL_ERRORS = { newPassword: '', confirmPassword: '' };
 
+const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div className="flex flex-col gap-2.5">
+    <label className="text-text-primary text-base font-medium">{label}</label>
+    {children}
+  </div>
+);
+
 export const SettingsForm = () => {
   const user = useAuthStore((state) => state.user);
   const login = useAuthStore((state) => state.login);
@@ -26,6 +33,12 @@ export const SettingsForm = () => {
       setFormData((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
+  const getPasswordError = () =>
+    formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '';
+
+  const getConfirmPasswordError = () =>
+    formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '';
+
   const handleEditStart = () => {
     setFormData({ ...INITIAL_FORM, nickname: user?.nickname ?? '' });
     setIsEditMode(true);
@@ -38,27 +51,17 @@ export const SettingsForm = () => {
   };
 
   const handleNewPasswordBlur = () => {
-    setErrors((prev) => ({
-      ...prev,
-      newPassword:
-        formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '',
-    }));
+    setErrors((prev) => ({ ...prev, newPassword: getPasswordError() }));
   };
 
   const handleConfirmPasswordBlur = () => {
-    setErrors((prev) => ({
-      ...prev,
-      confirmPassword:
-        formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '',
-    }));
+    setErrors((prev) => ({ ...prev, confirmPassword: getConfirmPasswordError() }));
   };
 
   const handleSaveClick = () => {
     const newErrors = {
-      newPassword:
-        formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '',
-      confirmPassword:
-        formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '',
+      newPassword: getPasswordError(),
+      confirmPassword: getConfirmPasswordError(),
     };
     setErrors(newErrors);
     if (newErrors.newPassword || newErrors.confirmPassword) return;
@@ -73,34 +76,31 @@ export const SettingsForm = () => {
         newPassword: formData.newPassword || undefined,
       });
       login(updatedUser);
-      setIsPasswordModalOpen(false);
       setIsEditMode(false);
       setFormData(INITIAL_FORM);
       showToast.success('수정되었습니다.');
     } catch {
       showToast.error('수정에 실패했습니다.');
+    } finally {
       setIsPasswordModalOpen(false);
     }
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2.5">
-        <label className="text-text-primary text-base font-medium">닉네임</label>
+      <FormField label="닉네임">
         <Input
           value={isEditMode ? formData.nickname : (user?.nickname ?? '')}
           disabled={!isEditMode}
           onChange={handleChange('nickname')}
         />
-      </div>
+      </FormField>
 
-      <div className="flex flex-col gap-2.5">
-        <label className="text-text-primary text-base font-medium">이메일</label>
+      <FormField label="이메일">
         <Input value={user?.email ?? ''} disabled />
-      </div>
+      </FormField>
 
-      <div className="flex flex-col gap-2.5">
-        <label className="text-text-primary text-base font-medium">새 비밀번호</label>
+      <FormField label="새 비밀번호">
         <Input
           type="password"
           placeholder="새 비밀번호를 입력해 주세요"
@@ -111,10 +111,9 @@ export const SettingsForm = () => {
           onChange={handleChange('newPassword')}
           onBlur={handleNewPasswordBlur}
         />
-      </div>
+      </FormField>
 
-      <div className="flex flex-col gap-2.5">
-        <label className="text-text-primary text-base font-medium">비밀번호 확인</label>
+      <FormField label="비밀번호 확인">
         <Input
           type="password"
           placeholder="비밀번호를 한 번 더 입력해 주세요"
@@ -125,7 +124,7 @@ export const SettingsForm = () => {
           onChange={handleChange('confirmPassword')}
           onBlur={handleConfirmPasswordBlur}
         />
-      </div>
+      </FormField>
 
       <div className="flex justify-center gap-2">
         {isEditMode ? (
