@@ -5,34 +5,29 @@ import { Modal } from '../Modal';
 import { Button } from '../Button';
 import IconClose from '@/assets/icon/icon-close.svg';
 
-export default function AddressForm() {
+interface AddressFormProps {
+  defaultValue?: string;
+}
+
+export default function AddressForm({ defaultValue }: AddressFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [addressData, setAddressData] = useState({
-    zonecode: '',
-    address: '',
-  });
+  const [addressData, setAddressData] = useState(defaultValue || '');
   const handleComplete = (data: Address) => {
-    setAddressData({
-      zonecode: data.zonecode,
-      address: data.address,
-    });
+    setAddressData(data.address);
     setIsOpen(false);
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex gap-2">
-        <Input value={addressData.zonecode} readOnly placeholder="우편번호" />
-        <Button type="button" onClick={() => setIsOpen(true)} className="w-40 shrink-0 text-sm">
-          우편번호 찾기
-        </Button>
-      </div>
+    <div className="flex w-full gap-3">
       <Input
-        value={addressData.address}
+        value={addressData}
         name="address"
         readOnly
         placeholder="버튼을 클릭해 주소를 찾아주세요."
       />
+      <Button type="button" onClick={() => setIsOpen(true)} className="w-40 shrink-0 text-sm">
+        우편번호 찾기
+      </Button>
       {isOpen && (
         <Modal
           onClose={() => setIsOpen(false)}

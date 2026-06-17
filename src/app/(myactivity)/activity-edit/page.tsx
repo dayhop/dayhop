@@ -8,6 +8,7 @@ import { Modal } from '@/components/ui/Modal';
 import { getActivity, postActivities, postActivitiesImage } from '@/lib/api/activities';
 import {
   ActivityCategory,
+  ActivityResponse,
   ActivityScheduleInput,
   PostActivitiesData,
 } from '@/lib/api/activities/type';
@@ -20,6 +21,8 @@ export default function ActivityEditPage() {
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
   const detailRef = useRef<ImgUploadRef>(null);
+
+  const [initData, setInitData] = useState<ActivityResponse>();
 
   //모달
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -112,13 +115,16 @@ export default function ActivityEditPage() {
     }
   };
 
-  //보여줄 데이터 가져오기
-  const getInitData = async () => {
-    const response = await getActivity(activityId);
-  };
-
   //화면에 마운트 되자마자 초기데이터를 가져옴
   useEffect(() => {
+    const getInitData = async () => {
+      try {
+        const response = await getActivity(activityId);
+        setInitData(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
     getInitData();
   }, []);
 
@@ -134,12 +140,22 @@ export default function ActivityEditPage() {
       )}
       <form className="flex flex-col justify-center gap-6" onSubmit={handleSubmit}>
         <div className="py-2.5 text-lg font-bold">내 체험 등록</div>
-        <ExperienceDetail />
-        <DateForm ref={dateRef} />
-        <ImgUpload mode="banner" ref={bannerRef} />
-        <ImgUpload mode="detail" ref={detailRef} />
+        <ExperienceDetail data={initData} key={initData?.id || 'loading'} />
+        <DateForm ref={dateRef} data={initData} />
+        <ImgUpload
+          mode="banner"
+          ref={bannerRef}
+          initialUrls={initData?.bannerImageUrl ? [initData.bannerImageUrl] : undefined}
+        />
+        <ImgUpload
+          mode="detail"
+          ref={detailRef}
+          initialUrls={
+            initData?.subImages ? initData.subImages.map((img) => img.imageUrl) : undefined
+          }
+        />
         <Button type="submit" size="md" className="mx-auto w-40">
-          등록하기
+          수정하기
         </Button>
       </form>
     </div>
