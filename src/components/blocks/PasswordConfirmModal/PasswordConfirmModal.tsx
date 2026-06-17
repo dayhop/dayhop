@@ -38,5 +38,20 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
 
   if (!isOpen) return null;
 
-  return <></>;
+  return (
+    <Modal onClose={handleClose} className="w-[320px] max-w-[calc(100vw-32px)] p-8! md:w-100">
+      <h2 className="text-lg font-bold">비밀번호 확인</h2>
+      <Input
+        type="password"
+        placeholder="현재 비밀번호를 입력해 주세요"
+        value={password}
+        isWarning={!!errorMessage}
+        warningText={errorMessage}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          setErrorMessage('');
+        }}
+      />
+    </Modal>
+  );
 };
