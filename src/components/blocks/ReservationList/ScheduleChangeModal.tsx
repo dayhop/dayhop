@@ -56,7 +56,6 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       window.location.reload();
     } catch (error) {
       showToast.error('예약 변경에 실패했습니다.');
-    } finally {
       onClose();
     }
   };

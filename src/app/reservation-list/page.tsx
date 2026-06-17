@@ -32,6 +32,14 @@ export default function ReservationListPage() {
 
   // 필터 변경 시
   useEffect(() => {
+    //바로 한 번 초기화
+    const initialData = () => {
+      setReservationList([]);
+      setCursorId(null);
+      setHasMore(true);
+    };
+    initialData();
+
     const fetchInitialData = async () => {
       setIsLoading(true);
       try {
@@ -39,6 +47,7 @@ export default function ReservationListPage() {
         if (activeStatus !== 'all') {
           params.status = activeStatus;
         }
+        //초기 데이터
         const response = await getMyReservations(params);
         setReservationList(response.reservations);
         setCursorId(response.cursorId);
@@ -56,7 +65,7 @@ export default function ReservationListPage() {
 
   // 스크롤
   useEffect(() => {
-    if (!observerRef.current) return;
+    if (!observerRef.current || isLoading || !hasMore) return;
 
     const fetchData = async () => {
       if (isLoading || !hasMore || !cursorId) return;
