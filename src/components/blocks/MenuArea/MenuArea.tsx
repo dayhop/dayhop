@@ -21,7 +21,12 @@ export const MenuArea = () => {
   return (
     <div className="flex flex-col items-center gap-3.5 md:gap-3">
       {MENU_ITEMS.map(({ label, Icon, href }) => (
-        <MenuItem key={href} Icon={Icon} href={href} selected={pathname === href}>
+        <MenuItem
+          key={href}
+          Icon={Icon}
+          href={href}
+          selected={pathname === href || pathname?.startsWith(`${href}/`)}
+        >
           {label}
         </MenuItem>
       ))}
