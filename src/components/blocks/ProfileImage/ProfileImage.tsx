@@ -16,6 +16,10 @@ interface ProfileMenuProps {
   onEditClick: () => void;
 }
 
+interface ProfileImageProps {
+  editable?: boolean;
+}
+
 const ProfileMenu = ({ onDeleteClick, onEditClick }: ProfileMenuProps) => {
   const { close } = usePopover();
 
@@ -47,7 +51,7 @@ const ProfileMenu = ({ onDeleteClick, onEditClick }: ProfileMenuProps) => {
   );
 };
 
-export const ProfileImage = () => {
+export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
   const user = useAuthStore((state) => state.user);
   const login = useAuthStore((state) => state.login);
 
@@ -102,6 +106,10 @@ export const ProfileImage = () => {
       <EditIcon2 className="absolute right-0 bottom-0 md:h-6 md:w-6 lg:h-7.5 lg:w-7.5" />
     </div>
   );
+
+  if (!editable) {
+    return <Avatar size="lg" src={user?.profileImageUrl ?? undefined} />;
+  }
 
   return (
     <div>
