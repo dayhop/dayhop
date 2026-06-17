@@ -107,7 +107,7 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
   const triggerEl = (
     <div className="relative">
       <Avatar size="lg" src={previewUrl ?? user?.profileImageUrl ?? undefined} />
-      <EditIcon2 className="absolute right-0 bottom-0 md:h-6 md:w-6 lg:h-7.5 lg:w-7.5" />
+      <EditIcon2 className="absolute right-0 bottom-0 h-7.5 w-7.5 md:h-6 md:w-6 lg:h-7.5 lg:w-7.5" />
     </div>
   );
 
