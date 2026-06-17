@@ -105,7 +105,7 @@ export function MapActivityCard({
           {/* 썸네일 */}
           <div
             className="relative aspect-square w-32 shrink-0 cursor-pointer overflow-hidden rounded-xl bg-gray-100 md:w-36"
-            onClick={() => router.push(`/activity/${selectedActivity.id}`)}
+            onClick={() => router.push(`/activities/${selectedActivity.id}`)}
           >
             <Image
               src={selectedActivity.bannerImageUrl}
@@ -120,7 +120,7 @@ export function MapActivityCard({
           {/* 정보 */}
           <div className="flex h-full min-w-0 flex-1 flex-col justify-between py-0.5 pr-2">
             <div
-              onClick={() => router.push(`/activity/${selectedActivity.id}`)}
+              onClick={() => router.push(`/activities/${selectedActivity.id}`)}
               className="cursor-pointer"
             >
               <span className="text-primary bg-primary-100 rounded-md px-2 py-0.5 text-xs font-bold">
