@@ -39,8 +39,11 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
   if (!isOpen) return null;
 
   return (
-    <Modal onClose={handleClose} className="w-[320px] max-w-[calc(100vw-32px)] p-8! md:w-100">
-      <h2 className="text-lg font-bold">비밀번호 확인</h2>
+    <Modal
+      onClose={handleClose}
+      className="p-y:8 p-x:4 w-[320px] max-w-[calc(100vw-32px)] md:w-100 md:p-8"
+    >
+      <h2 className="mb-2.5 text-lg font-bold">비밀번호 확인</h2>
       <Input
         type="password"
         placeholder="현재 비밀번호를 입력해 주세요"
@@ -52,6 +55,21 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
           setErrorMessage('');
         }}
       />
+
+      <div className="mt-5 flex gap-2">
+        <Button variant="secondary" size="md" className="flex-1" onClick={handleClose}>
+          취소
+        </Button>
+        <Button
+          variant="primary"
+          size="md"
+          className="flex-1"
+          disabled={!password || isLoading}
+          onClick={handleConfirm}
+        >
+          확인
+        </Button>
+      </div>
     </Modal>
   );
 };
