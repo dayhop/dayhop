@@ -14,12 +14,16 @@ import {
 import { patchMyActivity } from '@/lib/api/my-activities';
 import { PatchMyActivityRequest } from '@/lib/api/my-activities/type';
 import { showToast } from '@/utils/toast';
-import { useSearchParams } from 'next/navigation';
+
 import { useEffect, useRef, useState } from 'react';
 
-export default function ActivityEditPage() {
-  const parmas = useSearchParams();
-  const activityId = Number(parmas.get('id'));
+interface EditPageProps {
+  params: {
+    id: number;
+  };
+}
+export default function ActivityEditPage({ params }: EditPageProps) {
+  const { id } = params;
 
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
@@ -140,7 +144,7 @@ export default function ActivityEditPage() {
         schedulesToAdd,
       };
 
-      await patchMyActivity(activityId, submitData);
+      await patchMyActivity(id, submitData);
       setIsOpen(false);
       showToast.success('체험 수정이 완료되었습니다.');
       //TODO: 추가된 체험으로 이동하는 로직 추가
@@ -153,7 +157,7 @@ export default function ActivityEditPage() {
   useEffect(() => {
     const getInitData = async () => {
       try {
-        const response = await getActivity(activityId);
+        const response = await getActivity(id);
         setInitData(response);
       } catch (error) {
         console.error(error);
