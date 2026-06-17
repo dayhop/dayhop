@@ -96,6 +96,13 @@ export const SettingsForm = () => {
           isWarning={!!errors.newPassword}
           warningText={errors.newPassword}
           onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+          onBlur={() => {
+            if (formData.newPassword && formData.newPassword.length < 8) {
+              setErrors((prev) => ({ ...prev, newPassword: '8자 이상 입력해주세요.' }));
+            } else {
+              setErrors((prev) => ({ ...prev, newPassword: '' }));
+            }
+          }}
         />
       </div>
 
@@ -109,6 +116,13 @@ export const SettingsForm = () => {
           isWarning={!!errors.confirmPassword}
           warningText={errors.confirmPassword}
           onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+          onBlur={() => {
+            if (formData.newPassword !== formData.confirmPassword) {
+              setErrors((prev) => ({ ...prev, confirmPassword: '비밀번호가 일치하지 않습니다.' }));
+            } else {
+              setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+            }
+          }}
         />
       </div>
 
