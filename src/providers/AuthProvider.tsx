@@ -16,6 +16,9 @@ export default function AuthProvider({ children, initialUser }: AuthProviderProp
   useEffect(() => {
     if (initialUser) {
       login(initialUser);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
     }
   }, [initialUser, login]);
 
