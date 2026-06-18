@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { MyActivityCard } from './MyActivityCard';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { EmptyState } from '@/components/ui/EmptyState/EmptyState';
 import { deleteMyActivity, getMyActivities } from '@/lib/api/my-activities';
 import { showToast } from '@/utils/toast';
 import type { ActivityItem } from '@/types/api';
@@ -50,6 +51,10 @@ export const MyActivitiesList = ({
     showToast.success('체험이 삭제되었습니다.');
     setDeleteTargetId(null);
   };
+
+  if (activities.length === 0) {
+    return <EmptyState message="아직 등록한 체험이 없습니다." />;
+  }
 
   return (
     <>
