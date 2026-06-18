@@ -226,36 +226,37 @@ export function ReservationPaycard({
     }
 
     setIsSubmitting(true);
+    let res;
+
+    // 1. 백엔드 예약 생성 (pending 상태)
     try {
-      // 1. 백엔드 예약 생성 (pending 상태)
-      let res;
-      try {
-        res = await postActivityReservations(activityId, {
-          scheduleId: selectedScheduleId,
-          headCount,
-        });
-      } catch (apiError) {
-        console.warn(
-          'API reservation creation failed, using mock reservation for testing:',
-          apiError
-        );
-
-        const errorStatus = (apiError as { response?: { status?: number } })?.response?.status;
-        if (errorStatus === 401) {
-          showToast.error('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
-          router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
-          return;
-        }
-
-        res = {
-          id: generateRandomId(),
-        };
+      res = await postActivityReservations(activityId, {
+        scheduleId: selectedScheduleId,
+        headCount,
+      });
+    } catch (apiError) {
+      const errorStatus = (apiError as { response?: { status?: number } })?.response?.status;
+      if (errorStatus === 401) {
+        showToast.error('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
+        router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
+        setIsSubmitting(false);
+        return;
       }
 
-      // 2. 토스페이먼츠 SDK 호출
-      if (typeof window !== 'undefined' && window.TossPayments) {
-        const tossPayments = window.TossPayments('test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq');
-        const cleanUrl = window.location.origin + window.location.pathname;
+      console.warn(
+        'API reservation creation failed, using mock reservation for testing:',
+        apiError
+      );
+      res = {
+        id: generateRandomId(),
+      };
+    }
+
+    // 2. 토스페이먼츠 SDK 호출
+    if (typeof window !== 'undefined' && window.TossPayments) {
+      const tossPayments = window.TossPayments('test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq');
+      const cleanUrl = window.location.origin + window.location.pathname;
+      try {
         await tossPayments.requestPayment('카드', {
           amount: totalPrice,
           orderId: `res-${res.id}-${getTimestamp()}`,
@@ -264,14 +265,13 @@ export function ReservationPaycard({
           successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.id}`,
           failUrl: `${cleanUrl}?paymentStatus=fail`,
         });
-      } else {
-        showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+      } catch (paymentError) {
+        console.error('Payment request failed:', paymentError);
       }
-    } catch (error) {
-      console.error('Reservation failed:', error);
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     }
+    setIsSubmitting(false);
   };
 
   return (
