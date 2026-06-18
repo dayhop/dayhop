@@ -103,27 +103,6 @@ export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
               </div>
               <span className="text-text-tertiary mt-1 text-xs">{totalCount}개 후기</span>
             </div>
-
-            {/* 별점 비율 분포 (시각 효과용) */}
-            <div className="hidden w-full max-w-[280px] flex-col gap-2.5 sm:flex">
-              {[5, 4, 3, 2, 1].map((star) => {
-                const countByStar = reviews.filter((r) => Math.round(r.rating) === star).length;
-                const percentage = totalCount > 0 ? (countByStar / totalCount) * 100 : 0;
-                return (
-                  <div key={star} className="flex items-center gap-3 text-xs">
-                    <span className="text-text-secondary w-6 text-right font-medium">{star}점</span>
-                    <div className="h-2 flex-1 overflow-hidden rounded bg-gray-100">
-                      <div
-                        className="bg-primary h-full rounded"
-                        style={{
-                          width: `${Math.max(percentage, star === 5 ? 75 : star === 4 ? 20 : 5)}%`,
-                        }} // Visual approximation matching normal distributions
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </div>
 
           {/* 후기 리스트 */}

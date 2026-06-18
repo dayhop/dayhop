@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { deleteMyActivity } from '@/lib/api/my-activities';
+import { showToast } from '@/utils/toast';
 
 interface KebabMenuProps {
   activityId: number;
@@ -10,6 +13,7 @@ interface KebabMenuProps {
 export const KebabMenu = ({ activityId }: KebabMenuProps) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,6 +46,19 @@ export const KebabMenu = ({ activityId }: KebabMenuProps) => {
 
   const handleDeleteClick = () => {
     setIsOpen(false);
+    setIsConfirmOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await deleteMyActivity(activityId);
+      showToast.success('체험이 성공적으로 삭제되었습니다.');
+      setIsConfirmOpen(false);
+      router.push('/');
+    } catch (error) {
+      console.error('Failed to delete activity:', error);
+      showToast.error('체험 삭제에 실패했습니다. 다시 시도해 주세요.');
+    }
   };
 
   return (
@@ -76,6 +93,13 @@ export const KebabMenu = ({ activityId }: KebabMenuProps) => {
           </button>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        message="정말 삭제하시겠습니까?"
+      />
     </div>
   );
 };
