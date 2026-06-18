@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
+import { showToast } from '@/utils/toast';
 import { Avatar } from '@/components/ui/Avatar';
 import LogoIcon from '@/assets/icon/logoIcon.svg';
 import IconBell from '@/assets/icon/icon_bell.svg';
@@ -10,8 +12,10 @@ import IconBellDot from '@/assets/icon/icon_bell_dot.svg';
 import { getMyNotifications, deleteMyNotification } from '@/lib/api/my-notifications';
 import type { Notification } from '@/lib/api/my-notifications/type';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { NotificationPopover } from '@/components/blocks/Notification';
 
 export const Header = () => {
+  const router = useRouter();
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -21,7 +25,7 @@ export const Header = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  // 알림 목록 조회 및 60초 폴링
+  // 알림 목록 조회 및 30초 폴링
   useEffect(() => {
     if (!isLoggedIn || !user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -46,7 +50,7 @@ export const Header = () => {
 
     fetchNotifications();
 
-    const interval = setInterval(fetchNotifications, 60000);
+    const interval = setInterval(fetchNotifications, 30000);
     return () => {
       isCurrent = false;
       clearInterval(interval);
@@ -67,9 +71,17 @@ export const Header = () => {
       await deleteMyNotification({ notificationId: id });
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       setUnreadCount((prev) => Math.max(0, prev - 1));
+      showToast.success('알림을 삭제했어요.');
     } catch (error) {
       console.error('Failed to delete notification:', error);
+      showToast.error('알림 삭제에 실패했어요. 다시 시도해 주세요.');
     }
+  };
+
+  // 알림 클릭 시 내 예약 내역으로 이동
+  const handleSelectNotification = () => {
+    setIsNotificationOpen(false);
+    router.push('/mypage/reservations');
   };
 
   return (
@@ -104,47 +116,13 @@ export const Header = () => {
                 </button>
 
                 {isNotificationOpen && (
-                  <div className="border-border-default absolute top-full right-0 z-50 mt-2 flex w-80 flex-col gap-3 rounded-2xl border bg-white p-4 shadow-lg">
-                    <div className="border-border-default flex items-center justify-between border-b pb-2">
-                      <span className="text-text-primary text-sm font-bold">
-                        알림 ({unreadCount})
-                      </span>
-                    </div>
-
-                    <div className="flex max-h-60 flex-col gap-3 overflow-y-auto pr-1">
-                      {notifications.length > 0 ? (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className="relative flex flex-col gap-1 border-b border-gray-50 pb-3 last:border-none last:pb-0"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteNotification(n.id)}
-                              className="text-text-placeholder hover:text-text-secondary absolute top-0 right-0 cursor-pointer p-1 text-base leading-none font-bold"
-                              aria-label="알림 삭제"
-                            >
-                              &times;
-                            </button>
-                            <p className="text-text-secondary pr-5 text-xs leading-normal">
-                              {n.content}
-                            </p>
-                            <span className="text-text-placeholder text-[10px]">
-                              {new Date(n.createdAt).toLocaleDateString('ko-KR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              })}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-text-placeholder py-8 text-center text-xs">
-                          알림이 없습니다.
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <NotificationPopover
+                    notifications={notifications}
+                    totalCount={unreadCount}
+                    onClose={() => setIsNotificationOpen(false)}
+                    onSelect={handleSelectNotification}
+                    onDelete={handleDeleteNotification}
+                  />
                 )}
               </div>
 
