@@ -77,6 +77,7 @@ export const CalendarMyActivitiesModal = ({
         if (!ignore) {
           setSchedules([]);
           setSelectedTime('');
+          showToast.error('스케줄을 불러오는 데 실패했습니다.');
         }
       }
     }
@@ -98,7 +99,7 @@ export const CalendarMyActivitiesModal = ({
           prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
         );
       } catch {
-        // 글로벌 인터셉터에서 처리
+        if (!ignore) showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
       }
     }
     refreshScheduleCounts();
@@ -127,7 +128,10 @@ export const CalendarMyActivitiesModal = ({
         if (ignore) return;
         setReservations(data.reservations);
       } catch {
-        if (!ignore) setReservations([]);
+        if (!ignore) {
+          setReservations([]);
+          showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+        }
       }
     }
     loadReservations();
@@ -139,6 +143,31 @@ export const CalendarMyActivitiesModal = ({
   const refreshAfterAction = () => {
     setRefreshTrigger((prev) => prev + 1);
     onReservationChange?.();
+  };
+
+  const handleReservationAction =
+    (reservation: MyActivityReservation, type: 'confirmed' | 'declined') => () => {
+      setPendingAction({
+        type,
+        execute: async () => {
+          await patchMyActivityReservationStatus(activityId, reservation.id, { status: type });
+          refreshAfterAction();
+        },
+      });
+    };
+
+  const handleConfirm = async () => {
+    if (!pendingAction) return;
+    const isConfirmed = pendingAction.type === 'confirmed';
+    try {
+      await pendingAction.execute();
+      setActiveTab(isConfirmed ? 'confirmed' : 'declined');
+      showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
+    } catch {
+      showToast.error(isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.');
+    } finally {
+      setPendingAction(null);
+    }
   };
 
   return (
@@ -208,14 +237,12 @@ export const CalendarMyActivitiesModal = ({
               <h3 className="text-text-primary text-base leading-[1.15] font-bold lg:text-lg">
                 예약 내역
               </h3>
-              {reservations.length === 0 ? (
-                <div className="flex min-h-25 flex-col">
+              <div className="flex min-h-25 flex-col">
+                {reservations.length === 0 ? (
                   <p className="text-text-tertiary py-10 text-center text-sm md:p-0 md:pt-5">
                     예약 내역이 없습니다
                   </p>
-                </div>
-              ) : (
-                <div className="flex min-h-25 flex-col">
+                ) : (
                   <ul className="flex flex-col gap-3.5">
                     {reservations.map((reservation) => (
                       <ReservationItem
@@ -224,33 +251,13 @@ export const CalendarMyActivitiesModal = ({
                         headCount={reservation.headCount}
                         activeTab={activeTab}
                         isPast={isSchedulePast}
-                        onApprove={() =>
-                          setPendingAction({
-                            type: 'confirmed',
-                            execute: async () => {
-                              await patchMyActivityReservationStatus(activityId, reservation.id, {
-                                status: 'confirmed',
-                              });
-                              refreshAfterAction();
-                            },
-                          })
-                        }
-                        onDecline={() =>
-                          setPendingAction({
-                            type: 'declined',
-                            execute: async () => {
-                              await patchMyActivityReservationStatus(activityId, reservation.id, {
-                                status: 'declined',
-                              });
-                              refreshAfterAction();
-                            },
-                          })
-                        }
+                        onApprove={handleReservationAction(reservation, 'confirmed')}
+                        onDecline={handleReservationAction(reservation, 'declined')}
                       />
                     ))}
                   </ul>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -258,21 +265,7 @@ export const CalendarMyActivitiesModal = ({
       <ConfirmModal
         isOpen={pendingAction !== null}
         onClose={() => setPendingAction(null)}
-        onConfirm={async () => {
-          if (!pendingAction) return;
-          const isConfirmed = pendingAction.type === 'confirmed';
-          try {
-            await pendingAction.execute();
-            setActiveTab(isConfirmed ? 'confirmed' : 'declined');
-            showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
-          } catch {
-            showToast.error(
-              isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.'
-            );
-          } finally {
-            setPendingAction(null);
-          }
-        }}
+        onConfirm={handleConfirm}
         message={
           pendingAction?.type === 'confirmed'
             ? '예약을 승인하시겠습니까?'

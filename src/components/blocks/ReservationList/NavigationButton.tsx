@@ -31,7 +31,7 @@ interface NavigationButtonProps {
 
 export function NavigationButton({ activeStatus, onClickButton }: NavigationButtonProps) {
   return (
-    <div className="flex scrollbar-none gap-2 overflow-scroll [-ms-overflow-style:none]">
+    <div className="flex scrollbar-none gap-2 overflow-scroll px-6 [-ms-overflow-style:none] md:px-0">
       {buttonList.map((button) => (
         <button
           type="button"

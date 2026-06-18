@@ -14,6 +14,7 @@ import CategoryFood from '@/assets/icon/category-food.svg';
 import CategorySports from '@/assets/icon/category-sports.svg';
 import CategoryTour from '@/assets/icon/category-tour.svg';
 import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
 
@@ -193,7 +194,9 @@ function ActivitiesPageContent() {
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center text-gray-500">등록된 체험이 없습니다.</div>
+          <div className="min-h-[720px]">
+            <EmptyState message="등록된 체험이 없습니다." />
+          </div>
         )}
 
         <div className="mt-12 flex justify-center">

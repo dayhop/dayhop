@@ -7,6 +7,7 @@ import { BestActivities } from '@/components/blocks/BestActivities';
 import { LatestActivities } from '@/components/blocks/LatestActivities';
 import { MainpageReview } from '@/components/blocks/MainpageReview';
 import { SearchInput } from '@/components/blocks/SearchInput';
+import { Userfit } from '@/app/(main)/components/Userfit';
 
 export default function Home() {
   const router = useRouter();
@@ -27,6 +28,10 @@ export default function Home() {
 
       <section className="mt-16 w-full px-4 md:px-6">
         <SearchInput onSearch={handleSearch} />
+      </section>
+
+      <section className="mt-20 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
+        <Userfit />
       </section>
 
       <section className="mt-20 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
