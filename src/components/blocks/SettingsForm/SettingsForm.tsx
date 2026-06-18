@@ -28,6 +28,8 @@ export const SettingsForm = () => {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
 
+  if (!user) return null;
+
   const handleChange =
     (field: keyof typeof INITIAL_FORM) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({ ...prev, [field]: e.target.value }));
@@ -40,7 +42,7 @@ export const SettingsForm = () => {
     formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '';
 
   const handleEditStart = () => {
-    setFormData({ ...INITIAL_FORM, nickname: user?.nickname ?? '' });
+    setFormData({ ...INITIAL_FORM, nickname: user.nickname });
     setIsEditMode(true);
   };
 
@@ -69,7 +71,7 @@ export const SettingsForm = () => {
   };
 
   const handlePasswordConfirm = async (password: string) => {
-    await postLogin({ email: user?.email ?? '', password });
+    await postLogin({ email: user.email, password });
     try {
       const updatedUser = await patchMyUser({
         nickname: formData.nickname || undefined,
@@ -90,14 +92,14 @@ export const SettingsForm = () => {
     <div className="flex flex-col gap-6">
       <FormField label="닉네임">
         <Input
-          value={isEditMode ? formData.nickname : (user?.nickname ?? '')}
+          value={isEditMode ? formData.nickname : user.nickname}
           disabled={!isEditMode}
           onChange={handleChange('nickname')}
         />
       </FormField>
 
       <FormField label="이메일">
-        <Input value={user?.email ?? ''} disabled />
+        <Input value={user.email} disabled />
       </FormField>
 
       <FormField label="새 비밀번호">
