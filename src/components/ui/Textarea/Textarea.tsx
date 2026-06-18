@@ -46,7 +46,7 @@ export const Textarea = ({
       <div
         className={cn(
           'border-border-default bg-bg w-full overflow-hidden border',
-          'focus-within:border-primary',
+          'focus-within:border-text-primary',
           textareaVariantClassName[variant],
           className
         )}
