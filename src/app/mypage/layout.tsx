@@ -51,7 +51,7 @@ const PageHeader = ({
 }) => (
   <div
     className={cn(
-      'mb-6 flex flex-col justify-between px-6 md:mb-8 md:flex-row md:items-center md:px-0 lg:mb-10',
+      'mb-6 flex flex-col justify-between gap-3 px-6 md:mb-8 md:flex-row md:items-center md:px-0 lg:mb-10',
       config.headerClassName
     )}
   >
