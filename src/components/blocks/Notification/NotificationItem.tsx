@@ -44,7 +44,10 @@ export const NotificationItem = ({ notification, onSelect, onDelete }: Notificat
         tabIndex={0}
         onClick={() => onSelect(notification)}
         onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') onSelect(notification);
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onSelect(notification);
+          }
         }}
         className={cn(
           'flex cursor-pointer flex-col gap-1 rounded-xl px-4 py-3 transition-colors',

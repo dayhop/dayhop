@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Avatar } from '@/components/ui/Avatar';
@@ -36,7 +36,7 @@ export const Header = () => {
       try {
         const res = await getMyNotifications({ size: 1 });
         if (!isCurrent) return;
-        const latest = res.notifications[0]?.createdAt ?? null;
+        const latest = res.notifications?.[0]?.createdAt ?? null;
         const lastSeen = localStorage.getItem(lastSeenKey);
         setHasUnread(!!latest && (!lastSeen || new Date(latest) > new Date(lastSeen)));
       } catch (err) {
@@ -79,24 +79,20 @@ export const Header = () => {
     logout();
   };
 
-  const markAllSeen = async () => {
-    if (!lastSeenKey) return;
-    try {
-      const res = await getMyNotifications({ size: 1 });
-      const latest = res.notifications[0]?.createdAt;
-      if (latest) localStorage.setItem(lastSeenKey, latest);
-    } catch (err) {
-      console.error('Failed to mark notifications seen:', err);
-    }
-    setHasUnread(false);
-  };
+  const markSeen = useCallback(
+    (latestCreatedAt: string | null) => {
+      if (latestCreatedAt && lastSeenKey) {
+        localStorage.setItem(lastSeenKey, latestCreatedAt);
+      }
+      setHasUnread(false);
+    },
+    [lastSeenKey]
+  );
 
   const handleBellClick = () => {
-    setIsNotificationOpen((prev) => {
-      const next = !prev;
-      if (next) markAllSeen();
-      return next;
-    });
+    const next = !isNotificationOpen;
+    setIsNotificationOpen(next);
+    if (next) setHasUnread(false);
   };
 
   return (
@@ -131,7 +127,10 @@ export const Header = () => {
                 </button>
 
                 {isNotificationOpen && (
-                  <NotificationPopover onClose={() => setIsNotificationOpen(false)} />
+                  <NotificationPopover
+                    onClose={() => setIsNotificationOpen(false)}
+                    onLoaded={markSeen}
+                  />
                 )}
               </div>
 

@@ -14,9 +14,10 @@ const PAGE_SIZE = 5;
 
 interface NotificationPopoverProps {
   onClose: () => void;
+  onLoaded?: (latestCreatedAt: string | null) => void;
 }
 
-export const NotificationPopover = ({ onClose }: NotificationPopoverProps) => {
+export const NotificationPopover = ({ onClose, onLoaded }: NotificationPopoverProps) => {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -37,6 +38,7 @@ export const NotificationPopover = ({ onClose }: NotificationPopoverProps) => {
         setNotifications(res.notifications ?? []);
         setCursorId(res.cursorId);
         setTotalCount(res.totalCount ?? 0);
+        onLoaded?.(res.notifications?.[0]?.createdAt ?? null);
       } catch (error) {
         console.error('Failed to fetch notifications:', error);
         if (isCurrent) setIsError(true);
@@ -49,10 +51,12 @@ export const NotificationPopover = ({ onClose }: NotificationPopoverProps) => {
     return () => {
       isCurrent = false;
     };
-  }, []);
+  }, [onLoaded]);
 
   useEffect(() => {
     if (!cursorId) return;
+
+    let isCurrent = true;
 
     const observer = new IntersectionObserver(
       async ([entry]) => {
@@ -60,7 +64,8 @@ export const NotificationPopover = ({ onClose }: NotificationPopoverProps) => {
         isLoadingRef.current = true;
         try {
           const res = await getMyNotifications({ cursorId, size: PAGE_SIZE });
-          setNotifications((prev) => [...prev, ...res.notifications]);
+          if (!isCurrent) return;
+          setNotifications((prev) => [...prev, ...(res.notifications ?? [])]);
           setCursorId(res.cursorId);
         } catch (error) {
           console.error('Failed to load more notifications:', error);
@@ -72,7 +77,10 @@ export const NotificationPopover = ({ onClose }: NotificationPopoverProps) => {
     );
 
     if (observerRef.current) observer.observe(observerRef.current);
-    return () => observer.disconnect();
+    return () => {
+      isCurrent = false;
+      observer.disconnect();
+    };
   }, [cursorId]);
 
   const handleDelete = async (id: number) => {
