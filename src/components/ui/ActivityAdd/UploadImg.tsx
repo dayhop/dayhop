@@ -8,10 +8,10 @@ interface UploadImgProp {
 export function UploadImg({ onFileSelect }: UploadImgProp) {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      onFileSelect(file);
-    }
+    if (!file) return;
+    onFileSelect(file);
   };
+
   return (
     <label className="border-bg-footer flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border md:h-32 md:w-32">
       <input type="file" className="hidden" onChange={handleFileChange} />

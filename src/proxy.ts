@@ -50,13 +50,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/edit-profile',
-    '/reservation-list',
-    '/my-experiences',
-    '/experiences-add',
-    '/experiences-edit',
-    '/reservation-status',
-    '/notification',
-  ],
+  matcher: ['/mypage', '/mypage/:path*', '/activity-add', '/activity-edit/:path*'],
 };

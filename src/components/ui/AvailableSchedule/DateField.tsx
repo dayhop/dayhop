@@ -28,7 +28,7 @@ export function DateField({ data, setFormData, isLabel = true }: DateFieldProp) 
             setInputType('text');
           }
         }}
-        className="border-bg-footer text-text-primary w-full min-w-81 rounded-2xl border bg-white px-4 py-3 transition-all outline-none focus:bg-white [&::-webkit-calendar-picker-indicator]:cursor-pointer hover:[&::-webkit-calendar-picker-indicator]:opacity-80"
+        className="border-bg-footer text-text-primary focus-within:border-text-primary w-full min-w-81 rounded-2xl border bg-white px-4 py-3 transition-all outline-none focus:bg-white [&::-webkit-calendar-picker-indicator]:cursor-pointer hover:[&::-webkit-calendar-picker-indicator]:opacity-80"
       />
     </div>
   );

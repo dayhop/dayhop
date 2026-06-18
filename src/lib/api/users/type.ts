@@ -13,7 +13,7 @@ export type GetMyUserResponse = User;
 
 export interface UpdateMyUserRequest {
   nickname?: string;
-  profileImageUrl?: string;
+  profileImageUrl?: string | null;
   newPassword?: string;
 }
 
