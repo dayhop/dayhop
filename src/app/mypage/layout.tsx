@@ -2,11 +2,12 @@
 
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Header, Footer } from '@/components/layout';
 import { ProfileCard } from '@/components/blocks/ProfileCard';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
-import ChevronLeft from '@/assets/icon/ChevronLeft.svg';
-import { Header, Footer } from '@/components/layout';
+import ChevronPrev from '@/assets/icon/ChevronPrev.svg';
 
 interface PageConfig {
   title: string;
@@ -95,72 +96,62 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
   }, [pathname, router]);
 
   return (
-<<<<<<< HEAD
     <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="mx-auto w-full max-w-[980px] flex-grow px-6 py-8 md:px-[30px]">
+      <div className="min-h-[calc(100vh-250px)] py-8 md:min-h-[calc(100vh-178px)] md:pt-10 md:pb-15 lg:pb-20">
         {/* PC / Tablet */}
-        <div className="hidden md:flex md:gap-6">
-          <aside className="w-[178px] shrink-0 lg:w-[290px]">
-            <ProfileCard />
-          </aside>
-          <main className="min-w-0 flex-1">{children}</main>
-        </div>
-
-        {/* Mobile */}
-        <div className="md:hidden">
-          {!subPage ? (
-            <ProfileCard />
-          ) : (
-            <div>
-              <button
-                onClick={() => router.push('/mypage')}
-                className="text-text-primary mb-4 flex items-center gap-1 text-sm font-medium"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                뒤로가기
-              </button>
-              {children}
-            </div>
-          )}
-        </div>
-=======
-    <div className="py-8 md:pt-10 md:pb-15 lg:pb-20">
-      {/* PC / Tablet */}
-      <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
-        <aside className="w-55 shrink-0 lg:w-72.5">
-          <ProfileCard editable={editable} />
-        </aside>
-        <main className="min-w-0 flex-1">
-          {pageConfig && <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />}
-          <div className={cn(DEFAULT_CONTENT_CLASS, pageConfig?.contentClassName)}>{children}</div>
-        </main>
-      </div>
-
-      {/* Mobile */}
-      <div className="md:hidden">
-        {!subPage ? (
-          <div className="px-6">
+        <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
+          <aside className="w-55 shrink-0 lg:w-72.5">
             <ProfileCard editable={editable} />
-          </div>
-        ) : (
-          <div>
-            <button
-              onClick={() => router.push('/mypage')}
-              className="text-text-primary mb-4 flex items-center gap-1 px-6 text-sm font-medium"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              뒤로가기
-            </button>
+          </aside>
+          <main className="min-w-0 flex-1">
             {pageConfig && (
               <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />
             )}
             <div className={cn(DEFAULT_CONTENT_CLASS, pageConfig?.contentClassName)}>
               {children}
             </div>
-          </div>
-        )}
->>>>>>> 15ae9cc (refactor: mypage layout 내에 헤더와 콘텐츠 영역을 분리)
+          </main>
+        </div>
+
+        {/* Mobile */}
+        <div className="overflow-hidden md:hidden">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {!subPage ? (
+              <motion.div
+                key="profile"
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+                className="px-6"
+              >
+                <ProfileCard editable={editable} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={pathname}
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
+              >
+                <button
+                  onClick={() => router.push('/mypage')}
+                  className="text-text-primary bg-primary-100 mb-4 ml-6 flex h-7.5 w-7.5 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium"
+                >
+                  <ChevronPrev className="h-4 w-4" />
+                </button>
+                {pageConfig && (
+                  <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />
+                )}
+                <div className={cn(DEFAULT_CONTENT_CLASS, pageConfig?.contentClassName)}>
+                  {children}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
       <Footer />
     </div>
