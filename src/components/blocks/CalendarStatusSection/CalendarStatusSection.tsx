@@ -39,15 +39,17 @@ export const CalendarStatusSection = () => {
       {!isLoading &&
         (selectedActivity ? (
           <>
-            <SelectField
-              list={activities.map((activity) => activity.title)}
-              onSelectOption={(title) => {
-                const activity = activities.find((activity) => activity.title === title);
-                if (activity) setSelectedActivity(activity);
-              }}
-              selectedOption={selectedActivity?.title ?? ''}
-              defaultMessage="체험을 선택해 주세요"
-            />
+            <div className="px-6 md:px-0">
+              <SelectField
+                list={activities.map((activity) => activity.title)}
+                onSelectOption={(title) => {
+                  const activity = activities.find((activity) => activity.title === title);
+                  if (activity) setSelectedActivity(activity);
+                }}
+                selectedOption={selectedActivity?.title ?? ''}
+                defaultMessage="체험을 선택해 주세요"
+              />
+            </div>
             <div className="mt-7.5 md:mt-6 lg:relative lg:mt-7.5">
               <CalendarBoard
                 key={selectedActivity.id}
