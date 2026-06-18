@@ -46,7 +46,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
         <ConfirmModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
-          message="예약을 취소하시겠습니까?"
+          message="예약을 취소하시겠습니까? (취소 시 복구 불가)"
           onConfirm={() => handleClickReservationDelete(id)}
         />
       )}

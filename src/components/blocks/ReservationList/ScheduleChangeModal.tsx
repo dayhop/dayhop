@@ -25,11 +25,8 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       setIsLoading(true);
       try {
         const activity = await getActivity(reservation.activity.id);
-        const allSchedules = activity.schedules;
-        const availableSchedules = allSchedules.filter(
-          (schedule) => schedule.id !== reservation.scheduleId
-        );
-        setSchedules(availableSchedules);
+        const allSchedules = activity.schedules || [];
+        setSchedules(allSchedules);
       } catch (error) {
         showToast.error('일정 정보를 불러오는데 실패했습니다.');
         onClose();
@@ -40,7 +37,7 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
     };
 
     fetchSchedules();
-  }, [isOpen, onClose, reservation.activity.id, reservation.scheduleId]);
+  }, [isOpen, onClose, reservation.activity.id]);
 
   const handleConfirm = async () => {
     if (!selectedScheduleId) return;
@@ -59,6 +56,9 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       onClose();
     }
   };
+
+  const isSelectionUnchanged =
+    selectedScheduleId === reservation.scheduleId && headCount === reservation.headCount;
 
   if (!isOpen) return null;
 
@@ -109,8 +109,7 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
                   <span className="w-8 text-center font-medium text-gray-800">{headCount}</span>
                   <button
                     className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-50 text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50"
-                    onClick={() => setHeadCount((prev) => Math.min(10, prev + 1))}
-                    disabled={headCount >= 10}
+                    onClick={() => setHeadCount((prev) => prev + 1)}
                     aria-label="인원 증가"
                   >
                     +
@@ -126,7 +125,7 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
           <Button variant="secondary" onClick={onClose}>
             취소
           </Button>
-          <Button onClick={handleConfirm} disabled={!selectedScheduleId}>
+          <Button onClick={handleConfirm} disabled={!selectedScheduleId || isSelectionUnchanged}>
             변경하기
           </Button>
         </div>
