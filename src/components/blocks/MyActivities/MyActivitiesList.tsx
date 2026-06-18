@@ -21,8 +21,8 @@ export const MyActivitiesList = ({
   const router = useRouter();
   const [activities, setActivities] = useState(initialActivities);
   const [cursorId, setCursorId] = useState(initialCursorId);
-  const [isLoading, setIsLoading] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const isLoadingRef = useRef(false);
   const observerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,26 +30,36 @@ export const MyActivitiesList = ({
 
     const observer = new IntersectionObserver(
       async ([entry]) => {
-        if (!entry.isIntersecting || isLoading) return;
-        setIsLoading(true);
-        const { activities: next, cursorId: nextCursor } = await getMyActivities({ cursorId });
-        setActivities((prev) => [...prev, ...next]);
-        setCursorId(nextCursor);
-        setIsLoading(false);
+        if (!entry.isIntersecting || isLoadingRef.current) return;
+        isLoadingRef.current = true;
+        try {
+          const { activities: next, cursorId: nextCursor } = await getMyActivities({ cursorId });
+          setActivities((prev) => [...prev, ...next]);
+          setCursorId(nextCursor);
+        } catch {
+          // TODO: 전역 에러 처리 방식 결정 후 반영
+        } finally {
+          isLoadingRef.current = false;
+        }
       },
       { threshold: 0.5 }
     );
 
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
-  }, [cursorId, isLoading]);
+  }, [cursorId]);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTargetId) return;
-    await deleteMyActivity(deleteTargetId);
-    setActivities((prev) => prev.filter((a) => a.id !== deleteTargetId));
-    showToast.success('체험이 삭제되었습니다.');
-    setDeleteTargetId(null);
+    try {
+      await deleteMyActivity(deleteTargetId);
+      setActivities((prev) => prev.filter((a) => a.id !== deleteTargetId));
+      showToast.success('체험이 삭제되었습니다.');
+    } catch {
+      // TODO: 전역 에러 처리 방식 결정 후 반영
+    } finally {
+      setDeleteTargetId(null);
+    }
   };
 
   if (activities.length === 0) {

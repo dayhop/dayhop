@@ -43,7 +43,7 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
         ) : (
           <div>
             <button
-              onClick={() => router.back()}
+              onClick={() => router.push('/mypage')}
               className="text-text-primary mb-4 flex items-center gap-1 text-sm font-medium"
             >
               <ChevronLeft className="h-4 w-4" />
