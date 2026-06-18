@@ -6,14 +6,41 @@ import { useEffect, useState } from 'react';
 
 import CarouselLeft from '@/assets/icon/arrow-left.svg';
 import CarouselRight from '@/assets/icon/arrow-right.svg';
+import { getActivities } from '@/lib/api/activities';
+
 import type { ActivityItem } from '@/types/api';
 
 interface BannerCarouselProps {
-  activities: ActivityItem[];
+  activities?: ActivityItem[];
 }
 
-export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
+export const BannerCarousel = ({ activities: initialActivities }: BannerCarouselProps) => {
+  const [activities, setActivities] = useState<ActivityItem[]>(initialActivities ?? []);
+  const [isLoading, setIsLoading] = useState(!initialActivities);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (initialActivities) return;
+
+    const fetchBannerActivities = async () => {
+      try {
+        const data = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: 1,
+          size: 4,
+        });
+
+        setActivities(data.activities);
+      } catch {
+        setActivities([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBannerActivities();
+  }, [initialActivities]);
 
   useEffect(() => {
     if (activities.length <= 1) return;
@@ -25,7 +52,21 @@ export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
     return () => clearInterval(interval);
   }, [activities.length]);
 
-  if (!activities.length) return null;
+  if (isLoading) {
+    return (
+      <section className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible">
+        <div className="h-[234px] w-full animate-pulse rounded-3xl bg-gray-200 md:h-[290px] xl:h-[390px]" />
+      </section>
+    );
+  }
+
+  if (!activities.length) {
+    return (
+      <section className="relative mx-auto flex h-[234px] w-full max-w-[1200px] items-center justify-center rounded-3xl bg-gray-50 text-sm text-gray-500 md:h-[290px] xl:h-[390px]">
+        등록된 체험이 없습니다.
+      </section>
+    );
+  }
 
   const currentActivity = activities[currentIndex] || activities[0];
 
@@ -39,7 +80,6 @@ export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
 
   return (
     <section className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible">
-      {/* Mobile / Tablet */}
       <div className="relative xl:hidden">
         <div
           className="flex gap-4 transition-transform duration-500 ease-in-out [--slide-gap:16px] [--slide-width:343px] md:gap-6 md:[--slide-gap:24px] md:[--slide-width:696px]"
@@ -77,7 +117,6 @@ export const BannerCarousel = ({ activities }: BannerCarouselProps) => {
         </div>
       </div>
 
-      {/* PC */}
       <div className="relative hidden xl:block">
         <Link href={`/activities/${currentActivity.id}`}>
           <div className="relative h-[390px] w-full cursor-pointer overflow-hidden rounded-3xl">
