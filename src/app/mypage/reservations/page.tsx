@@ -99,12 +99,8 @@ export default function ReservationListPage() {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <div className="my-2.5 flex flex-col gap-2.5">
-        <div className="text-lg font-semibold">예약내역</div>
-        <div className="text-text-tertiary text-sm">예약내역 변경 및 취소할 수 있습니다.</div>
-      </div>
       <NavigationButton activeStatus={activeStatus} onClickButton={onClickNavigationButton} />
-      <div className="flex flex-col gap-7.5">
+      <div className="flex flex-col gap-7.5 px-6 md:px-0">
         {reservationList.length !== 0
           ? reservationList.map((reservation) => (
               <ReservationCard key={reservation.id} data={reservation} />

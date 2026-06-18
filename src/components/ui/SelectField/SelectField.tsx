@@ -61,7 +61,7 @@ export function SelectField({
           className={`border-border-default focus-within:border-text-primary flex h-13 w-full min-w-35 cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <span
-            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} font-medium`}
+            className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} min-w-0 flex-1 truncate text-left font-medium`}
           >
             {displayedMessage}
           </span>
@@ -78,7 +78,7 @@ export function SelectField({
                   }}
                   key={item}
                   variant="text"
-                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)] ${displayedMessage === item ? 'bg-[#f2f9ff]' : ''}`}
+                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 ${displayedMessage === item ? 'bg-[#f2f9ff]' : ''}`}
                 >
                   {item}
                 </Button>

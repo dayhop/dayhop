@@ -76,7 +76,7 @@ export function AddedTimeSlotForm({
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <MinusButton onClick={() => onDeleteSchedule} />
+          <MinusButton onClick={() => onDeleteSchedule(data.id)} />
         </div>
       </div>
     </div>

@@ -40,6 +40,10 @@ serverInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         await postRefreshToken();
+        const newToken = (await cookies()).get('accessToken')?.value;
+        if (newToken) {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        }
         return serverInstance(originalRequest);
       } catch (refreshError) {
         try {

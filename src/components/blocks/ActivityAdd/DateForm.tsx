@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useImperativeHandle, type Ref } from 'react';
+import { useState, useImperativeHandle, type Ref, useEffect } from 'react';
 import { CreateTimeSlotForm } from './CreateTimeSlotForm';
 import { AddedTimeSlotForm } from './AddedTimeSlotForm';
 import { ActivityScheduleInput } from '@/types/api';
 import { showToast } from '@/utils/toast';
+import { ActivityResponse } from '@/lib/api/activities/type';
 
 export interface DateFormRef {
   getValues: () => ActivityScheduleInput[];
@@ -14,8 +15,21 @@ export interface ScheduleItem extends ActivityScheduleInput {
   id: string;
 }
 
-export function DateForm({ ref }: { ref?: Ref<DateFormRef> }) {
+export function DateForm({ ref, data }: { ref?: Ref<DateFormRef>; data?: ActivityResponse }) {
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
+
+  useEffect(() => {
+    const matchId = () => {
+      if (data?.schedules) {
+        const initialSchedulesWithId = data.schedules.map((schedule) => ({
+          ...schedule,
+          id: crypto.randomUUID(),
+        }));
+        setSchedules(initialSchedulesWithId);
+      }
+    };
+    matchId();
+  }, [data]);
 
   useImperativeHandle(ref, () => ({
     getValues: () => schedules.map(({ id, ...rest }) => rest),

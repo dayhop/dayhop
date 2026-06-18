@@ -1,3 +1,4 @@
+import { cn } from '@/utils/cn';
 import Input from '../../ui/Input';
 interface AuthFormProps {
   title: string;
@@ -8,6 +9,8 @@ interface AuthFormProps {
   placeholder: string;
   type?: string;
   label: string;
+  className?: string;
+  value?: string;
 }
 export function AuthField({
   title,
@@ -18,9 +21,11 @@ export function AuthField({
   placeholder,
   type,
   label,
+  className,
+  value,
 }: AuthFormProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className={cn('flex flex-col gap-2', className)}>
       <label htmlFor={label} className="text-secondary text-sm font-semibold">
         {title}
       </label>
@@ -32,6 +37,7 @@ export function AuthField({
         placeholder={placeholder}
         onBlur={handleFocusout}
         onChange={handleChange}
+        value={value}
       />
     </div>
   );
