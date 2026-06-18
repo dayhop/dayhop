@@ -98,7 +98,7 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="py-8 md:pt-10 md:pb-15 lg:pb-20">
+      <div className="min-h-[calc(100vh-250px)] py-8 md:min-h-[calc(100vh-178px)] md:pt-10 md:pb-15 lg:pb-20">
         {/* PC / Tablet */}
         <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
           <aside className="w-55 shrink-0 lg:w-72.5">
@@ -152,8 +152,8 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
             )}
           </AnimatePresence>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }
