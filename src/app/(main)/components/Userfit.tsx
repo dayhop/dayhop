@@ -61,16 +61,15 @@ export function Userfit() {
       } else {
         setActivitiesList(userfitItems.slice(0, 4));
       }
-
-      const getNickname = async () => {
+    };
+    const getNickname = async () => {
+      try {
         const user = await getMyUser();
         setUserNickname(user.nickname);
-      };
-      try {
-        await getNickname();
       } catch {}
     };
     fetchActivities();
+    getNickname();
   }, []);
 
   if (activitiesList.length === 0) return null;
