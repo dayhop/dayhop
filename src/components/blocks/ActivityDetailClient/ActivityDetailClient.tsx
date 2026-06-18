@@ -42,7 +42,7 @@ interface ActivityDetailClientProps {
 
 export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) => {
   const { user, isLogin } = useAuthStore();
-  const isMyActivity = isLogin && user && (activity.userId === user.id || activity.userId === -1);
+  const isMyActivity = isLogin && user && activity.userId === user.id;
 
   const subImages = activity.subImages || [];
   const hasSubImages = subImages.length > 0;
