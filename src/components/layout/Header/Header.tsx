@@ -9,6 +9,7 @@ import IconBell from '@/assets/icon/icon_bell.svg';
 import IconBellDot from '@/assets/icon/icon_bell_dot.svg';
 import { getMyNotifications, deleteMyNotification } from '@/lib/api/my-notifications';
 import type { Notification } from '@/lib/api/my-notifications/type';
+import { useOutsideClick } from '@/hooks/useOutsideClick';
 
 export const Header = () => {
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
@@ -23,18 +24,21 @@ export const Header = () => {
   // 알림 목록 조회 및 60초 폴링
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      const timer = setTimeout(() => {
-        setNotifications([]);
-        setUnreadCount(0);
-      }, 0);
-      return () => clearTimeout(timer);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
     }
+
+    let isCurrent = true;
 
     const fetchNotifications = async () => {
       try {
         const res = await getMyNotifications({ size: 10 });
-        setNotifications(res.notifications || []);
-        setUnreadCount(res.totalCount || 0);
+        if (isCurrent) {
+          setNotifications(res.notifications || []);
+          setUnreadCount(res.totalCount || 0);
+        }
       } catch (err) {
         console.error('Failed to fetch notifications:', err);
       }
@@ -43,56 +47,15 @@ export const Header = () => {
     fetchNotifications();
 
     const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
+    return () => {
+      isCurrent = false;
+      clearInterval(interval);
+    };
   }, [isLoggedIn, user]);
 
-  // 프로필 드롭다운 외부 클릭 및 ESC 닫기
-  useEffect(() => {
-    if (!isDropdownOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isDropdownOpen]);
-
-  // 알림 드롭다운 외부 클릭 및 ESC 닫기
-  useEffect(() => {
-    if (!isNotificationOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-        setIsNotificationOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsNotificationOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isNotificationOpen]);
+  // 드롭다운 외부 클릭 및 ESC 닫기 처리
+  useOutsideClick(dropdownRef, () => setIsDropdownOpen(false), isDropdownOpen);
+  useOutsideClick(notificationRef, () => setIsNotificationOpen(false), isNotificationOpen);
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
@@ -159,6 +122,7 @@ export const Header = () => {
                               type="button"
                               onClick={() => handleDeleteNotification(n.id)}
                               className="text-text-placeholder hover:text-text-secondary absolute top-0 right-0 cursor-pointer p-1 text-base leading-none font-bold"
+                              aria-label="알림 삭제"
                             >
                               &times;
                             </button>
