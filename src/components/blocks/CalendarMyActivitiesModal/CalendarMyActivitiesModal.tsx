@@ -77,6 +77,7 @@ export const CalendarMyActivitiesModal = ({
         if (!ignore) {
           setSchedules([]);
           setSelectedTime('');
+          showToast.error('스케줄을 불러오는 데 실패했습니다.');
         }
       }
     }
@@ -98,7 +99,7 @@ export const CalendarMyActivitiesModal = ({
           prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
         );
       } catch {
-        // 글로벌 인터셉터에서 처리
+        if (!ignore) showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
       }
     }
     refreshScheduleCounts();
@@ -127,7 +128,10 @@ export const CalendarMyActivitiesModal = ({
         if (ignore) return;
         setReservations(data.reservations);
       } catch {
-        if (!ignore) setReservations([]);
+        if (!ignore) {
+          setReservations([]);
+          showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+        }
       }
     }
     loadReservations();
