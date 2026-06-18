@@ -26,9 +26,9 @@ function KakaoLogin() {
     try {
       const response = await postOauthSignIn('kakao', body);
       if (response.accessToken || response.refreshToken) {
-        router.push('/');
         showToast.success(response.user.nickname + '님 반갑습니다.');
         login(response.user);
+        router.push('/');
       }
     } catch (e) {
       showToast.error('로그인에 실패했습니다. 다시 시도해주세요.');
