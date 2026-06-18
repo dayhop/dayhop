@@ -4,7 +4,6 @@ import Toast from '@/components/ui/Toast';
 import { pretendard } from '@/lib/fonts';
 import './globals.css';
 import AuthProvider from '@/providers/AuthProvider';
-import { cookies } from 'next/headers';
 import { serverInstance } from '@/lib/api/instance';
 
 export const metadata: Metadata = {
@@ -14,10 +13,9 @@ export const metadata: Metadata = {
 
 async function getMe() {
   try {
-    const cookieStore = await cookies();
-    const response = await serverInstance.get('/user/me');
+    const response = await serverInstance.get('/users/me');
     return response.data;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
