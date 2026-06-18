@@ -7,7 +7,11 @@ import {
   getMyActivityReservationDashboard,
   getMyActivityReservedSchedule,
 } from '@/lib/api/my-activities';
-import type { ReservationCount } from '@/lib/api/my-activities/type';
+import type {
+  GetMyActivityReservationDashboardResponse,
+  GetMyActivityReservedScheduleResponse,
+  ReservationCount,
+} from '@/lib/api/my-activities/type';
 import { showToast } from '@/utils/toast';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
@@ -17,6 +21,40 @@ import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 interface CalendarBoardProps {
   activityId: number;
   wrapperClassName?: string;
+}
+
+function buildDateDataMap(
+  datesWithReservations: GetMyActivityReservationDashboardResponse[],
+  datesNeedingSchedules: string[],
+  scheduleResults: GetMyActivityReservedScheduleResponse[][]
+): Map<string, ReservationCount> {
+  const map = new Map<string, ReservationCount>();
+
+  // completed 뱃지: 대시보드 값 직접 사용
+  // (getMyActivityReservedSchedule은 완료된 슬롯을 반환하지 않으므로)
+  datesWithReservations.forEach(({ date, reservations: r }) => {
+    map.set(date, { pending: 0, confirmed: 0, completed: r.completed });
+  });
+
+  // pending/confirmed 뱃지: 시간이 지나지 않은 슬롯 수만 카운트
+  datesNeedingSchedules.forEach((date, i) => {
+    const slots = scheduleResults[i];
+    const counts = map.get(date)!;
+    slots.forEach((slot) => {
+      const isPast = isPastTime(date, slot.endTime);
+      if (!isPast && slot.count.pending > 0) counts.pending += 1;
+      if (!isPast && slot.count.confirmed > 0) counts.confirmed += 1;
+    });
+  });
+
+  // 모든 카운트가 0인 날짜 제거
+  map.forEach((counts, date) => {
+    if (counts.pending === 0 && counts.confirmed === 0 && counts.completed === 0) {
+      map.delete(date);
+    }
+  });
+
+  return map;
 }
 
 export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
@@ -51,33 +89,9 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
         );
         if (ignore) return;
 
-        const map = new Map<string, ReservationCount>();
-
-        // completed 뱃지: 대시보드 값 직접 사용
-        // (getMyActivityReservedSchedule은 완료된 슬롯을 반환하지 않으므로)
-        datesWithReservations.forEach(({ date, reservations: r }) => {
-          map.set(date, { pending: 0, confirmed: 0, completed: r.completed });
-        });
-
-        // pending/confirmed 뱃지: 시간이 지나지 않은 슬롯 수만 카운트
-        datesNeedingSchedules.forEach((date, i) => {
-          const slots = scheduleResults[i];
-          const counts = map.get(date)!;
-          slots.forEach((slot) => {
-            const isPast = isPastTime(date, slot.endTime);
-            if (!isPast && slot.count.pending > 0) counts.pending += 1;
-            if (!isPast && slot.count.confirmed > 0) counts.confirmed += 1;
-          });
-        });
-
-        // 모든 카운트가 0인 날짜 제거
-        map.forEach((counts, date) => {
-          if (counts.pending === 0 && counts.confirmed === 0 && counts.completed === 0) {
-            map.delete(date);
-          }
-        });
-
-        setDateDataMap(map);
+        setDateDataMap(
+          buildDateDataMap(datesWithReservations, datesNeedingSchedules, scheduleResults)
+        );
       } catch {
         showToast.error('예약 현황을 불러오는 데 실패했습니다.');
       }
@@ -88,6 +102,11 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
       ignore = true;
     };
   }, [activityId, currentMonth, refreshKey]);
+
+  const handleMonthChange = (month: Date) => {
+    setCurrentMonth(month);
+    setSelectedDate(undefined);
+  };
 
   const isDateClickable = useCallback(
     (date: Date) => dateDataMap.has(toLocalDateString(date)),
@@ -114,10 +133,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
       <Calendar
         value={selectedDate}
         onSelectDate={setSelectedDate}
-        onMonthChange={(month) => {
-          setCurrentMonth(month);
-          setSelectedDate(undefined);
-        }}
+        onMonthChange={handleMonthChange}
         holidays={holidays}
         isDateClickable={isDateClickable}
         renderDateExtra={renderDateExtra}
