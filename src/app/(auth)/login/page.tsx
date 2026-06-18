@@ -2,6 +2,7 @@ import Logo from '@/assets/icon/Logo.svg';
 import { LoginForm } from '@/components/blocks/Login/LoginForm';
 import { OAuth } from '../components/Oauth';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 export default function LoginPage() {
   return (
@@ -10,7 +11,9 @@ export default function LoginPage() {
         <Logo />
       </Link>
       <LoginForm />
-      <OAuth type="login" />
+      <Suspense fallback={<div>Loading...</div>}>
+        <OAuth type="login" />
+      </Suspense>
     </div>
   );
 }
