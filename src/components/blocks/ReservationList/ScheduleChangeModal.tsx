@@ -25,7 +25,7 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       setIsLoading(true);
       try {
         const activity = await getActivity(reservation.activity.id);
-        const allSchedules = activity.schedules || [];
+        const allSchedules = activity?.schedules || [];
         setSchedules(allSchedules);
       } catch (error) {
         showToast.error('일정 정보를 불러오는데 실패했습니다.');
