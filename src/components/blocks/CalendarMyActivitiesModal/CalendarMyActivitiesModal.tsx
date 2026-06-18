@@ -145,25 +145,16 @@ export const CalendarMyActivitiesModal = ({
     onReservationChange?.();
   };
 
-  const handleApprove = (reservation: MyActivityReservation) => () => {
-    setPendingAction({
-      type: 'confirmed',
-      execute: async () => {
-        await patchMyActivityReservationStatus(activityId, reservation.id, { status: 'confirmed' });
-        refreshAfterAction();
-      },
-    });
-  };
-
-  const handleDecline = (reservation: MyActivityReservation) => () => {
-    setPendingAction({
-      type: 'declined',
-      execute: async () => {
-        await patchMyActivityReservationStatus(activityId, reservation.id, { status: 'declined' });
-        refreshAfterAction();
-      },
-    });
-  };
+  const handleReservationAction =
+    (reservation: MyActivityReservation, type: 'confirmed' | 'declined') => () => {
+      setPendingAction({
+        type,
+        execute: async () => {
+          await patchMyActivityReservationStatus(activityId, reservation.id, { status: type });
+          refreshAfterAction();
+        },
+      });
+    };
 
   const handleConfirm = async () => {
     if (!pendingAction) return;
@@ -246,14 +237,12 @@ export const CalendarMyActivitiesModal = ({
               <h3 className="text-text-primary text-base leading-[1.15] font-bold lg:text-lg">
                 예약 내역
               </h3>
-              {reservations.length === 0 ? (
-                <div className="flex min-h-25 flex-col">
+              <div className="flex min-h-25 flex-col">
+                {reservations.length === 0 ? (
                   <p className="text-text-tertiary py-10 text-center text-sm md:p-0 md:pt-5">
                     예약 내역이 없습니다
                   </p>
-                </div>
-              ) : (
-                <div className="flex min-h-25 flex-col">
+                ) : (
                   <ul className="flex flex-col gap-3.5">
                     {reservations.map((reservation) => (
                       <ReservationItem
@@ -262,13 +251,13 @@ export const CalendarMyActivitiesModal = ({
                         headCount={reservation.headCount}
                         activeTab={activeTab}
                         isPast={isSchedulePast}
-                        onApprove={handleApprove(reservation)}
-                        onDecline={handleDecline(reservation)}
+                        onApprove={handleReservationAction(reservation, 'confirmed')}
+                        onDecline={handleReservationAction(reservation, 'declined')}
                       />
                     ))}
                   </ul>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
