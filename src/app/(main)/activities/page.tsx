@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { BannerCarousel } from '@/components/blocks/BannerCarousel';
 import { SearchInput } from '@/components/blocks/SearchInput';
@@ -36,19 +36,28 @@ const PAGE_SIZE = 8;
 
 const getSearchResultText = (keyword: string) => {
   const lastChar = keyword.charCodeAt(keyword.length - 1);
-  const hasFinalConsonant = (lastChar - 44032) % 28 !== 0;
-  const isRieulFinalConsonant = (lastChar - 44032) % 28 === 8;
+  const isKorean = lastChar >= 0xac00 && lastChar <= 0xd7a3;
+
+  if (!isKorean) {
+    return `${keyword}로 검색한 결과입니다.`;
+  }
+
+  const finalConsonantIndex = (lastChar - 0xac00) % 28;
+  const hasFinalConsonant = finalConsonantIndex !== 0;
+  const isRieulFinalConsonant = finalConsonantIndex === 8;
 
   return `${keyword}${hasFinalConsonant && !isRieulFinalConsonant ? '으로' : '로'} 검색한 결과입니다.`;
 };
 
 export default function ActivitiesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialKeyword = searchParams.get('keyword') ?? '';
 
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [bannerActivities, setBannerActivities] = useState<ActivityItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory | '전체'>('전체');
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState(initialKeyword);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -131,7 +140,7 @@ export default function ActivitiesPage() {
       </section>
 
       <section className="mt-16 w-full px-4 md:px-6">
-        <SearchInput onSearch={handleSearch} onReset={handleReset} />
+        <SearchInput onSearch={handleSearch} onReset={handleReset} initialValue={keyword} />
       </section>
 
       <section className="mt-16 w-full max-w-[1200px] px-4 md:px-6 xl:px-0">
