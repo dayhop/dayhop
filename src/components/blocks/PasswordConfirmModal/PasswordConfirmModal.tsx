@@ -41,7 +41,7 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
   return (
     <Modal
       onClose={handleClose}
-      className="p-y:8 p-x:4 w-[320px] max-w-[calc(100vw-32px)] md:w-100 md:p-8"
+      className="w-[320px] max-w-[calc(100vw-32px)] px-4 py-8 md:w-100 md:p-8"
     >
       <h2 className="mb-2.5 text-lg font-bold">비밀번호 확인</h2>
       <Input
