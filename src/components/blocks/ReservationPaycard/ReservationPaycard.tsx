@@ -32,35 +32,6 @@ interface ReservationPaycardProps {
   className?: string;
 }
 
-function generateMockSchedules(currentMonth: Date): ScheduleDate[] {
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
-  const mockSchedules: ScheduleDate[] = [];
-
-  for (let day = 1; day <= 28; day++) {
-    const dateObj = new Date(year, month, day);
-    const dayOfWeek = dateObj.getDay();
-    if (dayOfWeek === 3 || dayOfWeek === 6) {
-      // 수요일 또는 토요일
-      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      mockSchedules.push({
-        date: dateStr,
-        times: [
-          { id: day * 100 + 1, startTime: '10:00', endTime: '12:00' },
-          { id: day * 100 + 2, startTime: '14:00', endTime: '16:00' },
-          { id: day * 100 + 3, startTime: '18:00', endTime: '20:00' },
-        ],
-      });
-    }
-  }
-
-  return mockSchedules;
-}
-
-function generateRandomId(): number {
-  return Math.floor(Math.random() * 100000);
-}
-
 function getTimestamp(): number {
   return Date.now();
 }
@@ -114,19 +85,13 @@ export function ReservationPaycard({
               setSchedules([res as unknown as ScheduleDate]);
             }
           } else {
-            // API returned null (failed internally), fallback to mock schedules
-            const mockSchedules = generateMockSchedules(currentMonth);
-            setSchedules(mockSchedules);
+            setSchedules([]);
           }
         }
       } catch (error) {
-        console.warn(
-          'Failed to fetch real schedules, falling back to mock schedules for testing:',
-          error
-        );
+        console.error('Failed to fetch schedules:', error);
         if (isMounted) {
-          const mockSchedules = generateMockSchedules(currentMonth);
-          setSchedules(mockSchedules);
+          setSchedules([]);
         }
       }
     };
@@ -236,54 +201,47 @@ export function ReservationPaycard({
     }
 
     setIsSubmitting(true);
-    let res;
 
     // 1. 백엔드 예약 생성 (pending 상태)
     try {
-      res = await postActivityReservations(activityId, {
+      const res = await postActivityReservations(activityId, {
         scheduleId: selectedScheduleId,
         headCount,
       });
+
+      // 2. 토스페이먼츠 SDK 호출
+      if (typeof window !== 'undefined' && window.TossPayments) {
+        const clientKey =
+          process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+        const tossPayments = window.TossPayments(clientKey);
+        const cleanUrl = window.location.origin + window.location.pathname;
+        try {
+          await tossPayments.requestPayment('카드', {
+            amount: totalPrice,
+            orderId: `res-${res.id}-${getTimestamp()}`,
+            orderName: activityTitle,
+            customerName: user?.nickname || '구매자',
+            successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.id}`,
+            failUrl: `${cleanUrl}?paymentStatus=fail`,
+          });
+        } catch (paymentError) {
+          console.error('Payment request failed:', paymentError);
+        }
+      } else {
+        showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+      }
     } catch (apiError) {
       const errorStatus = (apiError as { response?: { status?: number } })?.response?.status;
       if (errorStatus === 401) {
         showToast.error('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
         router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
-        setIsSubmitting(false);
-        return;
+      } else {
+        showToast.error('예약 생성에 실패했습니다. 다시 시도해 주세요.');
+        console.error('API reservation creation failed:', apiError);
       }
-
-      console.warn(
-        'API reservation creation failed, using mock reservation for testing:',
-        apiError
-      );
-      res = {
-        id: generateRandomId(),
-      };
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // 2. 토스페이먼츠 SDK 호출
-    if (typeof window !== 'undefined' && window.TossPayments) {
-      const clientKey =
-        process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
-      const tossPayments = window.TossPayments(clientKey);
-      const cleanUrl = window.location.origin + window.location.pathname;
-      try {
-        await tossPayments.requestPayment('카드', {
-          amount: totalPrice,
-          orderId: `res-${res.id}-${getTimestamp()}`,
-          orderName: activityTitle,
-          customerName: user?.nickname || '구매자',
-          successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.id}`,
-          failUrl: `${cleanUrl}?paymentStatus=fail`,
-        });
-      } catch (paymentError) {
-        console.error('Payment request failed:', paymentError);
-      }
-    } else {
-      showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-    }
-    setIsSubmitting(false);
   };
 
   return (
