@@ -5,13 +5,48 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Avatar } from '@/components/ui/Avatar';
 import LogoIcon from '@/assets/icon/logoIcon.svg';
+import IconBell from '@/assets/icon/icon_bell.svg';
+import IconBellDot from '@/assets/icon/icon_bell_dot.svg';
+import { getMyNotifications, deleteMyNotification } from '@/lib/api/my-notifications';
+import type { Notification } from '@/lib/api/my-notifications/type';
 
 export const Header = () => {
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  // 드롭다운 외부 클릭 및 ESC 키 입력 시 닫기
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  // 알림 목록 조회 및 60초 폴링
+  useEffect(() => {
+    if (!isLoggedIn || !user) {
+      const timer = setTimeout(() => {
+        setNotifications([]);
+        setUnreadCount(0);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
+    const fetchNotifications = async () => {
+      try {
+        const res = await getMyNotifications({ size: 10 });
+        setNotifications(res.notifications || []);
+        setUnreadCount(res.totalCount || 0);
+      } catch (err) {
+        console.error('Failed to fetch notifications:', err);
+      }
+    };
+
+    fetchNotifications();
+
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, [isLoggedIn, user]);
+
+  // 프로필 드롭다운 외부 클릭 및 ESC 닫기
   useEffect(() => {
     if (!isDropdownOpen) return;
 
@@ -35,9 +70,43 @@ export const Header = () => {
     };
   }, [isDropdownOpen]);
 
+  // 알림 드롭다운 외부 클릭 및 ESC 닫기
+  useEffect(() => {
+    if (!isNotificationOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setIsNotificationOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsNotificationOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isNotificationOpen]);
+
   const handleLogout = () => {
     setIsDropdownOpen(false);
     logout();
+  };
+
+  const handleDeleteNotification = async (id: number) => {
+    try {
+      await deleteMyNotification({ notificationId: id });
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error('Failed to delete notification:', error);
+    }
   };
 
   return (
@@ -55,6 +124,66 @@ export const Header = () => {
           ) : isLoggedIn && user ? (
             // 분기: 로그인 상태
             <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+              {/* 알림 벨 버튼 및 알림 드롭다운 */}
+              <div className="relative" ref={notificationRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsNotificationOpen((prev) => !prev)}
+                  className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-gray-100"
+                  aria-expanded={isNotificationOpen}
+                  aria-label="알림"
+                >
+                  {unreadCount > 0 ? (
+                    <IconBellDot className="h-6 w-6" />
+                  ) : (
+                    <IconBell className="h-6 w-6" />
+                  )}
+                </button>
+
+                {isNotificationOpen && (
+                  <div className="border-border-default absolute top-full right-0 z-50 mt-2 flex w-80 flex-col gap-3 rounded-2xl border bg-white p-4 shadow-lg">
+                    <div className="border-border-default flex items-center justify-between border-b pb-2">
+                      <span className="text-text-primary text-sm font-bold">
+                        알림 ({unreadCount})
+                      </span>
+                    </div>
+
+                    <div className="flex max-h-60 flex-col gap-3 overflow-y-auto pr-1">
+                      {notifications.length > 0 ? (
+                        notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            className="relative flex flex-col gap-1 border-b border-gray-50 pb-3 last:border-none last:pb-0"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteNotification(n.id)}
+                              className="text-text-placeholder hover:text-text-secondary absolute top-0 right-0 cursor-pointer p-1 text-base leading-none font-bold"
+                            >
+                              &times;
+                            </button>
+                            <p className="text-text-secondary pr-5 text-xs leading-normal">
+                              {n.content}
+                            </p>
+                            <span className="text-text-placeholder text-[10px]">
+                              {new Date(n.createdAt).toLocaleDateString('ko-KR', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-text-placeholder py-8 text-center text-xs">
+                          알림이 없습니다.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* 유저 프로필 및 드롭다운 */}
               <div className="relative" ref={dropdownRef}>
                 <button
