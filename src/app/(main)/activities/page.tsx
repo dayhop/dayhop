@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { BannerCarousel } from '@/components/blocks/BannerCarousel';
@@ -38,9 +38,7 @@ const getSearchResultText = (keyword: string) => {
   const lastChar = keyword.charCodeAt(keyword.length - 1);
   const isKorean = lastChar >= 0xac00 && lastChar <= 0xd7a3;
 
-  if (!isKorean) {
-    return `${keyword}로 검색한 결과입니다.`;
-  }
+  if (!isKorean) return `${keyword}로 검색한 결과입니다.`;
 
   const finalConsonantIndex = (lastChar - 0xac00) % 28;
   const hasFinalConsonant = finalConsonantIndex !== 0;
@@ -49,7 +47,7 @@ const getSearchResultText = (keyword: string) => {
   return `${keyword}${hasFinalConsonant && !isRieulFinalConsonant ? '으로' : '로'} 검색한 결과입니다.`;
 };
 
-export default function ActivitiesPage() {
+function ActivitiesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialKeyword = searchParams.get('keyword') ?? '';
@@ -123,14 +121,6 @@ export default function ActivitiesPage() {
   const handleReset = () => {
     setKeyword('');
     setCurrentPage(1);
-  };
-
-  const handlePrev = () => {
-    setCurrentPage((prev) => Math.max(1, prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentPage((prev) => Math.min(paginationCount, prev + 1));
   };
 
   return (
@@ -210,12 +200,20 @@ export default function ActivitiesPage() {
           <Pagination
             paginationCount={paginationCount}
             currentPage={currentPage}
-            clickPrev={handlePrev}
-            clickNext={handleNext}
+            clickPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            clickNext={() => setCurrentPage((prev) => Math.min(paginationCount, prev + 1))}
             clickPage={setCurrentPage}
           />
         </div>
       </section>
     </main>
+  );
+}
+
+export default function ActivitiesPage() {
+  return (
+    <Suspense fallback={null}>
+      <ActivitiesPageContent />
+    </Suspense>
   );
 }
