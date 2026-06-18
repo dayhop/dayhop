@@ -6,21 +6,20 @@ import { ImgUpload, ImgUploadRef } from '@/components/blocks/ActivityAdd/ImgUplo
 import { Button } from '@/components/ui/Button';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { getActivity, postActivitiesImage } from '@/lib/api/activities';
-import {
-  ActivityCategory,
-  ActivityResponse,
-  ActivityScheduleInput,
-} from '@/lib/api/activities/type';
+import { ActivityResponse } from '@/lib/api/activities/type';
 import { patchMyActivity } from '@/lib/api/my-activities';
 import { PatchMyActivityRequest } from '@/lib/api/my-activities/type';
 import { showToast } from '@/utils/toast';
-import { use, useEffect, useRef, useState } from 'react';
+import { use, useEffect, useMemo, useRef, useState } from 'react';
+import { getDetailFormData, getImgCurrnet, handleIsEdited, validateFormField } from '../../util';
+import { useRouter } from 'next/navigation';
 
 interface EditPageProps {
   params: Promise<{ id: number }>;
 }
 export default function ActivityEditPage({ params }: EditPageProps) {
   const { id } = use(params);
+  const router = useRouter();
 
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
@@ -30,30 +29,14 @@ export default function ActivityEditPage({ params }: EditPageProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [initData, setInitData] = useState<ActivityResponse>();
 
-  const validateFormField = (
-    title: string,
-    category: string,
-    description: string,
-    address: string,
-    price: number,
-    schedules: ActivityScheduleInput[],
-    bannerImageCount: number
-  ) => {
-    if (
-      !title ||
-      !category ||
-      !description ||
-      !address ||
-      !price ||
-      price <= 0 ||
-      schedules.length === 0 ||
-      bannerImageCount === 0
-    ) {
-      showToast.error('모든 입력란을 작성해주세요.');
-      return false;
-    }
-    return true;
-  };
+  const bannerInitialUrls = useMemo(
+    () => (initData?.bannerImageUrl ? [initData.bannerImageUrl] : undefined),
+    [initData]
+  );
+  const detailInitialUrls = useMemo(
+    () => initData?.subImages?.map((img) => img.imageUrl),
+    [initData]
+  );
 
   const handleSubmit = async () => {
     if (!initData) return;
@@ -64,25 +47,23 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     const formData = new FormData(formRef.current);
 
     //detail에 있는 거 가져옴
-    const title = String(formData.get('title') || '').trim();
-    const category = String(formData.get('category') || '').trim() as ActivityCategory;
-    const description = String(formData.get('description') || '').trim();
-    const address = String(formData.get('address') || '').trim();
-    const price = Number(formData.get('price'));
+    const detailFormData = getDetailFormData(formData);
 
-    //유효성 검사를 위한 배너 이미지 갯수체크
+    //유효성 검사를 위한 배너 이미지와 스케줄 가져오기
     const bannerImageCount = bannerRef.current?.getCurrentUrls?.().length ?? 0;
     const schedules = dateRef.current?.getValues?.() || [];
-    const bannerFile = bannerRef.current?.getValues() || [];
-    const detailFiles = detailRef.current?.getValues() || [];
+
+    //배너, 디테일 현재 가져오기
+    const imgCurrnet = getImgCurrnet(bannerRef, detailRef);
+    const { bannerFile, detailFiles } = imgCurrnet;
 
     //유효성 검사
     const isValid = validateFormField(
-      title,
-      category,
-      description,
-      address,
-      price,
+      detailFormData.title,
+      detailFormData.category,
+      detailFormData.description,
+      detailFormData.address,
+      detailFormData.price,
       schedules,
       bannerImageCount
     );
@@ -90,31 +71,27 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     //유효하지 않는다면 종료
     if (!isValid) return;
 
-    //이미지 등록하기
-
-    const bannerUpload = await postActivitiesImage(bannerFile[0]);
-    const detailUploadPromise = detailFiles.map((file) => postActivitiesImage(file));
-
-    const detailUploadResponse = await Promise.all(detailUploadPromise);
+    //================================
 
     try {
-      let bannerImageUrl = initData.bannerImageUrl;
-      if (bannerFile[0]) {
-        const bannerUpload = await postActivitiesImage(bannerFile[0]);
-        bannerImageUrl = bannerUpload.activityImageUrl;
-      }
+      //배너 업로드
+      const bannerImageUrl =
+        bannerFile.length > 0
+          ? (await postActivitiesImage(bannerFile[0])).activityImageUrl
+          : initData.bannerImageUrl;
 
+      //디테일 파일 업로드
       const detailUploadPromise = detailFiles.map((file) => postActivitiesImage(file));
       const detailUploadResponse = await Promise.all(detailUploadPromise);
-      const subImageUrlsToAdd = detailUploadResponse.map((res) => res.activityImageUrl);
 
-      //초기 데이터랑 비교 후 세팅 : 지워진 건 초기에는 있고, 현재에는 없고
-      const currentDetailUrls = detailUploadResponse.map((res) => res.activityImageUrl);
-
+      //add와 diff
+      const subImageUrlsToAdd = detailUploadResponse.map((r) => r.activityImageUrl);
+      const currentDetailUrls = detailRef.current?.getCurrentUrls?.() ?? [];
       const subImageIdsToRemove = initData.subImages
         .filter((img) => !currentDetailUrls.includes(img.imageUrl))
         .map((img) => img.id);
 
+      // 스케줄
       const schedulesToAdd = schedules.filter(
         (s) =>
           initData.schedules.findIndex(
@@ -135,11 +112,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
 
       //데이터 세팅
       const submitData: PatchMyActivityRequest = {
-        title,
-        category,
-        description,
-        address,
-        price,
+        ...detailFormData,
         bannerImageUrl,
         subImageIdsToRemove,
         subImageUrlsToAdd,
@@ -147,10 +120,25 @@ export default function ActivityEditPage({ params }: EditPageProps) {
         schedulesToAdd,
       };
 
+      //수정 사항이 있는지 확인
+      const isEdited = handleIsEdited(
+        detailFormData,
+        initData,
+        subImageIdsToRemove,
+        subImageUrlsToAdd,
+        scheduleIdsToRemove,
+        schedulesToAdd,
+        bannerImageUrl
+      );
+      if (!isEdited) {
+        setIsOpen(false);
+        return showToast.error('수정 사항이 없습니다.');
+      }
+
       await patchMyActivity(id, submitData);
       setIsOpen(false);
       showToast.success('체험 수정이 완료되었습니다.');
-      //TODO: 추가된 체험으로 이동하는 로직 추가
+      router.back();
     } catch {
       showToast.error('체험 수정에 실패했습니다.');
     }
@@ -183,18 +171,8 @@ export default function ActivityEditPage({ params }: EditPageProps) {
         <div className="py-2.5 text-lg font-bold">내 체험 수정</div>
         <ExperienceDetail data={initData} key={initData?.id || 'loading'} />
         <DateForm ref={dateRef} data={initData} />
-        <ImgUpload
-          mode="banner"
-          ref={bannerRef}
-          initialUrls={initData?.bannerImageUrl ? [initData.bannerImageUrl] : undefined}
-        />
-        <ImgUpload
-          mode="detail"
-          ref={detailRef}
-          initialUrls={
-            initData?.subImages ? initData.subImages.map((img) => img.imageUrl) : undefined
-          }
-        />
+        <ImgUpload mode="banner" ref={bannerRef} initialUrls={bannerInitialUrls} />
+        <ImgUpload mode="detail" ref={detailRef} initialUrls={detailInitialUrls} />
         <Button type="button" onClick={() => setIsOpen(true)} size="md" className="mx-auto w-40">
           수정하기
         </Button>
