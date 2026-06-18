@@ -38,7 +38,7 @@ export function ActivityCard({ data }: ActivityCardProps) {
       onClick={() => {
         handleUpdateLog(id, category);
         handleUpdateMostClick(id);
-        router.push(`/activitis/${id}`);
+        router.push(`/activities/${id}`);
       }}
     >
       <div className="absolute bottom-3 left-0 flex flex-col gap-1.5 px-4 md:bottom-7.5 md:left-5 md:gap-5">
