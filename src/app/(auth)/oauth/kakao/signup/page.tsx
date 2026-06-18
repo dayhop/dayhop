@@ -9,6 +9,7 @@ import { postOauthSignUp } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { REDIRECT_SIGNUP_URI } from '@/app/(auth)/components/Oauth';
+import { generateRandomNickname } from '@/utils/randomNickname';
 
 function KakaoSignUpForm() {
   const { login } = useAuthStore();
@@ -55,7 +56,11 @@ function KakaoSignUpForm() {
         onChange={(e) => setNickname(e.target.value)}
       />
       <div className="flex gap-4">
-        <Button variant="secondary" type="button">
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={() => setNickname(generateRandomNickname())}
+        >
           랜덤 닉네임
         </Button>
         <Button type="submit">회원가입하기</Button>
