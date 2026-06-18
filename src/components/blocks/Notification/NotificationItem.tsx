@@ -67,9 +67,9 @@ export const NotificationItem = ({ notification, onSelect, onDelete }: Notificat
         type="button"
         onClick={() => onDelete(notification.id)}
         aria-label="알림 삭제"
-        className="absolute top-2 right-2 hidden cursor-pointer opacity-50 transition-opacity group-hover:block hover:opacity-100"
+        className="absolute top-0 right-0 block cursor-pointer p-2 opacity-50 transition-opacity hover:opacity-100 md:hidden md:group-hover:block"
       >
-        <CloseIcon className="h-4 w-4" />
+        <CloseIcon className="h-5 w-5 md:h-4 md:w-4" />
       </button>
     </li>
   );
