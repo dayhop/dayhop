@@ -23,6 +23,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
   const router = useRouter();
 
   const [reviews, setReviews] = useState<MainReviewItem[]>(items ?? []);
+  const [isLoading, setIsLoading] = useState(!items);
 
   const moveToActivity = (activityId: number) => {
     router.push(`/activities/${activityId}`);
@@ -42,31 +43,70 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
         const reviewResults = await Promise.all(
           activityData.activities.map(async (activity) => {
-            const reviewData = await getActivityReviews(activity.id, {
-              page: 1,
-              size: 1,
-            });
+            try {
+              const reviewData = await getActivityReviews(activity.id, {
+                page: 1,
+                size: 1,
+              });
 
-            const review = reviewData.reviews[0];
+              const review = reviewData.reviews[0];
 
-            if (!review) return null;
+              if (!review) return null;
 
-            return { activity, review };
+              return { activity, review };
+            } catch {
+              return null;
+            }
           })
         );
 
         setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
-      } catch {}
+      } catch {
+        setReviews([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchReviews();
   }, [items]);
 
-  if (reviews.length === 0) return null;
+  if (isLoading) {
+    return (
+      <section className="mx-auto w-[333px] py-16 min-[744px]:w-[695px] min-[1280px]:w-[1200px]">
+        <h2 className="mb-10 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
+
+        <div className="grid gap-y-12 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-20">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <article key={index} className="flex justify-between gap-5">
+              <div className="w-[190px] min-[744px]:w-[360px] min-[1280px]:w-[330px]">
+                <div className="mb-2 h-4 w-20 animate-pulse rounded bg-gray-200" />
+                <div className="mb-3 h-6 w-40 animate-pulse rounded bg-gray-200" />
+                <div className="h-20 w-full animate-pulse rounded bg-gray-200" />
+                <div className="mt-4 h-6 w-32 animate-pulse rounded bg-gray-200" />
+              </div>
+
+              <div className="h-[160px] w-[110px] shrink-0 animate-pulse rounded-xl bg-gray-200" />
+            </article>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <section className="mx-auto w-[333px] py-16 min-[744px]:w-[695px] min-[1280px]:w-[1200px]">
+        <h2 className="mb-10 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
+
+        <div className="py-10 text-center text-gray-500">등록된 후기가 없습니다.</div>
+      </section>
+    );
+  }
 
   return (
     <section className="mx-auto w-[333px] py-16 min-[744px]:w-[695px] min-[1280px]:w-[1200px]">
-      <h2 className="mb-10 text-2xl font-bold">✨ Hopper들의 생생한 후기</h2>
+      <h2 className="mb-10 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
 
       <div className="grid gap-y-12 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-20">
         {reviews.map((item) => (
