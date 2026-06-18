@@ -28,7 +28,7 @@ export default function Input({
     <div className={cn('flex flex-col gap-2', className)}>
       <div
         className={cn(
-          'flex h-[54px] items-center gap-2 rounded-2xl border bg-gray-50 px-4 has-[:disabled]:opacity-40',
+          'focus-within:border-text-primary flex h-[54px] items-center gap-2 rounded-2xl border px-4 has-[:disabled]:opacity-40',
           isWarning ? 'border-red-500' : 'border-gray-200'
         )}
       >
