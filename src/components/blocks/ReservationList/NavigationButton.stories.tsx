@@ -23,7 +23,6 @@ export const Default: Story = {
         activeStatus={activeStatus}
         onClickButton={(button) => {
           setActiveStatus(button);
-          console.log(button);
 
           if (args.onClickButton) {
             args.onClickButton(button);
