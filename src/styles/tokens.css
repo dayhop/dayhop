@@ -1,0 +1,81 @@
+@theme {
+  --font-sans: var(--font-pretendard), sans-serif;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-gray-25: #f8f8f8;
+  --color-gray-50: #edeef2;
+  --color-gray-100: #e0e0e5;
+  --color-gray-200: #c6c8cf;
+  --color-gray-300: #b3b4bc;
+  --color-gray-400: #9fa0a7;
+  --color-gray-500: #84858c;
+  --color-gray-600: #707177;
+  --color-gray-700: #5d5d61;
+  --color-gray-800: #49494c;
+  --color-gray-900: #323236;
+  --color-gray-950: #1f1f22;
+
+  --color-primary-100: #e5f3ff;
+  --color-primary-500: #3d9ef2;
+  --color-primary: #00c3ff;
+  --color-primary-dark: #2f6bff;
+
+  --color-red-500: #ff2727;
+
+  /* 별점 */
+  --color-yellow: #ffcb02;
+
+  /* 예약내역 배지 */
+  --color-status-pending-bg: #e9fbe4;
+  --color-status-pending-text: #2ba90d;
+
+  --color-status-declined-bg: #fcecea;
+  --color-status-declined-text: #f96767;
+
+  --color-status-completed-bg: #daf0ff;
+  --color-status-completed-text: #0d6cd1;
+
+  --color-status-confirmed-bg: #ddf9f9;
+  --color-status-confirmed-text: #1790a0;
+
+  --color-status-canceled-bg: #e0e0e5;
+  --color-status-canceled-text: #707177;
+
+  --color-status-danger: #e5484d;
+
+  /* 캘린더 상태 배지 */
+  --color-calendar-status-completed-bg: var(--color-gray-50);
+  --color-calendar-status-completed-text: var(--color-gray-500);
+
+  --color-calendar-status-pending-bg: var(--color-primary-100);
+  --color-calendar-status-pending-text: var(--color-primary-500);
+
+  --color-calendar-status-confirmed-bg: #fff8dd;
+  --color-calendar-status-confirmed-text: #ffb051;
+
+  /* 시멘틱 */
+
+  --color-bg: var(--color-white);
+  --color-bg-surface: var(--color-gray-50);
+  --color-bg-footer: var(--color-gray-100);
+  --color-border-default: var(--color-gray-100);
+  --color-text-primary: var(--color-gray-950);
+  --color-text-secondary: var(--color-gray-700);
+  --color-text-tertiary: var(--color-gray-500);
+  --color-text-placeholder: var(--color-gray-400);
+  --color-calendar-primary: var(--color-gray-800);
+  --color-calendar-secondary: var(--color-gray-900);
+  --shadow-card: 0px 4px 16px 0px rgba(17, 34, 17, 0.05);
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* 버튼 */
+  --color-primary-button-active: #0096cc;
+  --color-primary-button-hover: #00aee6;
+  --color-secondary-button-active: #cceeff;
+  --color-secondary-button-hover: #e5f3ff;
+  --color-kakao-button: #f7e600;
+  --color-kakao-button-hover: #ebd800;
+  --color-kakao-button-active: #d4c200;
+}
