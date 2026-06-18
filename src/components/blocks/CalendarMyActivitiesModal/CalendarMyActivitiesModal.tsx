@@ -145,6 +145,40 @@ export const CalendarMyActivitiesModal = ({
     onReservationChange?.();
   };
 
+  const handleApprove = (reservation: MyActivityReservation) => () => {
+    setPendingAction({
+      type: 'confirmed',
+      execute: async () => {
+        await patchMyActivityReservationStatus(activityId, reservation.id, { status: 'confirmed' });
+        refreshAfterAction();
+      },
+    });
+  };
+
+  const handleDecline = (reservation: MyActivityReservation) => () => {
+    setPendingAction({
+      type: 'declined',
+      execute: async () => {
+        await patchMyActivityReservationStatus(activityId, reservation.id, { status: 'declined' });
+        refreshAfterAction();
+      },
+    });
+  };
+
+  const handleConfirm = async () => {
+    if (!pendingAction) return;
+    const isConfirmed = pendingAction.type === 'confirmed';
+    try {
+      await pendingAction.execute();
+      setActiveTab(isConfirmed ? 'confirmed' : 'declined');
+      showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
+    } catch {
+      showToast.error(isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.');
+    } finally {
+      setPendingAction(null);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -228,28 +262,8 @@ export const CalendarMyActivitiesModal = ({
                         headCount={reservation.headCount}
                         activeTab={activeTab}
                         isPast={isSchedulePast}
-                        onApprove={() =>
-                          setPendingAction({
-                            type: 'confirmed',
-                            execute: async () => {
-                              await patchMyActivityReservationStatus(activityId, reservation.id, {
-                                status: 'confirmed',
-                              });
-                              refreshAfterAction();
-                            },
-                          })
-                        }
-                        onDecline={() =>
-                          setPendingAction({
-                            type: 'declined',
-                            execute: async () => {
-                              await patchMyActivityReservationStatus(activityId, reservation.id, {
-                                status: 'declined',
-                              });
-                              refreshAfterAction();
-                            },
-                          })
-                        }
+                        onApprove={handleApprove(reservation)}
+                        onDecline={handleDecline(reservation)}
                       />
                     ))}
                   </ul>
@@ -262,21 +276,7 @@ export const CalendarMyActivitiesModal = ({
       <ConfirmModal
         isOpen={pendingAction !== null}
         onClose={() => setPendingAction(null)}
-        onConfirm={async () => {
-          if (!pendingAction) return;
-          const isConfirmed = pendingAction.type === 'confirmed';
-          try {
-            await pendingAction.execute();
-            setActiveTab(isConfirmed ? 'confirmed' : 'declined');
-            showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
-          } catch {
-            showToast.error(
-              isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.'
-            );
-          } finally {
-            setPendingAction(null);
-          }
-        }}
+        onConfirm={handleConfirm}
         message={
           pendingAction?.type === 'confirmed'
             ? '예약을 승인하시겠습니까?'
