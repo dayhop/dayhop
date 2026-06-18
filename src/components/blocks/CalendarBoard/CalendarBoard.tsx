@@ -8,6 +8,7 @@ import {
   getMyActivityReservedSchedule,
 } from '@/lib/api/my-activities';
 import type { ReservationCount } from '@/lib/api/my-activities/type';
+import { showToast } from '@/utils/toast';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
 import { isPastTime, toLocalDateString } from '../Calendar/utils';
@@ -78,7 +79,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
 
         setDateDataMap(map);
       } catch {
-        // 글로벌 인터셉터에서 처리
+        showToast.error('예약 현황을 불러오는 데 실패했습니다.');
       }
     }
     fetchDashboard();
