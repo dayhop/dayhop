@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ProfileCard } from '@/components/blocks/ProfileCard';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
-import ChevronLeft from '@/assets/icon/ChevronLeft.svg';
+import ChevronPrev from '@/assets/icon/ChevronPrev.svg';
 
 interface PageConfig {
   title: string;
@@ -131,10 +131,9 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
             >
               <button
                 onClick={() => router.push('/mypage')}
-                className="text-text-primary mb-4 flex items-center gap-1 px-6 text-sm font-medium"
+                className="text-text-primary bg-primary-100 mb-4 ml-6 flex h-7.5 w-7.5 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium"
               >
-                <ChevronLeft className="h-4 w-4" />
-                뒤로가기
+                <ChevronPrev className="h-4 w-4" />
               </button>
               {pageConfig && (
                 <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />
