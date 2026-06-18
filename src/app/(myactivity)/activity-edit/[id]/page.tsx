@@ -149,7 +149,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     const getInitData = async () => {
       try {
         const response = await getActivity(id);
-        setInitData(response);
+        setInitData(response ?? undefined);
       } catch (error) {
         console.error(error);
       }

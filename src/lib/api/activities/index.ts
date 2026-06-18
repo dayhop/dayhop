@@ -15,20 +15,30 @@ export async function postActivities(data: T.PostActivitiesData): Promise<T.Acti
   return response.data;
 }
 
-export async function getActivity(activityId: number): Promise<T.ActivityResponse> {
-  const response = await serverInstance.get<T.ActivityResponse>(`/activities/${activityId}`);
-  return response.data;
+export async function getActivity(activityId: number): Promise<T.ActivityResponse | null> {
+  try {
+    const response = await serverInstance.get<T.ActivityResponse>(`/activities/${activityId}`);
+    return response.data;
+  } catch (error) {
+    console.warn(`Failed to get activity ${activityId}:`, error);
+    return null;
+  }
 }
 
 export async function getActivityAvailableSchedule(
   activityId: number,
   params: T.GetActivityAvailableScheduleParams
-): Promise<T.GetActivityAvailableScheduleResponse> {
-  const response = await serverInstance.get<T.GetActivityAvailableScheduleResponse>(
-    `/activities/${activityId}/available-schedule`,
-    { params }
-  );
-  return response.data;
+): Promise<T.GetActivityAvailableScheduleResponse | null> {
+  try {
+    const response = await serverInstance.get<T.GetActivityAvailableScheduleResponse>(
+      `/activities/${activityId}/available-schedule`,
+      { params }
+    );
+    return response.data;
+  } catch {
+    console.warn(`Failed to get available schedule for activity ${activityId}`);
+    return null;
+  }
 }
 
 export async function getActivityReviews(

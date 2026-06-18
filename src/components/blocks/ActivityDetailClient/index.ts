@@ -1,0 +1,1 @@
+export { ActivityDetailClient } from './ActivityDetailClient';
