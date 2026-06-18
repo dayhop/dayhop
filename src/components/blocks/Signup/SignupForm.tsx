@@ -12,8 +12,8 @@ import {
 } from '@/utils/validate';
 import { AuthField } from '../AuthField/AuthField';
 import { showToast } from '@/utils/toast';
-import { handleRandomNickname } from '@/utils/randomNickname';
 import { useRouter } from 'next/navigation';
+import { generateRandomNickname } from '@/utils/randomNickname';
 
 export function SignupForm() {
   const router = useRouter();
@@ -114,7 +114,12 @@ export function SignupForm() {
         />
         <Button
           className="mt-7 w-40 p-0 text-sm"
-          onClick={() => handleRandomNickname(handleChange)}
+          onClick={() => {
+            const nickname = generateRandomNickname();
+            setFormData((prev) => ({ ...prev, name: nickname }));
+            setErrorMessage((prev) => ({ ...prev, name: '' }));
+          }}
+          type="button"
         >
           랜덤 닉네임
         </Button>
