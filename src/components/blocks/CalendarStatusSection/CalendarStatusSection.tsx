@@ -35,6 +35,11 @@ export const CalendarStatusSection = () => {
     };
   }, []);
 
+  const handleSelectActivity = (title: string) => {
+    const activity = activities.find((a) => a.title === title);
+    if (activity) setSelectedActivity(activity);
+  };
+
   return (
     <>
       {!isLoading &&
@@ -42,11 +47,8 @@ export const CalendarStatusSection = () => {
           <>
             <SelectField
               list={activities.map((activity) => activity.title)}
-              onSelectOption={(title) => {
-                const activity = activities.find((activity) => activity.title === title);
-                if (activity) setSelectedActivity(activity);
-              }}
-              selectedOption={selectedActivity?.title ?? ''}
+              onSelectOption={handleSelectActivity}
+              selectedOption={selectedActivity.title}
               defaultMessage="체험을 선택해 주세요"
             />
             <div className="mt-7.5 md:mt-6 lg:relative lg:mt-7.5">
