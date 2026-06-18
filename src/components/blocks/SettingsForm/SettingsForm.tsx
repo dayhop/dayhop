@@ -10,7 +10,7 @@ import { PasswordConfirmModal } from '../PasswordConfirmModal';
 import { showToast } from '@/utils/toast';
 
 const INITIAL_FORM = { nickname: '', newPassword: '', confirmPassword: '' };
-const INITIAL_ERRORS = { newPassword: '', confirmPassword: '' };
+const INITIAL_ERRORS = { nickname: '', newPassword: '', confirmPassword: '' };
 
 const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex flex-col gap-2.5">
@@ -34,6 +34,8 @@ export const SettingsForm = () => {
     (field: keyof typeof INITIAL_FORM) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({ ...prev, [field]: e.target.value }));
     };
+
+  const getNicknameError = () => (!formData.nickname.trim() ? '닉네임을 입력해주세요.' : '');
 
   const getPasswordError = () =>
     formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '';
@@ -62,11 +64,12 @@ export const SettingsForm = () => {
 
   const handleSaveClick = () => {
     const newErrors = {
+      nickname: getNicknameError(),
       newPassword: getPasswordError(),
       confirmPassword: getConfirmPasswordError(),
     };
     setErrors(newErrors);
-    if (newErrors.newPassword || newErrors.confirmPassword) return;
+    if (newErrors.nickname || newErrors.newPassword || newErrors.confirmPassword) return;
     setIsPasswordModalOpen(true);
   };
 
@@ -94,6 +97,8 @@ export const SettingsForm = () => {
         <Input
           value={isEditMode ? formData.nickname : user.nickname}
           disabled={!isEditMode}
+          isWarning={!!errors.nickname}
+          warningText={errors.nickname}
           onChange={handleChange('nickname')}
         />
       </FormField>
