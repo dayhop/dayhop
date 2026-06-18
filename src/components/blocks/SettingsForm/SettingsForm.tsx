@@ -54,6 +54,10 @@ export const SettingsForm = () => {
     setIsEditMode(false);
   };
 
+  const handleNicknameBlur = () => {
+    setErrors((prev) => ({ ...prev, nickname: getNicknameError() }));
+  };
+
   const handleNewPasswordBlur = () => {
     setErrors((prev) => ({ ...prev, newPassword: getPasswordError() }));
   };
@@ -100,6 +104,7 @@ export const SettingsForm = () => {
           isWarning={!!errors.nickname}
           warningText={errors.nickname}
           onChange={handleChange('nickname')}
+          onBlur={handleNicknameBlur}
         />
       </FormField>
 
