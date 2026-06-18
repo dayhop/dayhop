@@ -20,7 +20,7 @@ export async function getActivity(activityId: number): Promise<T.ActivityRespons
     const response = await serverInstance.get<T.ActivityResponse>(`/activities/${activityId}`);
     return response.data;
   } catch (error) {
-    console.warn(`Failed to get activity ${activityId} (using mock fallback):`, error);
+    console.warn(`Failed to get activity ${activityId}:`, error);
     return null;
   }
 }
