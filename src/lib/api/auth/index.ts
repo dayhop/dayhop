@@ -33,7 +33,7 @@ export const postRefreshToken = async (): Promise<T.TokenResponse> => {
     {},
     {
       headers: {
-        Cookie: `refreshToken=${refreshToken}`,
+        Authorization: `Bearer ${refreshToken}`,
       },
     }
   );
