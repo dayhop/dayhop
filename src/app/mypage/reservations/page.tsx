@@ -100,7 +100,7 @@ export default function ReservationListPage() {
   return (
     <div className="flex flex-col gap-3.5">
       <NavigationButton activeStatus={activeStatus} onClickButton={onClickNavigationButton} />
-      <div className="flex flex-col gap-7.5">
+      <div className="flex flex-col gap-7.5 px-6 md:px-0">
         {reservationList.length !== 0
           ? reservationList.map((reservation) => (
               <ReservationCard key={reservation.id} data={reservation} />

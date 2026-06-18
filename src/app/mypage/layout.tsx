@@ -24,6 +24,7 @@ const PAGE_CONFIG: Record<string, PageConfig> = {
   '/mypage/reservations': {
     title: '예약 내역',
     description: '예약 내역을 확인하고 변경 및 취소할 수 있습니다.',
+    contentClassName: 'px-0',
   },
   '/mypage/activities': {
     title: '내 체험 관리',
