@@ -1,57 +1,74 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Avatar } from '@/components/ui/Avatar';
 import LogoIcon from '@/assets/icon/logoIcon.svg';
 import IconBell from '@/assets/icon/icon_bell.svg';
 import IconBellDot from '@/assets/icon/icon_bell_dot.svg';
-import { getMyNotifications, deleteMyNotification } from '@/lib/api/my-notifications';
-import type { Notification } from '@/lib/api/my-notifications/type';
+import { getMyNotifications } from '@/lib/api/my-notifications';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { NotificationPopover } from '@/components/blocks/Notification';
 
 export const Header = () => {
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [hasUnread, setHasUnread] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  // 알림 목록 조회 및 60초 폴링
+  const lastSeenKey = user ? `notification:lastSeenAt:${user.id}` : null;
+
   useEffect(() => {
-    if (!isLoggedIn || !user) {
+    if (!isLoggedIn || !user || !lastSeenKey) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setNotifications([]);
-      setUnreadCount(0);
+      setHasUnread(false);
       return;
     }
 
     let isCurrent = true;
+    let interval: ReturnType<typeof setInterval> | undefined;
 
-    const fetchNotifications = async () => {
+    const check = async () => {
       try {
-        const res = await getMyNotifications({ size: 10 });
-        if (isCurrent) {
-          setNotifications(res.notifications || []);
-          setUnreadCount(res.totalCount || 0);
-        }
+        const res = await getMyNotifications({ size: 1 });
+        if (!isCurrent) return;
+        const latest = res.notifications?.[0]?.createdAt ?? null;
+        const lastSeen = localStorage.getItem(lastSeenKey);
+        setHasUnread(!!latest && (!lastSeen || new Date(latest) > new Date(lastSeen)));
       } catch (err) {
         console.error('Failed to fetch notifications:', err);
       }
     };
 
-    fetchNotifications();
+    const start = () => {
+      if (interval) clearInterval(interval);
+      check();
+      interval = setInterval(check, 30000);
+    };
 
-    const interval = setInterval(fetchNotifications, 60000);
+    const stop = () => {
+      if (interval) clearInterval(interval);
+      interval = undefined;
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+
+    if (!document.hidden) start();
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       isCurrent = false;
-      clearInterval(interval);
+      stop();
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, lastSeenKey]);
 
   // 드롭다운 외부 클릭 및 ESC 닫기 처리
   useOutsideClick(dropdownRef, () => setIsDropdownOpen(false), isDropdownOpen);
@@ -62,14 +79,20 @@ export const Header = () => {
     logout();
   };
 
-  const handleDeleteNotification = async (id: number) => {
-    try {
-      await deleteMyNotification({ notificationId: id });
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-    }
+  const markSeen = useCallback(
+    (latestCreatedAt: string | null) => {
+      if (latestCreatedAt && lastSeenKey) {
+        localStorage.setItem(lastSeenKey, latestCreatedAt);
+      }
+      setHasUnread(false);
+    },
+    [lastSeenKey]
+  );
+
+  const handleBellClick = () => {
+    const next = !isNotificationOpen;
+    setIsNotificationOpen(next);
+    if (next) setHasUnread(false);
   };
 
   return (
@@ -91,12 +114,12 @@ export const Header = () => {
               <div className="relative" ref={notificationRef}>
                 <button
                   type="button"
-                  onClick={() => setIsNotificationOpen((prev) => !prev)}
+                  onClick={handleBellClick}
                   className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-gray-100"
                   aria-expanded={isNotificationOpen}
                   aria-label="알림"
                 >
-                  {unreadCount > 0 ? (
+                  {hasUnread ? (
                     <IconBellDot className="h-6 w-6" />
                   ) : (
                     <IconBell className="h-6 w-6" />
@@ -104,47 +127,10 @@ export const Header = () => {
                 </button>
 
                 {isNotificationOpen && (
-                  <div className="border-border-default absolute top-full right-0 z-50 mt-2 flex w-80 flex-col gap-3 rounded-2xl border bg-white p-4 shadow-lg">
-                    <div className="border-border-default flex items-center justify-between border-b pb-2">
-                      <span className="text-text-primary text-sm font-bold">
-                        알림 ({unreadCount})
-                      </span>
-                    </div>
-
-                    <div className="flex max-h-60 flex-col gap-3 overflow-y-auto pr-1">
-                      {notifications.length > 0 ? (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className="relative flex flex-col gap-1 border-b border-gray-50 pb-3 last:border-none last:pb-0"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteNotification(n.id)}
-                              className="text-text-placeholder hover:text-text-secondary absolute top-0 right-0 cursor-pointer p-1 text-base leading-none font-bold"
-                              aria-label="알림 삭제"
-                            >
-                              &times;
-                            </button>
-                            <p className="text-text-secondary pr-5 text-xs leading-normal">
-                              {n.content}
-                            </p>
-                            <span className="text-text-placeholder text-[10px]">
-                              {new Date(n.createdAt).toLocaleDateString('ko-KR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              })}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-text-placeholder py-8 text-center text-xs">
-                          알림이 없습니다.
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <NotificationPopover
+                    onClose={() => setIsNotificationOpen(false)}
+                    onLoaded={markSeen}
+                  />
                 )}
               </div>
 
