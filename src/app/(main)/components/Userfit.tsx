@@ -73,6 +73,8 @@ export function Userfit() {
     fetchActivities();
   }, []);
 
+  if (activitiesList.length === 0) return null;
+
   //비로그인일시 '회원님'
   const username = userNickname || '회원';
 

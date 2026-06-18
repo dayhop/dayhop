@@ -2,7 +2,7 @@ import { ActivityCategory } from '@/types/api';
 
 const userfitItem = {
   category: {
-    '문화·예술': 0,
+    '문화 · 예술': 0,
     식음료: 0,
     스포츠: 0,
     투어: 0,
