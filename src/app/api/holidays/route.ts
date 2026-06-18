@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { NextResponse } from 'next/server';
 
 type HolidayItem = {
@@ -26,7 +25,16 @@ export async function GET(request: Request) {
   const url = `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?serviceKey=${serviceKey}&solYear=${year}&solMonth=${month}&_type=json`;
 
   try {
-    const { data } = await axios.get(url);
+    const response = await fetch(url, { next: { revalidate: 60 * 60 * 24 } });
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { message: '공휴일 정보를 불러오는데 실패했습니다.' },
+        { status: 502 }
+      );
+    }
+
+    const data = await response.json();
 
     if (typeof data !== 'object' || data === null || !data.response) {
       return NextResponse.json(

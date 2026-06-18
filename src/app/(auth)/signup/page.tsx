@@ -2,6 +2,7 @@ import { SignupForm } from '@/components/blocks/Signup/SignupForm';
 import Link from 'next/link';
 import { OAuth } from '../components/Oauth';
 import Logo from '@/assets/icon/Logo.svg';
+import { Suspense } from 'react';
 
 export default function SignupPage() {
   return (
@@ -10,7 +11,9 @@ export default function SignupPage() {
         <Logo />
       </Link>
       <SignupForm />
-      <OAuth type="signup" />
+      <Suspense fallback={<div>Loading...</div>}>
+        <OAuth type="signup" />
+      </Suspense>
     </div>
   );
 }
