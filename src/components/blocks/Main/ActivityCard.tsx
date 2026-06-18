@@ -5,6 +5,7 @@ import { useClickLogger } from '@/hooks/useClickLogger';
 import { useClickMost } from '@/hooks/useClickMost';
 import { ActivityCategory } from '@/types/api';
 import { totalPriceToString } from '@/utils/priceFormat';
+import { useRouter } from 'next/navigation';
 
 interface ActivityCardProps {
   data: {
@@ -19,6 +20,7 @@ interface ActivityCardProps {
 }
 
 export function ActivityCard({ data }: ActivityCardProps) {
+  const router = useRouter();
   const { id, title, price, bannerImageUrl, rating, reviewCount, category } = data;
   const { handleUpdateLog } = useClickLogger();
   const { handleUpdateMostClick } = useClickMost();
@@ -36,6 +38,7 @@ export function ActivityCard({ data }: ActivityCardProps) {
       onClick={() => {
         handleUpdateLog(id, category);
         handleUpdateMostClick(id);
+        router.push(`/activitis/${id}`);
       }}
     >
       <div className="absolute bottom-3 left-0 flex flex-col gap-1.5 px-4 md:bottom-7.5 md:left-5 md:gap-5">
