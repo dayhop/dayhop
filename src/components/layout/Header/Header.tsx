@@ -2,55 +2,45 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
-import { showToast } from '@/utils/toast';
 import { Avatar } from '@/components/ui/Avatar';
 import LogoIcon from '@/assets/icon/logoIcon.svg';
 import IconBell from '@/assets/icon/icon_bell.svg';
 import IconBellDot from '@/assets/icon/icon_bell_dot.svg';
-import { getMyNotifications, deleteMyNotification } from '@/lib/api/my-notifications';
-import type { Notification } from '@/lib/api/my-notifications/type';
+import { getMyNotifications } from '@/lib/api/my-notifications';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { NotificationPopover } from '@/components/blocks/Notification';
 
 export const Header = () => {
-  const router = useRouter();
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  // 알림 목록 조회 및 30초 폴링
   useEffect(() => {
     if (!isLoggedIn || !user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setNotifications([]);
       setUnreadCount(0);
       return;
     }
 
     let isCurrent = true;
 
-    const fetchNotifications = async () => {
+    const fetchUnreadCount = async () => {
       try {
-        const res = await getMyNotifications({ size: 10 });
-        if (isCurrent) {
-          setNotifications(res.notifications || []);
-          setUnreadCount(res.totalCount || 0);
-        }
+        const res = await getMyNotifications({ size: 1 });
+        if (isCurrent) setUnreadCount(res.totalCount || 0);
       } catch (err) {
         console.error('Failed to fetch notifications:', err);
       }
     };
 
-    fetchNotifications();
+    fetchUnreadCount();
 
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(fetchUnreadCount, 30000);
     return () => {
       isCurrent = false;
       clearInterval(interval);
@@ -64,24 +54,6 @@ export const Header = () => {
   const handleLogout = () => {
     setIsDropdownOpen(false);
     logout();
-  };
-
-  const handleDeleteNotification = async (id: number) => {
-    try {
-      await deleteMyNotification({ notificationId: id });
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-      showToast.success('알림을 삭제했어요.');
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-      showToast.error('알림 삭제에 실패했어요. 다시 시도해 주세요.');
-    }
-  };
-
-  // 알림 클릭 시 내 예약 내역으로 이동
-  const handleSelectNotification = () => {
-    setIsNotificationOpen(false);
-    router.push('/mypage/reservations');
   };
 
   return (
@@ -117,11 +89,8 @@ export const Header = () => {
 
                 {isNotificationOpen && (
                   <NotificationPopover
-                    notifications={notifications}
-                    totalCount={unreadCount}
                     onClose={() => setIsNotificationOpen(false)}
-                    onSelect={handleSelectNotification}
-                    onDelete={handleDeleteNotification}
+                    onCountChange={setUnreadCount}
                   />
                 )}
               </div>
