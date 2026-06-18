@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SelectField } from '@/components/ui/SelectField';
 import { getMyActivities } from '@/lib/api/my-activities';
+import { showToast } from '@/utils/toast';
 import type { ActivityItem } from '@/lib/api/my-activities/type';
 import { CalendarBoard } from '../CalendarBoard';
 
@@ -23,7 +24,7 @@ export const CalendarStatusSection = () => {
           setSelectedActivity(data.activities[0]);
         }
       } catch {
-        // 글로벌 인터셉터에서 처리
+        if (!ignore) showToast.error('체험 목록을 불러오는 데 실패했습니다.');
       } finally {
         if (!ignore) setIsLoading(false);
       }
@@ -34,6 +35,11 @@ export const CalendarStatusSection = () => {
     };
   }, []);
 
+  const handleSelectActivity = (title: string) => {
+    const activity = activities.find((a) => a.title === title);
+    if (activity) setSelectedActivity(activity);
+  };
+
   return (
     <>
       {!isLoading &&
@@ -42,11 +48,8 @@ export const CalendarStatusSection = () => {
             <div className="px-6 md:px-0">
               <SelectField
                 list={activities.map((activity) => activity.title)}
-                onSelectOption={(title) => {
-                  const activity = activities.find((activity) => activity.title === title);
-                  if (activity) setSelectedActivity(activity);
-                }}
-                selectedOption={selectedActivity?.title ?? ''}
+                onSelectOption={handleSelectActivity}
+                selectedOption={selectedActivity.title}
                 defaultMessage="체험을 선택해 주세요"
               />
             </div>
