@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+
 import { Button } from '../../ui/Button';
 import { postSignUp } from '@/lib/api/users';
 
@@ -11,8 +12,12 @@ import {
 } from '@/utils/validate';
 import { AuthField } from '../AuthField/AuthField';
 import { showToast } from '@/utils/toast';
+import { useRouter } from 'next/navigation';
+import { generateRandomNickname } from '@/utils/randomNickname';
 
 export function SignupForm() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -79,6 +84,7 @@ export function SignupForm() {
     try {
       const res = await postSignUp(requestBody);
       showToast.success('회원가입에 성공했습니다.');
+      router.push('/');
       return res;
     } catch {}
   };
@@ -94,15 +100,31 @@ export function SignupForm() {
         placeholder="이메일을 입력해 주세요"
         label="email"
       />
-      <AuthField
-        title="닉네임"
-        errorMessage={errorMessage.name}
-        isError={!!errorMessage.name}
-        handleChange={handleChange}
-        handleFocusout={handleFocusout}
-        placeholder="닉네임을 입력해 주세요"
-        label="name"
-      />
+      <div className="flex items-end gap-2">
+        <AuthField
+          title="닉네임"
+          errorMessage={errorMessage.name}
+          isError={!!errorMessage.name}
+          handleChange={handleChange}
+          handleFocusout={handleFocusout}
+          placeholder="닉네임을 입력해 주세요"
+          label="name"
+          value={formData.name}
+          className="w-180"
+        />
+        <Button
+          className="mt-7 w-40 p-0 text-sm"
+          onClick={() => {
+            const nickname = generateRandomNickname();
+            setFormData((prev) => ({ ...prev, name: nickname }));
+            setErrorMessage((prev) => ({ ...prev, name: '' }));
+          }}
+          type="button"
+        >
+          랜덤 닉네임
+        </Button>
+      </div>
+
       <AuthField
         title="비밀번호"
         type="password"

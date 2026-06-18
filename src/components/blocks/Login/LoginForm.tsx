@@ -56,7 +56,7 @@ export function LoginForm() {
     e.preventDefault();
     try {
       const result = await postLogin(formData);
-      showToast.success(`${result.user?.nickname} 님 반갑습니다.`);
+      showToast.success(`${result.user?.nickname}님 반갑습니다.`);
       router.push('/');
       login(result.user);
     } catch {}
