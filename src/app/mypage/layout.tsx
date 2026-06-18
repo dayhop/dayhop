@@ -41,6 +41,7 @@ const PAGE_CONFIG: Record<string, PageConfig> = {
 const DEFAULT_CONTENT_CLASS = 'px-6 md:px-0';
 
 const isSubPage = (pathname: string) => pathname !== '/mypage';
+const isEditable = (pathname: string) => pathname === '/mypage' || pathname === '/mypage/info';
 
 const PageHeader = ({
   config,
@@ -76,6 +77,7 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const router = useRouter();
   const subPage = isSubPage(pathname);
+  const editable = isEditable(pathname);
   const pageConfig = PAGE_CONFIG[pathname];
 
   useEffect(() => {
@@ -127,7 +129,7 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
       {/* PC / Tablet */}
       <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
         <aside className="w-55 shrink-0 lg:w-72.5">
-          <ProfileCard />
+          <ProfileCard editable={editable} />
         </aside>
         <main className="min-w-0 flex-1">
           {pageConfig && <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />}
@@ -139,7 +141,7 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
       <div className="md:hidden">
         {!subPage ? (
           <div className="px-6">
-            <ProfileCard />
+            <ProfileCard editable={editable} />
           </div>
         ) : (
           <div>
