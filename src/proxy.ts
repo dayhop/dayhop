@@ -5,15 +5,7 @@ export async function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get('refreshToken')?.value;
   const accessToken = request.cookies.get('accessToken')?.value;
 
-  const needAuthorization = [
-    '/edit-profile',
-    '/reservation-list',
-    '/my-experiences',
-    '/experiences-add',
-    '/experiences-edit',
-    '/reservation-status',
-    '/notification',
-  ];
+  const needAuthorization = ['/mypage', '/activity-add', '/activity-edit'];
 
   const isAuthorizationpage = needAuthorization.some((path) =>
     request.nextUrl.pathname.startsWith(path)
@@ -34,7 +26,6 @@ export async function proxy(request: NextRequest) {
           Authorization: `Bearer ${refreshToken}`,
         },
       });
-      console.log('토큰 갱신 결과', res.status, res.ok);
 
       if (res.ok) {
         const data = await res.json();
