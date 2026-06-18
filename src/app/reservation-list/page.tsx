@@ -16,7 +16,7 @@ type Params = {
   status?: ReservationStatus;
   cursorId?: number;
 };
-const GET_SIZE = 2;
+const GET_SIZE = 10;
 
 export default function ReservationListPage() {
   const observerRef = useRef<HTMLDivElement>(null);
