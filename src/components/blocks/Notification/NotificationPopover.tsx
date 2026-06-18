@@ -14,10 +14,9 @@ const PAGE_SIZE = 5;
 
 interface NotificationPopoverProps {
   onClose: () => void;
-  onCountChange?: (count: number) => void;
 }
 
-export const NotificationPopover = ({ onClose, onCountChange }: NotificationPopoverProps) => {
+export const NotificationPopover = ({ onClose }: NotificationPopoverProps) => {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -38,7 +37,6 @@ export const NotificationPopover = ({ onClose, onCountChange }: NotificationPopo
         setNotifications(res.notifications ?? []);
         setCursorId(res.cursorId);
         setTotalCount(res.totalCount ?? 0);
-        onCountChange?.(res.totalCount ?? 0);
       } catch (error) {
         console.error('Failed to fetch notifications:', error);
         if (isCurrent) setIsError(true);
@@ -51,7 +49,7 @@ export const NotificationPopover = ({ onClose, onCountChange }: NotificationPopo
     return () => {
       isCurrent = false;
     };
-  }, [onCountChange]);
+  }, []);
 
   useEffect(() => {
     if (!cursorId) return;
@@ -81,11 +79,7 @@ export const NotificationPopover = ({ onClose, onCountChange }: NotificationPopo
     try {
       await deleteMyNotification({ notificationId: id });
       setNotifications((prev) => prev.filter((n) => n.id !== id));
-      setTotalCount((prev) => {
-        const next = Math.max(0, prev - 1);
-        onCountChange?.(next);
-        return next;
-      });
+      setTotalCount((prev) => Math.max(0, prev - 1));
       showToast.success('알림을 삭제했어요.');
     } catch (error) {
       console.error('Failed to delete notification:', error);

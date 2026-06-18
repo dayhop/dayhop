@@ -15,37 +15,60 @@ export const Header = () => {
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [hasUnread, setHasUnread] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
+  const lastSeenKey = user ? `notification:lastSeenAt:${user.id}` : null;
+
   useEffect(() => {
-    if (!isLoggedIn || !user) {
+    if (!isLoggedIn || !user || !lastSeenKey) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUnreadCount(0);
+      setHasUnread(false);
       return;
     }
 
     let isCurrent = true;
+    let interval: ReturnType<typeof setInterval> | undefined;
 
-    const fetchUnreadCount = async () => {
+    const check = async () => {
       try {
         const res = await getMyNotifications({ size: 1 });
-        if (isCurrent) setUnreadCount(res.totalCount || 0);
+        if (!isCurrent) return;
+        const latest = res.notifications[0]?.createdAt ?? null;
+        const lastSeen = localStorage.getItem(lastSeenKey);
+        setHasUnread(!!latest && (!lastSeen || new Date(latest) > new Date(lastSeen)));
       } catch (err) {
         console.error('Failed to fetch notifications:', err);
       }
     };
 
-    fetchUnreadCount();
+    const start = () => {
+      if (interval) clearInterval(interval);
+      check();
+      interval = setInterval(check, 30000);
+    };
 
-    const interval = setInterval(fetchUnreadCount, 30000);
+    const stop = () => {
+      if (interval) clearInterval(interval);
+      interval = undefined;
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+
+    if (!document.hidden) start();
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       isCurrent = false;
-      clearInterval(interval);
+      stop();
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, lastSeenKey]);
 
   // 드롭다운 외부 클릭 및 ESC 닫기 처리
   useOutsideClick(dropdownRef, () => setIsDropdownOpen(false), isDropdownOpen);
@@ -54,6 +77,26 @@ export const Header = () => {
   const handleLogout = () => {
     setIsDropdownOpen(false);
     logout();
+  };
+
+  const markAllSeen = async () => {
+    if (!lastSeenKey) return;
+    try {
+      const res = await getMyNotifications({ size: 1 });
+      const latest = res.notifications[0]?.createdAt;
+      if (latest) localStorage.setItem(lastSeenKey, latest);
+    } catch (err) {
+      console.error('Failed to mark notifications seen:', err);
+    }
+    setHasUnread(false);
+  };
+
+  const handleBellClick = () => {
+    setIsNotificationOpen((prev) => {
+      const next = !prev;
+      if (next) markAllSeen();
+      return next;
+    });
   };
 
   return (
@@ -75,12 +118,12 @@ export const Header = () => {
               <div className="relative" ref={notificationRef}>
                 <button
                   type="button"
-                  onClick={() => setIsNotificationOpen((prev) => !prev)}
+                  onClick={handleBellClick}
                   className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-gray-100"
                   aria-expanded={isNotificationOpen}
                   aria-label="알림"
                 >
-                  {unreadCount > 0 ? (
+                  {hasUnread ? (
                     <IconBellDot className="h-6 w-6" />
                   ) : (
                     <IconBell className="h-6 w-6" />
@@ -88,10 +131,7 @@ export const Header = () => {
                 </button>
 
                 {isNotificationOpen && (
-                  <NotificationPopover
-                    onClose={() => setIsNotificationOpen(false)}
-                    onCountChange={setUnreadCount}
-                  />
+                  <NotificationPopover onClose={() => setIsNotificationOpen(false)} />
                 )}
               </div>
 
