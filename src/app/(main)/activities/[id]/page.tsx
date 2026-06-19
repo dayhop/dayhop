@@ -11,11 +11,13 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     notFound();
   }
 
-  const activity = await getActivity(activityId);
+  const res = await getActivity(activityId);
 
-  if (!activity) {
+  if (!res.success) {
     notFound();
   }
+
+  const activity = res.data;
 
   const processedActivity = {
     ...activity,

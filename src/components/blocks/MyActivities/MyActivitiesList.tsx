@@ -32,14 +32,11 @@ export const MyActivitiesList = ({
       async ([entry]) => {
         if (!entry.isIntersecting || isLoadingRef.current) return;
         isLoadingRef.current = true;
-        try {
-          const { activities: next, cursorId: nextCursor } = await getMyActivities({ cursorId });
-          setActivities((prev) => [...prev, ...next]);
-          setCursorId(nextCursor);
-        } catch {
-          // TODO: 전역 에러 처리 방식 결정 후 반영
-        } finally {
-          isLoadingRef.current = false;
+        const res = await getMyActivities({ cursorId });
+        isLoadingRef.current = false;
+        if (res.success) {
+          setActivities((prev) => [...prev, ...res.data.activities]);
+          setCursorId(res.data.cursorId);
         }
       },
       { threshold: 0.5 }
@@ -51,15 +48,15 @@ export const MyActivitiesList = ({
 
   const handleDeleteConfirm = async () => {
     if (!deleteTargetId) return;
-    try {
-      await deleteMyActivity(deleteTargetId);
-      setActivities((prev) => prev.filter((a) => a.id !== deleteTargetId));
-      showToast.success('체험이 삭제되었습니다.');
-    } catch {
-      // TODO: 전역 에러 처리 방식 결정 후 반영
-    } finally {
+    const res = await deleteMyActivity(deleteTargetId);
+    if (!res.success) {
+      showToast.error(res.message);
       setDeleteTargetId(null);
+      return;
     }
+    setActivities((prev) => prev.filter((a) => a.id !== deleteTargetId));
+    showToast.success('체험이 삭제되었습니다.');
+    setDeleteTargetId(null);
   };
 
   if (activities.length === 0) {

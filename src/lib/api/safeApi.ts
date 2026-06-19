@@ -15,7 +15,7 @@ export async function safeApi<T>(fn: () => Promise<AxiosResponse<T>>): Promise<A
         status === 401 ? UNAUTHORIZED_MESSAGE : (error.response?.data?.message ?? DEFAULT_MESSAGE);
       return { success: false, message, status };
     }
-    return { success: false, message: DEFAULT_MESSAGE };
+    throw error;
   }
 }
 

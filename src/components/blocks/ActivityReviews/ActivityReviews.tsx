@@ -23,23 +23,17 @@ export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
     let isMounted = true;
 
     const fetchReviews = async () => {
-      try {
-        const res = await getActivityReviews(activityId, {
-          page: currentPage,
-          size: PAGE_SIZE,
-        });
-        if (isMounted && res) {
-          setReviews(res.reviews || []);
-          setAverageRating(res.averageRating || 0);
-          setTotalCount(res.totalCount || 0);
-        }
-      } catch (error) {
-        console.warn('Failed to fetch reviews:', error);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+      const res = await getActivityReviews(activityId, {
+        page: currentPage,
+        size: PAGE_SIZE,
+      });
+      if (!isMounted) return;
+      if (res.success) {
+        setReviews(res.data.reviews || []);
+        setAverageRating(res.data.averageRating || 0);
+        setTotalCount(res.data.totalCount || 0);
       }
+      setIsLoading(false);
     };
 
     fetchReviews();

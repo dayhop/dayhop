@@ -68,33 +68,43 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
     let ignore = false;
 
     async function fetchDashboard() {
-      try {
-        const dashboard = await getMyActivityReservationDashboard(activityId, {
-          year: String(currentMonth.getFullYear()),
-          month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
-        });
-        if (ignore) return;
-
-        const datesWithReservations = dashboard.filter(
-          ({ reservations: r }) => r.pending > 0 || r.confirmed > 0 || r.completed > 0
-        );
-
-        // pending/confirmed가 있는 날짜만 스케줄 API 호출 (슬롯 수 카운트용)
-        const datesNeedingSchedules = datesWithReservations
-          .filter(({ reservations: r }) => r.pending > 0 || r.confirmed > 0)
-          .map(({ date }) => date);
-
-        const scheduleResults = await Promise.all(
-          datesNeedingSchedules.map((date) => getMyActivityReservedSchedule(activityId, { date }))
-        );
-        if (ignore) return;
-
-        setDateDataMap(
-          buildDateDataMap(datesWithReservations, datesNeedingSchedules, scheduleResults)
-        );
-      } catch {
-        showToast.error('예약 현황을 불러오는 데 실패했습니다.');
+      const dashboardRes = await getMyActivityReservationDashboard(activityId, {
+        year: String(currentMonth.getFullYear()),
+        month: String(currentMonth.getMonth() + 1).padStart(2, '0'),
+      });
+      if (ignore) return;
+      if (!dashboardRes.success) {
+        showToast.error(dashboardRes.message);
+        return;
       }
+      const dashboard = dashboardRes.data;
+
+      const datesWithReservations = dashboard.filter(
+        ({ reservations: r }) => r.pending > 0 || r.confirmed > 0 || r.completed > 0
+      );
+
+      // pending/confirmed가 있는 날짜만 스케줄 API 호출 (슬롯 수 카운트용)
+      const datesNeedingSchedules = datesWithReservations
+        .filter(({ reservations: r }) => r.pending > 0 || r.confirmed > 0)
+        .map(({ date }) => date);
+
+      const scheduleResults = await Promise.all(
+        datesNeedingSchedules.map((date) => getMyActivityReservedSchedule(activityId, { date }))
+      );
+      if (ignore) return;
+      const failedSchedule = scheduleResults.find((r) => !r.success);
+      if (failedSchedule && !failedSchedule.success) {
+        showToast.error(failedSchedule.message);
+        return;
+      }
+
+      setDateDataMap(
+        buildDateDataMap(
+          datesWithReservations,
+          datesNeedingSchedules,
+          scheduleResults.flatMap((r) => (r.success ? [r.data] : []))
+        )
+      );
     }
     fetchDashboard();
 

@@ -78,21 +78,24 @@ export const SettingsForm = () => {
   };
 
   const handlePasswordConfirm = async (password: string) => {
-    await postLogin({ email: user.email, password });
-    try {
-      const updatedUser = await patchMyUser({
-        nickname: formData.nickname || undefined,
-        newPassword: formData.newPassword || undefined,
-      });
-      login(updatedUser);
-      setIsEditMode(false);
-      setFormData(INITIAL_FORM);
-      showToast.success('수정되었습니다.');
-    } catch {
-      showToast.error('수정에 실패했습니다.');
-    } finally {
-      setIsPasswordModalOpen(false);
+    const loginRes = await postLogin({ email: user.email, password });
+    if (!loginRes.success) {
+      throw new Error(loginRes.message);
     }
+    const res = await patchMyUser({
+      nickname: formData.nickname || undefined,
+      newPassword: formData.newPassword || undefined,
+    });
+    if (!res.success) {
+      showToast.error(res.message);
+      setIsPasswordModalOpen(false);
+      return;
+    }
+    login(res.data);
+    setIsEditMode(false);
+    setFormData(INITIAL_FORM);
+    showToast.success('수정되었습니다.');
+    setIsPasswordModalOpen(false);
   };
 
   return (
