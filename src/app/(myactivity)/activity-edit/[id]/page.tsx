@@ -58,15 +58,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     const { bannerFile, detailFiles } = imgCurrnet;
 
     //유효성 검사
-    const isValid = validateFormField(
-      detailFormData.title,
-      detailFormData.category,
-      detailFormData.description,
-      detailFormData.address,
-      detailFormData.price,
-      schedules,
-      bannerImageCount
-    );
+    const isValid = validateFormField(detailFormData, schedules, bannerImageCount);
 
     //유효하지 않는다면 종료
     if (!isValid) return;
