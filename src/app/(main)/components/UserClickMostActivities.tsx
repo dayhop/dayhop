@@ -24,22 +24,20 @@ export function UserClickMostActivities() {
         .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 10)
         .map(([id]) => id);
-      const results = await Promise.allSettled(
+      const results = await Promise.all(
         userfitList.map((activityId) => getActivity(Number(activityId)))
       );
 
       const data = results
-        .filter((r): r is PromiseFulfilledResult<ActivityResponse> => r.status === 'fulfilled')
-        .map((r) => r.value);
+        .filter((r): r is { success: true; data: ActivityResponse } => r.success)
+        .map((r) => r.data);
 
       setActivitiesList(data);
     };
 
     const getNickname = async () => {
-      try {
-        const user = await getMyUser();
-        setNickname(user.nickname);
-      } catch {}
+      const res = await getMyUser();
+      if (res.success) setNickname(res.data.nickname);
     };
 
     fetchActivities();

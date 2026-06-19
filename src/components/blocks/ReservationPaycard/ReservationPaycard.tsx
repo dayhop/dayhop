@@ -73,26 +73,19 @@ export function ReservationPaycard({
   useEffect(() => {
     let isMounted = true;
     const fetchSchedules = async () => {
-      try {
-        const year = String(currentMonth.getFullYear());
-        const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
-        const res = await getActivityAvailableSchedule(activityId, { year, month });
-        if (isMounted) {
-          if (res) {
-            if (Array.isArray(res)) {
-              setSchedules(res);
-            } else {
-              setSchedules([res as unknown as ScheduleDate]);
-            }
-          } else {
-            setSchedules([]);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch schedules:', error);
-        if (isMounted) {
-          setSchedules([]);
-        }
+      const year = String(currentMonth.getFullYear());
+      const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+      const res = await getActivityAvailableSchedule(activityId, { year, month });
+      if (!isMounted) return;
+      if (!res.success) {
+        setSchedules([]);
+        return;
+      }
+      const data = res.data;
+      if (Array.isArray(data)) {
+        setSchedules(data);
+      } else {
+        setSchedules([data as unknown as ScheduleDate]);
       }
     };
 
@@ -203,45 +196,44 @@ export function ReservationPaycard({
     setIsSubmitting(true);
 
     // 1. 백엔드 예약 생성 (pending 상태)
-    try {
-      const res = await postActivityReservations(activityId, {
-        scheduleId: selectedScheduleId,
-        headCount,
-      });
+    const res = await postActivityReservations(activityId, {
+      scheduleId: selectedScheduleId,
+      headCount,
+    });
 
-      // 2. 토스페이먼츠 SDK 호출
-      if (typeof window !== 'undefined' && window.TossPayments) {
-        const clientKey =
-          process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
-        const tossPayments = window.TossPayments(clientKey);
-        const cleanUrl = window.location.origin + window.location.pathname;
-        try {
-          await tossPayments.requestPayment('카드', {
-            amount: totalPrice,
-            orderId: `res-${res.id}-${getTimestamp()}`,
-            orderName: activityTitle,
-            customerName: user?.nickname || '구매자',
-            successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.id}`,
-            failUrl: `${cleanUrl}?paymentStatus=fail`,
-          });
-        } catch (paymentError) {
-          console.error('Payment request failed:', paymentError);
-        }
-      } else {
-        showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-      }
-    } catch (apiError) {
-      const errorStatus = (apiError as { response?: { status?: number } })?.response?.status;
-      if (errorStatus === 401) {
+    if (!res.success) {
+      if (res.status === 401) {
         showToast.error('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
         router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
       } else {
-        showToast.error('예약 생성에 실패했습니다. 다시 시도해 주세요.');
-        console.error('API reservation creation failed:', apiError);
+        showToast.error(res.message);
       }
-    } finally {
       setIsSubmitting(false);
+      return;
     }
+
+    // 2. 토스페이먼츠 SDK 호출
+    if (typeof window !== 'undefined' && window.TossPayments) {
+      const clientKey =
+        process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+      const tossPayments = window.TossPayments(clientKey);
+      const cleanUrl = window.location.origin + window.location.pathname;
+      try {
+        await tossPayments.requestPayment('카드', {
+          amount: totalPrice,
+          orderId: `res-${res.data.id}-${getTimestamp()}`,
+          orderName: activityTitle,
+          customerName: user?.nickname || '구매자',
+          successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.data.id}`,
+          failUrl: `${cleanUrl}?paymentStatus=fail`,
+        });
+      } catch (paymentError) {
+        console.error('Payment request failed:', paymentError);
+      }
+    } else {
+      showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+    setIsSubmitting(false);
   };
 
   return (

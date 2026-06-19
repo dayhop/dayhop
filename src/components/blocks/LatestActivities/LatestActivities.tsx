@@ -20,20 +20,15 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
     if (initialActivities) return;
 
     const fetchLatestActivities = async () => {
-      try {
-        const data = await getActivities({
-          method: 'offset',
-          sort: 'latest',
-          page: 1,
-          size: 3,
-        });
+      const res = await getActivities({
+        method: 'offset',
+        sort: 'latest',
+        page: 1,
+        size: 3,
+      });
 
-        setActivities(data.activities);
-      } catch {
-        setActivities([]);
-      } finally {
-        setIsLoading(false);
-      }
+      setActivities(res.success ? res.data.activities : []);
+      setIsLoading(false);
     };
 
     fetchLatestActivities();

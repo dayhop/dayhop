@@ -42,11 +42,13 @@ export function Userfit() {
       }
 
       //요청
-      const fitcategorydata = await getActivities({
+      const fitRes = await getActivities({
         method: 'cursor',
         category: userfitCategory, // 상태 대신 지역 변수를 사용해야 합니다.
         size: 10,
       });
+      if (!fitRes.success) return;
+      const fitcategorydata = fitRes.data;
 
       //봤던 상품
       const alreadyshow = JSON.parse(response).clicksActivityLog;
@@ -63,10 +65,8 @@ export function Userfit() {
       }
     };
     const getNickname = async () => {
-      try {
-        const user = await getMyUser();
-        setUserNickname(user.nickname);
-      } catch {}
+      const res = await getMyUser();
+      if (res.success) setUserNickname(res.data.nickname);
     };
     fetchActivities();
     getNickname();

@@ -29,14 +29,17 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    try {
-      await postMyReservationReview({ reservationId: reservation.id }, { rating, content });
-      showToast.success('후기가 등록되었습니다.');
-      onClose();
-    } catch {
-    } finally {
-      setIsSubmitting(false);
+    const res = await postMyReservationReview(
+      { reservationId: reservation.id },
+      { rating, content }
+    );
+    setIsSubmitting(false);
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
     }
+    showToast.success('후기가 등록되었습니다.');
+    onClose();
   };
 
   return (

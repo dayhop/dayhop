@@ -23,16 +23,16 @@ function KakaoLogin() {
       redirectUri: REDIRECT_LOGIN_URI,
       token: code,
     };
-    try {
-      const response = await postOauthSignIn('kakao', body);
-      if (response.accessToken || response.refreshToken) {
-        showToast.success(response.user.nickname + '님 반갑습니다.');
-        login(response.user);
-        router.push('/');
-      }
-    } catch (e) {
-      showToast.error('로그인에 실패했습니다. 다시 시도해주세요.');
+    const res = await postOauthSignIn('kakao', body);
+    if (!res.success) {
+      showToast.error(res.message);
       router.push('/login');
+      return;
+    }
+    if (res.data.accessToken || res.data.refreshToken) {
+      showToast.success(res.data.user.nickname + '님 반갑습니다.');
+      login(res.data.user);
+      router.push('/');
     }
   };
 
