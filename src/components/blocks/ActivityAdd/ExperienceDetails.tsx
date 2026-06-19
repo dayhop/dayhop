@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { CATEGORY_LIST } from '@/constants/categoty-list';
 import { totalPriceToString } from '@/utils/priceFormat';
 import { ActivityResponse } from '@/lib/api/activities/type';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ActivityDetailProps {
   data?: ActivityResponse;
@@ -15,8 +15,15 @@ interface ActivityDetailProps {
 
 export function ExperienceDetail({ data }: ActivityDetailProps) {
   const { title, category, description, address, price } = data || {};
+  const initdisplay = totalPriceToString(price || 0) + ' 원';
   const [categorySelected, setCategorySelected] = useState<string>(category || '');
-  const [displayPrice, setDisplayPrice] = useState<string>('');
+  const [displayPrice, setDisplayPrice] = useState<string>(initdisplay);
+
+  // useEffect(() => {
+  //   if (price !== undefined) {
+  //     setDisplayPrice(totalPriceToString(price) + ' 원');
+  //   }
+  // }, [price]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -42,14 +49,15 @@ export function ExperienceDetail({ data }: ActivityDetailProps) {
         <Input
           name="price"
           placeholder="체험 금액을 입력해주세요"
-          defaultValue={price}
+          defaultValue={initdisplay}
           onChange={(e) => {
             const rawValue = e.target.value.replace(/[^0-9]/g, '');
             setDisplayPrice(totalPriceToString(Number(rawValue)));
           }}
           value={displayPrice}
           onBlur={(e) => {
-            setDisplayPrice(`${e.target.value.replace(/[^0-9]/g, '')} 원`);
+            const rawValue = e.target.value.replace(/[^0-9]/g, '');
+            setDisplayPrice(Number(rawValue).toLocaleString() + ' 원');
           }}
         />
       </div>
