@@ -12,8 +12,7 @@ import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { NotificationPopover } from '@/components/blocks/Notification';
 import { postLogout } from '@/lib/api/auth';
 import { useRouter } from 'next/navigation';
-import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 export const Header = () => {
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
@@ -106,20 +105,18 @@ export const Header = () => {
   return (
     <div>
       {isOpen && (
-        <Modal onClose={() => setIsOpen(false)} className="min-w-80">
-          <div className="flex flex-col gap-4">
-            <p>정말 로그아웃하시겠습니까?</p>
-            <Button
-              onClick={() => {
-                setIsOpen(false);
-                handleLogout();
-                router.push('/');
-              }}
-            >
-              떠나기
-            </Button>
-          </div>
-        </Modal>
+        <ConfirmModal
+          message="정말 로그아웃하시겠습니까?"
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          onConfirm={() => {
+            setIsOpen(false);
+            handleLogout();
+            router.push('/');
+          }}
+          confirmText="떠나기"
+          cancelText="더 구경하기"
+        />
       )}
       <header className="border-border-default bg-bg sticky top-0 z-40 flex w-full items-center justify-center border-b py-2">
         <div className="flex w-full max-w-[1200px] items-center justify-between px-6 md:px-12">
