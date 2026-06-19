@@ -10,7 +10,7 @@ import { showToast } from '@/utils/toast';
 import { ReservationItem } from './ReservationItem';
 import { patchMyActivityReservationStatus } from '@/lib/api/my-activities';
 import type { MyActivityReservation } from '@/lib/api/my-activities/type';
-import { useReservationModal, type TabStatus } from './useReservationModal';
+import { useReservationModal, formatTimeOption, type TabStatus } from './useReservationModal';
 
 interface CalendarMyActivitiesModalProps {
   activityId: number;
@@ -37,10 +37,6 @@ function formatDate(date: string) {
   return `${String(year).slice(2)}년 ${Number(month)}월 ${Number(day)}일`;
 }
 
-function formatTimeOption(startTime: string, endTime: string) {
-  return `${startTime} - ${endTime}`;
-}
-
 export const CalendarMyActivitiesModal = ({
   activityId,
   date,
@@ -58,7 +54,6 @@ export const CalendarMyActivitiesModal = ({
     selectedTime,
     setSelectedTime,
     selectedSchedule,
-    selectedScheduleId,
     isSchedulePast,
     reservations,
     cursorId,
@@ -147,7 +142,7 @@ export const CalendarMyActivitiesModal = ({
                 예약 시간
               </h3>
               <SelectField
-                list={schedules.map((s) => formatTimeOption(s.startTime, s.endTime))}
+                list={schedules.map(formatTimeOption)}
                 onSelectOption={setSelectedTime}
                 selectedOption={selectedTime}
                 defaultMessage={

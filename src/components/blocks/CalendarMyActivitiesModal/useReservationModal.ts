@@ -9,7 +9,7 @@ import type {
 
 export type TabStatus = 'pending' | 'confirmed' | 'declined';
 
-function formatTimeOption(schedule: GetMyActivityReservedScheduleResponse) {
+export function formatTimeOption(schedule: GetMyActivityReservedScheduleResponse) {
   return `${schedule.startTime} - ${schedule.endTime}`;
 }
 
