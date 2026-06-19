@@ -136,10 +136,8 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     );
     if (!isEdited) {
       setIsOpen(false);
-      showToast.success('체험 수정이 완료되었습니다.');
-      router.push(`/activities/${id}`);
-    } catch {
       showToast.error('수정 사항이 없습니다.');
+      return;
     }
 
     const patchRes = await patchMyActivity(id, submitData);

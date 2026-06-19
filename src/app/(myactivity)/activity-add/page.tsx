@@ -20,6 +20,7 @@ export default function ActivityAddPage() {
 
   //모달
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [activityId, setActivityId] = useState<number>();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,30 +37,30 @@ export default function ActivityAddPage() {
 
     if (!isValid) return;
 
-    //이미지 업로드
-    const bannerUpload = await postActivitiesImage(bannerFile[0]);
-    if (!bannerUpload.success) {
-      showToast.error(bannerUpload.message);
-      return;
-    }
+    try {
+      //이미지 업로드
+      const bannerUpload = await postActivitiesImage(bannerFile[0]);
+      if (!bannerUpload.success) {
+        showToast.error(bannerUpload.message);
+        return;
+      }
 
-    const detailUploadResponse = await Promise.all(
-      detailFiles.map((file) => postActivitiesImage(file))
-    );
-    const failedUpload = detailUploadResponse.find((res) => !res.success);
-    if (failedUpload && !failedUpload.success) {
-      showToast.error(failedUpload.message);
-      return;
-    }
+      const detailUploadResponses = await Promise.all(
+        detailFiles.map((file) => postActivitiesImage(file))
+      );
+      const failedDetail = detailUploadResponses.find((r) => !r.success);
+      if (failedDetail && !failedDetail.success) {
+        showToast.error(failedDetail.message);
+        return;
+      }
 
-    const bannerImageUrl = bannerUpload.data.activityImageUrl;
-    const subImageUrls = detailUploadResponse.flatMap((res) =>
-      res.success ? [res.data.activityImageUrl] : []
-    );
+      const bannerImageUrl = bannerUpload.data.activityImageUrl;
+      const subImageUrls = detailUploadResponses.map((r) =>
+        r.success ? r.data.activityImageUrl : ''
+      );
 
       const { title, category, description, address, price } = detailFormData;
 
-      //데이터 세팅
       const submitData: PostActivitiesData = {
         title,
         category,
@@ -72,15 +73,15 @@ export default function ActivityAddPage() {
       };
 
       const res = await postActivities(submitData);
+      if (!res.success) {
+        showToast.error(res.message);
+        return;
+      }
       setIsOpen(true);
-      showToast.success('체험 등록이 완료되었습니다.');
-      router.push(`/activities/${res.id}`);
+      setActivityId(res.data.id);
     } catch {
       showToast.error('체험 등록에 실패했습니다.');
     }
-    setIsOpen(true);
-    showToast.success('체험 등록이 완료되었습니다.');
-    //TODO: 추가된 체험으로 이동하는 로직 추가
   };
   return (
     <div>
@@ -88,7 +89,14 @@ export default function ActivityAddPage() {
         <Modal onClose={() => setIsOpen(false)} className="min-w-80">
           <div className="flex flex-col gap-4">
             <p>체험 등록이 완료되었습니다.</p>
-            <Button onClick={() => setIsOpen(false)}>확인</Button>
+            <Button
+              onClick={() => {
+                setIsOpen(false);
+                router.push(`/activities/${activityId}`);
+              }}
+            >
+              확인
+            </Button>
           </div>
         </Modal>
       )}
