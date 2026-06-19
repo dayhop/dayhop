@@ -173,7 +173,12 @@ export default function ActivityEditPage({ params }: EditPageProps) {
         <DateForm ref={dateRef} data={initData} />
         <ImgUpload mode="banner" ref={bannerRef} initialUrls={bannerInitialUrls} />
         <ImgUpload mode="detail" ref={detailRef} initialUrls={detailInitialUrls} />
-        <Button type="button" onClick={() => setIsOpen(true)} size="md" className="mx-auto w-40">
+        <Button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          size="md"
+          className="mx-auto mt-5 w-40"
+        >
           수정하기
         </Button>
       </form>
