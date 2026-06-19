@@ -53,9 +53,17 @@ export const SettingsForm = () => {
   const getConfirmPasswordError = () =>
     formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '';
 
+  // 수정하기 클릭 → 비밀번호 확인 모달 열기
   const handleEditStart = () => {
+    setIsPasswordModalOpen(true);
+  };
+
+  // 비밀번호 인증 성공 → 수정 모드 전환
+  const handlePasswordConfirm = async (password: string) => {
+    await postLogin({ email: user.email, password });
     setFormData({ ...INITIAL_FORM, nickname: user.nickname });
     setIsEditMode(true);
+    setIsPasswordModalOpen(false);
   };
 
   const handleEditCancel = () => {
@@ -76,7 +84,8 @@ export const SettingsForm = () => {
     setErrors((prev) => ({ ...prev, confirmPassword: getConfirmPasswordError() }));
   };
 
-  const handleSaveClick = () => {
+  // 저장하기 → 바로 저장 (비밀번호 재확인 없음)
+  const handleSaveClick = async () => {
     const newErrors = {
       nickname: getNicknameError(),
       newPassword: getPasswordError(),
@@ -84,11 +93,7 @@ export const SettingsForm = () => {
     };
     setErrors(newErrors);
     if (newErrors.nickname || newErrors.newPassword || newErrors.confirmPassword) return;
-    setIsPasswordModalOpen(true);
-  };
 
-  const handlePasswordConfirm = async (password: string) => {
-    await postLogin({ email: user.email, password });
     try {
       const updatedUser = await patchMyUser({
         nickname: formData.nickname || undefined,
@@ -100,8 +105,6 @@ export const SettingsForm = () => {
       showToast.success('수정되었습니다.');
     } catch {
       showToast.error('수정에 실패했습니다.');
-    } finally {
-      setIsPasswordModalOpen(false);
     }
   };
 
