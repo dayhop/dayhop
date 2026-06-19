@@ -12,9 +12,19 @@ import { showToast } from '@/utils/toast';
 const INITIAL_FORM = { nickname: '', newPassword: '', confirmPassword: '' };
 const INITIAL_ERRORS = { nickname: '', newPassword: '', confirmPassword: '' };
 
-const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
+const FormField = ({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) => (
   <div className="flex flex-col gap-2.5">
-    <label className="text-text-primary text-base font-medium">{label}</label>
+    <label htmlFor={htmlFor} className="text-text-primary text-base font-medium">
+      {label}
+    </label>
     {children}
   </div>
 );
@@ -97,8 +107,9 @@ export const SettingsForm = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <FormField label="닉네임">
+      <FormField label="닉네임" htmlFor="nickname">
         <Input
+          id="nickname"
           value={isEditMode ? formData.nickname : user.nickname}
           disabled={!isEditMode}
           isWarning={!!errors.nickname}
@@ -108,12 +119,13 @@ export const SettingsForm = () => {
         />
       </FormField>
 
-      <FormField label="이메일">
-        <Input value={user.email} disabled />
+      <FormField label="이메일" htmlFor="email">
+        <Input id="email" value={user.email} disabled />
       </FormField>
 
-      <FormField label="새 비밀번호">
+      <FormField label="새 비밀번호" htmlFor="newPassword">
         <Input
+          id="newPassword"
           type="password"
           placeholder="새 비밀번호를 입력해 주세요"
           value={formData.newPassword}
@@ -125,8 +137,9 @@ export const SettingsForm = () => {
         />
       </FormField>
 
-      <FormField label="비밀번호 확인">
+      <FormField label="비밀번호 확인" htmlFor="confirmPassword">
         <Input
+          id="confirmPassword"
           type="password"
           placeholder="비밀번호를 한 번 더 입력해 주세요"
           value={formData.confirmPassword}
