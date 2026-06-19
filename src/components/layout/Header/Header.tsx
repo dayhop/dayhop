@@ -75,15 +75,16 @@ export const Header = () => {
   useOutsideClick(dropdownRef, () => setIsDropdownOpen(false), isDropdownOpen);
   useOutsideClick(notificationRef, () => setIsNotificationOpen(false), isNotificationOpen);
 
+  //로그아웃 클릭
   const handleClickLogout = () => {
     setIsOpen(true);
   };
 
-  const handleLogout = () => {
+  //실제 로그아웃
+  const handleLogout = async () => {
     setIsDropdownOpen(false);
-    postLogout();
+    await postLogout();
     logout();
-    router.push('/');
   };
 
   const markSeen = useCallback(
@@ -103,15 +104,16 @@ export const Header = () => {
   };
 
   return (
+    //로그아웃 컨펌모달
     <div>
       {isOpen && (
         <ConfirmModal
           message="정말 로그아웃하시겠습니까?"
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          onConfirm={() => {
+          onConfirm={async () => {
             setIsOpen(false);
-            handleLogout();
+            await handleLogout();
             router.push('/');
           }}
           confirmText="떠나기"

@@ -1,5 +1,5 @@
 'use client';
-import { unstable_startGestureTransition, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '../../ui/Button';
 import { postSignUp } from '@/lib/api/users';
