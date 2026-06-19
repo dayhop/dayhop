@@ -33,39 +33,38 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
     if (items) return;
 
     const fetchReviews = async () => {
-      try {
-        const activityData = await getActivities({
-          method: 'offset',
-          sort: 'latest',
-          page: 1,
-          size: 4,
-        });
+      const activityRes = await getActivities({
+        method: 'offset',
+        sort: 'latest',
+        page: 1,
+        size: 4,
+      });
 
-        const reviewResults = await Promise.all(
-          activityData.activities.map(async (activity) => {
-            try {
-              const reviewData = await getActivityReviews(activity.id, {
-                page: 1,
-                size: 1,
-              });
-
-              const review = reviewData.reviews[0];
-
-              if (!review) return null;
-
-              return { activity, review };
-            } catch {
-              return null;
-            }
-          })
-        );
-
-        setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
-      } catch {
+      if (!activityRes.success) {
         setReviews([]);
-      } finally {
         setIsLoading(false);
+        return;
       }
+
+      const reviewResults = await Promise.all(
+        activityRes.data.activities.map(async (activity) => {
+          const reviewRes = await getActivityReviews(activity.id, {
+            page: 1,
+            size: 1,
+          });
+
+          if (!reviewRes.success) return null;
+
+          const review = reviewRes.data.reviews[0];
+
+          if (!review) return null;
+
+          return { activity, review };
+        })
+      );
+
+      setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
+      setIsLoading(false);
     };
 
     fetchReviews();

@@ -19,20 +19,15 @@ export function BestActivities({ items }: BestActivitiesProps) {
     if (items) return;
 
     const fetchBestActivities = async () => {
-      try {
-        const data = await getActivities({
-          method: 'offset',
-          sort: 'most_reviewed',
-          page: 1,
-          size: 10,
-        });
+      const res = await getActivities({
+        method: 'offset',
+        sort: 'most_reviewed',
+        page: 1,
+        size: 10,
+      });
 
-        setActivities(data.activities);
-      } catch {
-        setActivities([]);
-      } finally {
-        setIsLoading(false);
-      }
+      setActivities(res.success ? res.data.activities : []);
+      setIsLoading(false);
     };
 
     fetchBestActivities();

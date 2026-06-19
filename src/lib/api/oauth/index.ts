@@ -1,32 +1,22 @@
 'use server';
 import { serverInstance } from '../instance';
+import { safeApi } from '../safeApi';
+import type { ApiResult } from '../result';
 import * as T from './type';
 
 export const postOauthApp = async (
   body: T.CreateOauthAppRequest
-): Promise<T.CreateOauthAppResponse> => {
-  const { data } = await serverInstance.post<T.CreateOauthAppResponse>('/oauth/apps', body);
-  return data;
-};
+): Promise<ApiResult<T.CreateOauthAppResponse>> =>
+  safeApi(() => serverInstance.post<T.CreateOauthAppResponse>('/oauth/apps', body));
 
 export const postOauthSignUp = async (
   provider: T.OauthProvider,
   body: T.SignUpWithOauthRequest
-): Promise<T.SignUpWithOauthResponse> => {
-  const { data } = await serverInstance.post<T.SignUpWithOauthResponse>(
-    `/oauth/sign-up/${provider}`,
-    body
-  );
-  return data;
-};
+): Promise<ApiResult<T.SignUpWithOauthResponse>> =>
+  safeApi(() => serverInstance.post<T.SignUpWithOauthResponse>(`/oauth/sign-up/${provider}`, body));
 
 export const postOauthSignIn = async (
   provider: T.OauthProvider,
   body: T.SignInWithOauthRequest
-): Promise<T.SignInWithOauthResponse> => {
-  const { data } = await serverInstance.post<T.SignInWithOauthResponse>(
-    `/oauth/sign-in/${provider}`,
-    body
-  );
-  return data;
-};
+): Promise<ApiResult<T.SignInWithOauthResponse>> =>
+  safeApi(() => serverInstance.post<T.SignInWithOauthResponse>(`/oauth/sign-in/${provider}`, body));

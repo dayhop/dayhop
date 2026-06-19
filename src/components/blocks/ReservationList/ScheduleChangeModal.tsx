@@ -23,17 +23,15 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
     if (!isOpen) return;
     const fetchSchedules = async () => {
       setIsLoading(true);
-      try {
-        const activity = await getActivity(reservation.activity.id);
-        const allSchedules = activity?.schedules || [];
-        setSchedules(allSchedules);
-      } catch (error) {
-        showToast.error('일정 정보를 불러오는데 실패했습니다.');
+      const res = await getActivity(reservation.activity.id);
+      if (res.success) {
+        setSchedules(res.data.schedules || []);
+      } else {
+        showToast.error(res.message);
         onClose();
-      } finally {
-        setIsLoading(false);
-        setSelectedScheduleId(null);
       }
+      setIsLoading(false);
+      setSelectedScheduleId(null);
     };
 
     fetchSchedules();
@@ -47,14 +45,14 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       headCount: headCount,
     };
 
-    try {
-      await patchMyReservationApplication({ reservationId: reservation.id }, body);
-      showToast.success('예약 일정이 변경되었습니다.');
-      window.location.reload();
-    } catch (error) {
-      showToast.error('예약 변경에 실패했습니다.');
+    const res = await patchMyReservationApplication({ reservationId: reservation.id }, body);
+    if (!res.success) {
+      showToast.error(res.message);
       onClose();
+      return;
     }
+    showToast.success('예약 일정이 변경되었습니다.');
+    window.location.reload();
   };
 
   const isSelectionUnchanged =

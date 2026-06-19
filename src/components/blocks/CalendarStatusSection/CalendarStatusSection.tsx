@@ -16,18 +16,18 @@ export const CalendarStatusSection = () => {
   useEffect(() => {
     let ignore = false;
     async function fetchActivities() {
-      try {
-        const data = await getMyActivities();
-        if (ignore) return;
-        setActivities(data.activities);
-        if (data.activities.length > 0) {
-          setSelectedActivity(data.activities[0]);
-        }
-      } catch {
-        if (!ignore) showToast.error('체험 목록을 불러오는 데 실패했습니다.');
-      } finally {
-        if (!ignore) setIsLoading(false);
+      const res = await getMyActivities();
+      if (ignore) return;
+      if (!res.success) {
+        showToast.error(res.message);
+        setIsLoading(false);
+        return;
       }
+      setActivities(res.data.activities);
+      if (res.data.activities.length > 0) {
+        setSelectedActivity(res.data.activities[0]);
+      }
+      setIsLoading(false);
     }
     fetchActivities();
     return () => {

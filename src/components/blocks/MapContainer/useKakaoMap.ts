@@ -97,27 +97,26 @@ export function useKakaoMap() {
 
   // 서버로부터 체험 데이터 가져오기 및 주소 변환
   const fetchActivitiesData = useCallback(async () => {
-    try {
-      const res = await getActivities({ method: 'offset', size: 100 });
-      const apiActivities = res.activities;
+    const res = await getActivities({ method: 'offset', size: 100 });
+    if (!res.success) {
+      setActivities([]);
+      return;
+    }
+    const apiActivities = res.data.activities;
 
-      if (apiActivities && apiActivities.length > 0) {
-        const processed = await Promise.all(
-          apiActivities.map(async (act) => {
-            const coords = await geocodeAddress(act.address);
-            if (coords) {
-              return { ...act, lat: coords.lat, lng: coords.lng };
-            }
+    if (apiActivities && apiActivities.length > 0) {
+      const processed = await Promise.all(
+        apiActivities.map(async (act) => {
+          const coords = await geocodeAddress(act.address);
+          if (coords) {
+            return { ...act, lat: coords.lat, lng: coords.lng };
+          }
 
-            return { ...act, lat: 37.5665, lng: 126.978 };
-          })
-        );
-        setActivities(processed);
-      } else {
-        setActivities([]);
-      }
-    } catch (error) {
-      console.warn('API fetch failed, setting empty activities:', error);
+          return { ...act, lat: 37.5665, lng: 126.978 };
+        })
+      );
+      setActivities(processed);
+    } else {
       setActivities([]);
     }
   }, [geocodeAddress]);

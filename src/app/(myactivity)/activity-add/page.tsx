@@ -78,34 +78,47 @@ export default function ActivityAddPage() {
 
     if (!isValid) return;
 
-    try {
-      //이미지 업로드
-      const bannerUpload = await postActivitiesImage(bannerFile[0]);
-      const detailUploadPromise = detailFiles.map((file) => postActivitiesImage(file));
-
-      const detailUploadResponse = await Promise.all(detailUploadPromise);
-      const bannerImageUrl = bannerUpload.activityImageUrl;
-      const subImageUrls = detailUploadResponse.map((res) => res.activityImageUrl);
-
-      //데이터 세팅
-      const submitData: PostActivitiesData = {
-        title,
-        category,
-        description,
-        address,
-        price,
-        schedules: schedules as ActivityScheduleInput[],
-        bannerImageUrl,
-        subImageUrls,
-      };
-
-      await postActivities(submitData);
-      setIsOpen(true);
-      showToast.success('체험 등록이 완료되었습니다.');
-      //TODO: 추가된 체험으로 이동하는 로직 추가
-    } catch {
-      showToast.error('체험 등록에 실패했습니다.');
+    //이미지 업로드
+    const bannerUpload = await postActivitiesImage(bannerFile[0]);
+    if (!bannerUpload.success) {
+      showToast.error(bannerUpload.message);
+      return;
     }
+
+    const detailUploadResponse = await Promise.all(
+      detailFiles.map((file) => postActivitiesImage(file))
+    );
+    const failedUpload = detailUploadResponse.find((res) => !res.success);
+    if (failedUpload && !failedUpload.success) {
+      showToast.error(failedUpload.message);
+      return;
+    }
+
+    const bannerImageUrl = bannerUpload.data.activityImageUrl;
+    const subImageUrls = detailUploadResponse.flatMap((res) =>
+      res.success ? [res.data.activityImageUrl] : []
+    );
+
+    //데이터 세팅
+    const submitData: PostActivitiesData = {
+      title,
+      category,
+      description,
+      address,
+      price,
+      schedules: schedules as ActivityScheduleInput[],
+      bannerImageUrl,
+      subImageUrls,
+    };
+
+    const createRes = await postActivities(submitData);
+    if (!createRes.success) {
+      showToast.error(createRes.message);
+      return;
+    }
+    setIsOpen(true);
+    showToast.success('체험 등록이 완료되었습니다.');
+    //TODO: 추가된 체험으로 이동하는 로직 추가
   };
   return (
     <div>

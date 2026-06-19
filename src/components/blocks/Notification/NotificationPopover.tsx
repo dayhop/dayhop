@@ -32,19 +32,18 @@ export const NotificationPopover = ({ onClose, onLoaded }: NotificationPopoverPr
     let isCurrent = true;
 
     const fetchFirstPage = async () => {
-      try {
-        const res = await getMyNotifications({ size: PAGE_SIZE });
-        if (!isCurrent) return;
-        setNotifications(res.notifications ?? []);
-        setCursorId(res.cursorId);
-        setTotalCount(res.totalCount ?? 0);
-        onLoaded?.(res.notifications?.[0]?.createdAt ?? null);
-      } catch (error) {
-        console.error('Failed to fetch notifications:', error);
-        if (isCurrent) setIsError(true);
-      } finally {
-        if (isCurrent) setIsLoading(false);
+      const res = await getMyNotifications({ size: PAGE_SIZE });
+      if (!isCurrent) return;
+      if (!res.success) {
+        setIsError(true);
+        setIsLoading(false);
+        return;
       }
+      setNotifications(res.data.notifications ?? []);
+      setCursorId(res.data.cursorId);
+      setTotalCount(res.data.totalCount ?? 0);
+      onLoaded?.(res.data.notifications?.[0]?.createdAt ?? null);
+      setIsLoading(false);
     };
 
     fetchFirstPage();
@@ -62,15 +61,12 @@ export const NotificationPopover = ({ onClose, onLoaded }: NotificationPopoverPr
       async ([entry]) => {
         if (!entry.isIntersecting || isLoadingRef.current) return;
         isLoadingRef.current = true;
-        try {
-          const res = await getMyNotifications({ cursorId, size: PAGE_SIZE });
-          if (!isCurrent) return;
-          setNotifications((prev) => [...prev, ...(res.notifications ?? [])]);
-          setCursorId(res.cursorId);
-        } catch (error) {
-          console.error('Failed to load more notifications:', error);
-        } finally {
-          isLoadingRef.current = false;
+        const res = await getMyNotifications({ cursorId, size: PAGE_SIZE });
+        isLoadingRef.current = false;
+        if (!isCurrent) return;
+        if (res.success) {
+          setNotifications((prev) => [...prev, ...(res.data.notifications ?? [])]);
+          setCursorId(res.data.cursorId);
         }
       },
       { threshold: 0.5 }
@@ -84,15 +80,14 @@ export const NotificationPopover = ({ onClose, onLoaded }: NotificationPopoverPr
   }, [cursorId]);
 
   const handleDelete = async (id: number) => {
-    try {
-      await deleteMyNotification({ notificationId: id });
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-      setTotalCount((prev) => Math.max(0, prev - 1));
-      showToast.success('알림을 삭제했어요.');
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-      showToast.error('알림 삭제에 실패했어요. 다시 시도해 주세요.');
+    const res = await deleteMyNotification({ notificationId: id });
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
     }
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setTotalCount((prev) => Math.max(0, prev - 1));
+    showToast.success('알림을 삭제했어요.');
   };
 
   const handleSelect = () => {
