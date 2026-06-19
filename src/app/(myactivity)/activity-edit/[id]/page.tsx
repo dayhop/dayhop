@@ -130,7 +130,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
       await patchMyActivity(id, submitData);
       setIsOpen(false);
       showToast.success('체험 수정이 완료되었습니다.');
-      router.back();
+      router.push(`/activities/${id}`);
     } catch {
       showToast.error('체험 수정에 실패했습니다.');
     }

@@ -19,12 +19,6 @@ export function ExperienceDetail({ data }: ActivityDetailProps) {
   const [categorySelected, setCategorySelected] = useState<string>(category || '');
   const [displayPrice, setDisplayPrice] = useState<string>(initdisplay);
 
-  // useEffect(() => {
-  //   if (price !== undefined) {
-  //     setDisplayPrice(totalPriceToString(price) + ' 원');
-  //   }
-  // }, [price]);
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2.5">
