@@ -43,10 +43,16 @@ export function useReservationModal({
     let ignore = false;
     async function loadSchedules() {
       try {
-        const data = await getMyActivityReservedSchedule(activityId, { date });
+        const res = await getMyActivityReservedSchedule(activityId, { date });
         if (ignore) return;
-        setSchedules(data);
-        setSelectedTime(data.length > 0 ? formatTimeOption(data[0]) : '');
+        if (!res.success) {
+          setSchedules([]);
+          setSelectedTime('');
+          showToast.error('스케줄을 불러오는 데 실패했습니다.');
+          return;
+        }
+        setSchedules(res.data);
+        setSelectedTime(res.data.length > 0 ? formatTimeOption(res.data[0]) : '');
       } catch {
         if (!ignore) {
           setSchedules([]);
@@ -66,10 +72,16 @@ export function useReservationModal({
     let ignore = false;
     async function refreshScheduleCounts() {
       try {
-        const data = await getMyActivityReservedSchedule(activityId, { date });
+        const res = await getMyActivityReservedSchedule(activityId, { date });
         if (ignore) return;
+        if (!res.success) {
+          showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
+          return;
+        }
         setSchedules((prev) =>
-          prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
+          prev.map(
+            (prevSlot) => res.data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot
+          )
         );
       } catch {
         if (!ignore) showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
@@ -90,13 +102,19 @@ export function useReservationModal({
         return;
       }
       try {
-        const data = await getMyActivityReservations(activityId, {
+        const res = await getMyActivityReservations(activityId, {
           scheduleId: selectedScheduleId,
           status: activeTab,
         });
         if (ignore) return;
-        setReservations(data.reservations);
-        setCursorId(data.cursorId);
+        if (!res.success) {
+          setReservations([]);
+          setCursorId(null);
+          showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+          return;
+        }
+        setReservations(res.data.reservations);
+        setCursorId(res.data.cursorId);
       } catch {
         if (!ignore) {
           setReservations([]);
@@ -115,13 +133,17 @@ export function useReservationModal({
     if (isFetchingMoreRef.current || cursorId === null || selectedScheduleId === undefined) return;
     isFetchingMoreRef.current = true;
     try {
-      const data = await getMyActivityReservations(activityId, {
+      const res = await getMyActivityReservations(activityId, {
         scheduleId: selectedScheduleId,
         status: activeTab,
         cursorId,
       });
-      setReservations((prev) => [...prev, ...data.reservations]);
-      setCursorId(data.cursorId);
+      if (!res.success) {
+        showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+        return;
+      }
+      setReservations((prev) => [...prev, ...res.data.reservations]);
+      setCursorId(res.data.cursorId);
     } catch {
       showToast.error('예약 목록을 불러오는 데 실패했습니다.');
     } finally {
