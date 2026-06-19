@@ -54,3 +54,9 @@ export const postRefreshToken = async (): Promise<T.TokenResponse> => {
 
   return data;
 };
+
+export const postLogout = async () => {
+  (await cookies()).delete('accessToken');
+  (await cookies()).delete('refreshToken');
+  return;
+};
