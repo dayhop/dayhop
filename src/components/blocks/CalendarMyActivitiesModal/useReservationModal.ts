@@ -3,11 +3,12 @@ import { showToast } from '@/utils/toast';
 import { isPastTime } from '../Calendar/utils';
 import { getMyActivityReservedSchedule, getMyActivityReservations } from '@/lib/api/my-activities';
 import type {
+  GetMyActivityReservationsParams,
   GetMyActivityReservedScheduleResponse,
   MyActivityReservation,
 } from '@/lib/api/my-activities/type';
 
-export type TabStatus = 'pending' | 'confirmed' | 'declined';
+export type TabStatus = GetMyActivityReservationsParams['status'];
 
 export function formatTimeOption(schedule: GetMyActivityReservedScheduleResponse) {
   return `${schedule.startTime} - ${schedule.endTime}`;
@@ -153,7 +154,6 @@ export function useReservationModal({
     selectedTime,
     setSelectedTime,
     selectedSchedule,
-    selectedScheduleId,
     isSchedulePast,
     reservations,
     cursorId,
