@@ -65,7 +65,10 @@ export const SettingsForm = () => {
 
   // 비밀번호 인증 성공 → 수정 모드 전환
   const handlePasswordConfirm = async (password: string) => {
-    await postLogin({ email: user.email, password });
+    const res = await postLogin({ email: user.email, password });
+    if (!res.success) {
+      throw new Error(res.message);
+    }
     setCurrentPassword(password);
     setFormData({ ...INITIAL_FORM, nickname: user.nickname });
     setIsEditMode(true);
@@ -102,11 +105,15 @@ export const SettingsForm = () => {
     if (newErrors.nickname || newErrors.newPassword || newErrors.confirmPassword) return;
 
     try {
-      const updatedUser = await patchMyUser({
+      const res = await patchMyUser({
         nickname: formData.nickname || undefined,
         newPassword: formData.newPassword || undefined,
       });
-      login(updatedUser);
+      if (!res.success) {
+        showToast.error(res.message);
+        return;
+      }
+      login(res.data);
       setCurrentPassword('');
       setIsEditMode(false);
       setFormData(INITIAL_FORM);
