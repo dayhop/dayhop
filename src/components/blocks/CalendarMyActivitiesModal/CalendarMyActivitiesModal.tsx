@@ -31,6 +31,11 @@ interface CalendarMyActivitiesModalProps {
 
 type TabStatus = GetMyActivityReservationsParams['status'];
 
+type PendingAction = {
+  type: 'confirmed' | 'declined';
+  execute: () => Promise<void>;
+};
+
 const TABS: { status: TabStatus; label: string }[] = [
   { status: 'pending', label: '신청' },
   { status: 'confirmed', label: '승인' },
@@ -58,10 +63,7 @@ export const CalendarMyActivitiesModal = ({
   const [schedules, setSchedules] = useState<GetMyActivityReservedScheduleResponse[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [reservations, setReservations] = useState<MyActivityReservation[]>([]);
-  const [pendingAction, setPendingAction] = useState<{
-    type: 'confirmed' | 'declined';
-    execute: () => Promise<void>;
-  } | null>(null);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [cursorId, setCursorId] = useState<number | null>(null);
   const isFetchingMoreRef = useRef(false);
