@@ -2,28 +2,32 @@
 
 import { cookies } from 'next/headers';
 import { serverInstance } from '../instance';
+import { safeApi } from '../safeApi';
+import type { ApiResult } from '../result';
 import * as T from './type';
 
-export const postLogin = async (body: T.LoginRequest): Promise<T.LoginResponse> => {
-  const { data } = await serverInstance.post<T.LoginResponse>('/auth/login', body);
+export const postLogin = async (body: T.LoginRequest): Promise<ApiResult<T.LoginResponse>> => {
+  const result = await safeApi(() => serverInstance.post<T.LoginResponse>('/auth/login', body));
 
-  (await cookies()).set('accessToken', data.accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 15,
-  });
+  if (result.success) {
+    (await cookies()).set('accessToken', result.data.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 15,
+    });
 
-  (await cookies()).set('refreshToken', data.refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-  });
+    (await cookies()).set('refreshToken', result.data.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  }
 
-  return data;
+  return result;
 };
 
 export const postRefreshToken = async (): Promise<T.TokenResponse> => {

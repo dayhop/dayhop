@@ -42,22 +42,21 @@ export default function ReservationListPage() {
 
     const fetchInitialData = async () => {
       setIsLoading(true);
-      try {
-        const params: Params = { size: GET_SIZE };
-        if (activeStatus !== 'all') {
-          params.status = activeStatus;
-        }
-        //초기 데이터
-        const response = await getMyReservations(params);
-        setReservationList(response.reservations);
-        setCursorId(response.cursorId);
-        setHasMore(response.cursorId !== null);
-      } catch (error) {
-        console.error('초기 데이터를 불러오지 못했습니다:', error);
-        showToast.error('초기 데이터를 불러오지 못했습니다');
-      } finally {
-        setIsLoading(false);
+      const params: Params = { size: GET_SIZE };
+      if (activeStatus !== 'all') {
+        params.status = activeStatus;
       }
+      //초기 데이터
+      const res = await getMyReservations(params);
+      if (!res.success) {
+        showToast.error(res.message);
+        setIsLoading(false);
+        return;
+      }
+      setReservationList(res.data.reservations);
+      setCursorId(res.data.cursorId);
+      setHasMore(res.data.cursorId !== null);
+      setIsLoading(false);
     };
 
     fetchInitialData();
@@ -70,20 +69,20 @@ export default function ReservationListPage() {
     const fetchData = async () => {
       if (isLoading || !hasMore || !cursorId) return;
       setIsLoading(true);
-      try {
-        const params: Params = { size: GET_SIZE, cursorId };
-        if (activeStatus !== 'all') {
-          params.status = activeStatus;
-        }
-        const response = await getMyReservations(params);
-        setReservationList((prev) => [...prev, ...response.reservations]);
-        setCursorId(response.cursorId);
-        setHasMore(response.cursorId !== null);
-      } catch {
-        showToast.error('추가 데이터를 불러오지 못했습니다');
-      } finally {
-        setIsLoading(false);
+      const params: Params = { size: GET_SIZE, cursorId };
+      if (activeStatus !== 'all') {
+        params.status = activeStatus;
       }
+      const res = await getMyReservations(params);
+      if (!res.success) {
+        showToast.error(res.message);
+        setIsLoading(false);
+        return;
+      }
+      setReservationList((prev) => [...prev, ...res.data.reservations]);
+      setCursorId(res.data.cursorId);
+      setHasMore(res.data.cursorId !== null);
+      setIsLoading(false);
     };
 
     const observer = new IntersectionObserver(

@@ -50,15 +50,14 @@ export const KebabMenu = ({ activityId }: KebabMenuProps) => {
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      await deleteMyActivity(activityId);
-      showToast.success('체험이 성공적으로 삭제되었습니다.');
-      setIsConfirmOpen(false);
-      router.push('/');
-    } catch (error) {
-      console.error('Failed to delete activity:', error);
-      showToast.error('체험 삭제에 실패했습니다. 다시 시도해 주세요.');
+    const res = await deleteMyActivity(activityId);
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
     }
+    showToast.success('체험이 성공적으로 삭제되었습니다.');
+    setIsConfirmOpen(false);
+    router.push('/');
   };
 
   return (

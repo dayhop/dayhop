@@ -65,18 +65,14 @@ function ActivitiesPageContent() {
 
   useEffect(() => {
     const fetchBannerActivities = async () => {
-      try {
-        const data = await getActivities({
-          method: 'offset',
-          sort: 'latest',
-          page: 1,
-          size: 4,
-        });
+      const res = await getActivities({
+        method: 'offset',
+        sort: 'latest',
+        page: 1,
+        size: 4,
+      });
 
-        setBannerActivities(data.activities);
-      } catch {
-        setBannerActivities([]);
-      }
+      setBannerActivities(res.success ? res.data.activities : []);
     };
 
     fetchBannerActivities();
@@ -86,24 +82,23 @@ function ActivitiesPageContent() {
     const fetchActivities = async () => {
       setIsLoading(true);
 
-      try {
-        const data = await getActivities({
-          method: 'offset',
-          sort: 'latest',
-          page: currentPage,
-          size: PAGE_SIZE,
-          keyword: keyword || undefined,
-          category: selectedCategory === '전체' ? undefined : selectedCategory,
-        });
+      const res = await getActivities({
+        method: 'offset',
+        sort: 'latest',
+        page: currentPage,
+        size: PAGE_SIZE,
+        keyword: keyword || undefined,
+        category: selectedCategory === '전체' ? undefined : selectedCategory,
+      });
 
-        setActivities(data.activities);
-        setTotalCount(data.totalCount);
-      } catch {
+      if (res.success) {
+        setActivities(res.data.activities);
+        setTotalCount(res.data.totalCount);
+      } else {
         setActivities([]);
         setTotalCount(0);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
     fetchActivities();

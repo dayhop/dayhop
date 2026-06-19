@@ -31,19 +31,19 @@ function KakaoSignUpForm() {
       setErrorMessage('닉네임을 입력해주세요');
       return;
     }
-    try {
-      const response = await postOauthSignUp('kakao', {
-        nickname: nickname,
-        redirectUri: REDIRECT_SIGNUP_URI,
-        token: token,
-      });
-      showToast.success(response.user.nickname + '님 반갑습니다.');
-      login(response.user);
-      router.push('/');
-    } catch (e) {
-      showToast.error('이미 등록된 사용자입니다. 로그인해주세요');
+    const res = await postOauthSignUp('kakao', {
+      nickname: nickname,
+      redirectUri: REDIRECT_SIGNUP_URI,
+      token: token,
+    });
+    if (!res.success) {
+      showToast.error(res.message);
       router.push('/login');
+      return;
     }
+    showToast.success(res.data.user.nickname + '님 반갑습니다.');
+    login(res.data.user);
+    router.push('/');
   };
   return (
     <form className="mx-auto mt-50 flex max-w-100 flex-col gap-3" onSubmit={handleClickSignup}>

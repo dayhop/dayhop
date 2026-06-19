@@ -33,15 +33,11 @@ export const Header = () => {
     let interval: ReturnType<typeof setInterval> | undefined;
 
     const check = async () => {
-      try {
-        const res = await getMyNotifications({ size: 1 });
-        if (!isCurrent) return;
-        const latest = res.notifications?.[0]?.createdAt ?? null;
-        const lastSeen = localStorage.getItem(lastSeenKey);
-        setHasUnread(!!latest && (!lastSeen || new Date(latest) > new Date(lastSeen)));
-      } catch (err) {
-        console.error('Failed to fetch notifications:', err);
-      }
+      const res = await getMyNotifications({ size: 1 });
+      if (!isCurrent || !res.success) return;
+      const latest = res.data.notifications?.[0]?.createdAt ?? null;
+      const lastSeen = localStorage.getItem(lastSeenKey);
+      setHasUnread(!!latest && (!lastSeen || new Date(latest) > new Date(lastSeen)));
     };
 
     const start = () => {

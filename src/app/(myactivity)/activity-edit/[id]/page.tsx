@@ -65,86 +65,98 @@ export default function ActivityEditPage({ params }: EditPageProps) {
 
     //================================
 
-    try {
-      //배너 업로드
-      const bannerImageUrl =
-        bannerFile.length > 0
-          ? (await postActivitiesImage(bannerFile[0])).activityImageUrl
-          : initData.bannerImageUrl;
-
-      //디테일 파일 업로드
-      const detailUploadPromise = detailFiles.map((file) => postActivitiesImage(file));
-      const detailUploadResponse = await Promise.all(detailUploadPromise);
-
-      //add와 diff
-      const subImageUrlsToAdd = detailUploadResponse.map((r) => r.activityImageUrl);
-      const currentDetailUrls = detailRef.current?.getCurrentUrls?.() ?? [];
-      const subImageIdsToRemove = initData.subImages
-        .filter((img) => !currentDetailUrls.includes(img.imageUrl))
-        .map((img) => img.id);
-
-      // 스케줄
-      const schedulesToAdd = schedules.filter(
-        (s) =>
-          initData.schedules.findIndex(
-            (init) =>
-              init.date === s.date && init.startTime === s.startTime && init.endTime === s.endTime
-          ) === -1
-      );
-
-      const scheduleIdsToRemove = initData.schedules
-        .filter(
-          (init) =>
-            schedules.findIndex(
-              (s) =>
-                s.date === init.date && s.startTime === init.startTime && s.endTime === init.endTime
-            ) === -1
-        )
-        .map((init) => init.id);
-
-      //데이터 세팅
-      const submitData: PatchMyActivityRequest = {
-        ...detailFormData,
-        bannerImageUrl,
-        subImageIdsToRemove,
-        subImageUrlsToAdd,
-        scheduleIdsToRemove,
-        schedulesToAdd,
-      };
-
-      //수정 사항이 있는지 확인
-      const isEdited = handleIsEdited(
-        detailFormData,
-        initData,
-        subImageIdsToRemove,
-        subImageUrlsToAdd,
-        scheduleIdsToRemove,
-        schedulesToAdd,
-        bannerImageUrl
-      );
-      if (!isEdited) {
-        setIsOpen(false);
-        return showToast.error('수정 사항이 없습니다.');
+    //배너 업로드
+    let bannerImageUrl = initData.bannerImageUrl;
+    if (bannerFile.length > 0) {
+      const bannerRes = await postActivitiesImage(bannerFile[0]);
+      if (!bannerRes.success) {
+        showToast.error(bannerRes.message);
+        return;
       }
+      bannerImageUrl = bannerRes.data.activityImageUrl;
+    }
 
-      await patchMyActivity(id, submitData);
+    //디테일 파일 업로드
+    const detailUploadResponse = await Promise.all(
+      detailFiles.map((file) => postActivitiesImage(file))
+    );
+    const failedUpload = detailUploadResponse.find((r) => !r.success);
+    if (failedUpload && !failedUpload.success) {
+      showToast.error(failedUpload.message);
+      return;
+    }
+
+    //add와 diff
+    const subImageUrlsToAdd = detailUploadResponse.flatMap((r) =>
+      r.success ? [r.data.activityImageUrl] : []
+    );
+    const currentDetailUrls = detailRef.current?.getCurrentUrls?.() ?? [];
+    const subImageIdsToRemove = initData.subImages
+      .filter((img) => !currentDetailUrls.includes(img.imageUrl))
+      .map((img) => img.id);
+
+    // 스케줄
+    const schedulesToAdd = schedules.filter(
+      (s) =>
+        initData.schedules.findIndex(
+          (init) =>
+            init.date === s.date && init.startTime === s.startTime && init.endTime === s.endTime
+        ) === -1
+    );
+
+    const scheduleIdsToRemove = initData.schedules
+      .filter(
+        (init) =>
+          schedules.findIndex(
+            (s) =>
+              s.date === init.date && s.startTime === init.startTime && s.endTime === init.endTime
+          ) === -1
+      )
+      .map((init) => init.id);
+
+    //데이터 세팅
+    const submitData: PatchMyActivityRequest = {
+      ...detailFormData,
+      bannerImageUrl,
+      subImageIdsToRemove,
+      subImageUrlsToAdd,
+      scheduleIdsToRemove,
+      schedulesToAdd,
+    };
+
+    //수정 사항이 있는지 확인
+    const isEdited = handleIsEdited(
+      detailFormData,
+      initData,
+      subImageIdsToRemove,
+      subImageUrlsToAdd,
+      scheduleIdsToRemove,
+      schedulesToAdd,
+      bannerImageUrl
+    );
+    if (!isEdited) {
       setIsOpen(false);
       showToast.success('체험 수정이 완료되었습니다.');
       router.push(`/activities/${id}`);
     } catch {
-      showToast.error('체험 수정에 실패했습니다.');
+      showToast.error('수정 사항이 없습니다.');
     }
+
+    const patchRes = await patchMyActivity(id, submitData);
+    if (!patchRes.success) {
+      showToast.error(patchRes.message);
+      return;
+    }
+    setIsOpen(false);
+    showToast.success('체험 수정이 완료되었습니다.');
+    router.back();
   };
 
   //화면에 마운트 되자마자 초기데이터를 가져옴
   useEffect(() => {
     const getInitData = async () => {
-      try {
-        const response = await getActivity(id);
-        setInitData(response ?? undefined);
-      } catch (error) {
-        console.error(error);
-      }
+      const res = await getActivity(id);
+      if (res.success) setInitData(res.data);
     };
     getInitData();
   }, [id]);

@@ -36,14 +36,26 @@ export default function ActivityAddPage() {
 
     if (!isValid) return;
 
-    try {
-      //이미지 업로드
-      const bannerUpload = await postActivitiesImage(bannerFile[0]);
-      const detailUploadPromise = detailFiles.map((file) => postActivitiesImage(file));
+    //이미지 업로드
+    const bannerUpload = await postActivitiesImage(bannerFile[0]);
+    if (!bannerUpload.success) {
+      showToast.error(bannerUpload.message);
+      return;
+    }
 
-      const detailUploadResponse = await Promise.all(detailUploadPromise);
-      const bannerImageUrl = bannerUpload.activityImageUrl;
-      const subImageUrls = detailUploadResponse.map((res) => res.activityImageUrl);
+    const detailUploadResponse = await Promise.all(
+      detailFiles.map((file) => postActivitiesImage(file))
+    );
+    const failedUpload = detailUploadResponse.find((res) => !res.success);
+    if (failedUpload && !failedUpload.success) {
+      showToast.error(failedUpload.message);
+      return;
+    }
+
+    const bannerImageUrl = bannerUpload.data.activityImageUrl;
+    const subImageUrls = detailUploadResponse.flatMap((res) =>
+      res.success ? [res.data.activityImageUrl] : []
+    );
 
       const { title, category, description, address, price } = detailFormData;
 
@@ -66,6 +78,9 @@ export default function ActivityAddPage() {
     } catch {
       showToast.error('체험 등록에 실패했습니다.');
     }
+    setIsOpen(true);
+    showToast.success('체험 등록이 완료되었습니다.');
+    //TODO: 추가된 체험으로 이동하는 로직 추가
   };
   return (
     <div>

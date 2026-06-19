@@ -63,15 +63,15 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleConfirmDelete = async () => {
-    try {
-      const updateUser = await patchMyUser({ profileImageUrl: null });
-      login(updateUser);
+    const res = await patchMyUser({ profileImageUrl: null });
+    if (!res.success) {
+      showToast.error(res.message);
       setIsConfirmOpen(false);
-      showToast.success('프로필 이미지가 삭제되었습니다.');
-    } catch {
-      showToast.error('프로필 이미지 삭제에 실패했습니다.');
-      setIsConfirmOpen(false);
+      return;
     }
+    login(res.data);
+    setIsConfirmOpen(false);
+    showToast.success('프로필 이미지가 삭제되었습니다.');
   };
 
   useEffect(() => {
@@ -89,19 +89,24 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
 
   const handleConfirmEdit = async () => {
     if (!pendingFile) return;
-    try {
-      const { profileImageUrl } = await postMyUserProfile({ image: pendingFile });
-      const updatedUser = await patchMyUser({ profileImageUrl });
-      login(updatedUser);
-      setPreviewUrl(null);
-      setPendingFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      setIsEditConfirmOpen(false);
-      showToast.success('프로필 이미지가 변경되었습니다.');
-    } catch {
-      showToast.error('프로필 이미지 변경에 실패했습니다.');
+    const uploadRes = await postMyUserProfile({ image: pendingFile });
+    if (!uploadRes.success) {
+      showToast.error(uploadRes.message);
       handleCancelEdit();
+      return;
     }
+    const res = await patchMyUser({ profileImageUrl: uploadRes.data.profileImageUrl });
+    if (!res.success) {
+      showToast.error(res.message);
+      handleCancelEdit();
+      return;
+    }
+    login(res.data);
+    setPreviewUrl(null);
+    setPendingFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    setIsEditConfirmOpen(false);
+    showToast.success('프로필 이미지가 변경되었습니다.');
   };
 
   const triggerEl = (

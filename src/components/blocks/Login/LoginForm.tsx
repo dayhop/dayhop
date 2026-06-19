@@ -54,12 +54,14 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const result = await postLogin(formData);
-      showToast.success(`${result.user?.nickname}님 반갑습니다.`);
-      router.push('/');
-      login(result.user);
-    } catch {}
+    const res = await postLogin(formData);
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
+    }
+    showToast.success(`${res.data.user?.nickname}님 반갑습니다.`);
+    router.push('/');
+    login(res.data.user);
   };
 
   return (

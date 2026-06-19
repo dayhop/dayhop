@@ -14,6 +14,7 @@ import {
   getMyActivityReservations,
   patchMyActivityReservationStatus,
 } from '@/lib/api/my-activities';
+import type { ApiResult } from '@/lib/api/result';
 import type {
   GetMyActivityReservationsParams,
   GetMyActivityReservedScheduleResponse,
@@ -60,7 +61,7 @@ export const CalendarMyActivitiesModal = ({
   const [reservations, setReservations] = useState<MyActivityReservation[]>([]);
   const [pendingAction, setPendingAction] = useState<{
     type: 'confirmed' | 'declined';
-    execute: () => Promise<void>;
+    execute: () => Promise<ApiResult<unknown>>;
   } | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -68,18 +69,16 @@ export const CalendarMyActivitiesModal = ({
   useEffect(() => {
     let ignore = false;
     async function loadSchedules() {
-      try {
-        const data = await getMyActivityReservedSchedule(activityId, { date });
-        if (ignore) return;
-        setSchedules(data);
-        setSelectedTime(data.length > 0 ? formatTimeOption(data[0]) : '');
-      } catch {
-        if (!ignore) {
-          setSchedules([]);
-          setSelectedTime('');
-          showToast.error('스케줄을 불러오는 데 실패했습니다.');
-        }
+      const res = await getMyActivityReservedSchedule(activityId, { date });
+      if (ignore) return;
+      if (!res.success) {
+        setSchedules([]);
+        setSelectedTime('');
+        showToast.error(res.message);
+        return;
       }
+      setSchedules(res.data);
+      setSelectedTime(res.data.length > 0 ? formatTimeOption(res.data[0]) : '');
     }
     loadSchedules();
     return () => {
@@ -92,15 +91,17 @@ export const CalendarMyActivitiesModal = ({
     if (refreshTrigger === 0) return;
     let ignore = false;
     async function refreshScheduleCounts() {
-      try {
-        const data = await getMyActivityReservedSchedule(activityId, { date });
-        if (ignore) return;
-        setSchedules((prev) =>
-          prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
-        );
-      } catch {
-        if (!ignore) showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
+      const res = await getMyActivityReservedSchedule(activityId, { date });
+      if (ignore) return;
+      if (!res.success) {
+        showToast.error(res.message);
+        return;
       }
+      setSchedules((prev) =>
+        prev.map(
+          (prevSlot) => res.data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot
+        )
+      );
     }
     refreshScheduleCounts();
     return () => {
@@ -120,19 +121,17 @@ export const CalendarMyActivitiesModal = ({
         setReservations([]);
         return;
       }
-      try {
-        const data = await getMyActivityReservations(activityId, {
-          scheduleId: selectedScheduleId,
-          status: activeTab,
-        });
-        if (ignore) return;
-        setReservations(data.reservations);
-      } catch {
-        if (!ignore) {
-          setReservations([]);
-          showToast.error('예약 목록을 불러오는 데 실패했습니다.');
-        }
+      const res = await getMyActivityReservations(activityId, {
+        scheduleId: selectedScheduleId,
+        status: activeTab,
+      });
+      if (ignore) return;
+      if (!res.success) {
+        setReservations([]);
+        showToast.error(res.message);
+        return;
       }
+      setReservations(res.data.reservations);
     }
     loadReservations();
     return () => {
@@ -150,8 +149,11 @@ export const CalendarMyActivitiesModal = ({
       setPendingAction({
         type,
         execute: async () => {
-          await patchMyActivityReservationStatus(activityId, reservation.id, { status: type });
-          refreshAfterAction();
+          const res = await patchMyActivityReservationStatus(activityId, reservation.id, {
+            status: type,
+          });
+          if (res.success) refreshAfterAction();
+          return res;
         },
       });
     };
@@ -159,15 +161,15 @@ export const CalendarMyActivitiesModal = ({
   const handleConfirm = async () => {
     if (!pendingAction) return;
     const isConfirmed = pendingAction.type === 'confirmed';
-    try {
-      await pendingAction.execute();
-      setActiveTab(isConfirmed ? 'confirmed' : 'declined');
-      showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
-    } catch {
-      showToast.error(isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.');
-    } finally {
+    const res = await pendingAction.execute();
+    if (!res.success) {
+      showToast.error(res.message);
       setPendingAction(null);
+      return;
     }
+    setActiveTab(isConfirmed ? 'confirmed' : 'declined');
+    showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
+    setPendingAction(null);
   };
 
   return (
