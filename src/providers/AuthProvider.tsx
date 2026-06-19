@@ -16,10 +16,11 @@ export default function AuthProvider({ children, initialUser }: AuthProviderProp
   useEffect(() => {
     if (initialUser) {
       login(initialUser);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialUser, login]);
 
   return <>{children}</>;
 }
