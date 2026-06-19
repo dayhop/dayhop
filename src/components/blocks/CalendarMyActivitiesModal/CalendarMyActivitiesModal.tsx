@@ -240,7 +240,9 @@ export const CalendarMyActivitiesModal = ({
               <div className="flex min-h-25 flex-col">
                 {reservations.length === 0 ? (
                   <p className="text-text-tertiary py-10 text-center text-sm md:p-0 md:pt-5">
-                    예약 내역이 없습니다
+                    {isSchedulePast && activeTab === 'confirmed'
+                      ? '완료된 예약은 조회할 수 없습니다.'
+                      : '예약 내역이 없습니다.'}
                   </p>
                 ) : (
                   <ul className="flex flex-col gap-3.5">
