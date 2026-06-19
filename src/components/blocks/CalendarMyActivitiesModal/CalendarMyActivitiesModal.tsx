@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -63,6 +63,10 @@ export const CalendarMyActivitiesModal = ({
     execute: () => Promise<void>;
   } | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [cursorId, setCursorId] = useState<number | null>(null);
+  const isFetchingMoreRef = useRef(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 초기 로드: date/activityId 변경 시 스케줄 목록 리셋
   useEffect(() => {
@@ -118,6 +122,7 @@ export const CalendarMyActivitiesModal = ({
     async function loadReservations() {
       if (selectedScheduleId === undefined) {
         setReservations([]);
+        setCursorId(null);
         return;
       }
       try {
@@ -127,9 +132,11 @@ export const CalendarMyActivitiesModal = ({
         });
         if (ignore) return;
         setReservations(data.reservations);
+        setCursorId(data.cursorId);
       } catch {
         if (!ignore) {
           setReservations([]);
+          setCursorId(null);
           showToast.error('예약 목록을 불러오는 데 실패했습니다.');
         }
       }
@@ -139,6 +146,39 @@ export const CalendarMyActivitiesModal = ({
       ignore = true;
     };
   }, [activityId, selectedScheduleId, activeTab, refreshTrigger]);
+
+  const loadMore = useCallback(async () => {
+    if (isFetchingMoreRef.current || cursorId === null || selectedScheduleId === undefined) return;
+    isFetchingMoreRef.current = true;
+    try {
+      const data = await getMyActivityReservations(activityId, {
+        scheduleId: selectedScheduleId,
+        status: activeTab,
+        cursorId,
+      });
+      setReservations((prev) => [...prev, ...data.reservations]);
+      setCursorId(data.cursorId);
+    } catch {
+      showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+    } finally {
+      isFetchingMoreRef.current = false;
+    }
+  }, [cursorId, selectedScheduleId, activityId, activeTab]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { root: scrollContainerRef.current, threshold: 0 }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const refreshAfterAction = () => {
     setRefreshTrigger((prev) => prev + 1);
@@ -215,7 +255,10 @@ export const CalendarMyActivitiesModal = ({
             />
           </div>
 
-          <div className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col">
+          <div
+            ref={scrollContainerRef}
+            className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col"
+          >
             {/* 예약 시간 */}
             <div className="flex flex-col gap-3 md:flex-1">
               <h3 className="text-text-primary text-base leading-[1.15] font-bold lg:text-lg">
@@ -245,19 +288,22 @@ export const CalendarMyActivitiesModal = ({
                       : '예약 내역이 없습니다.'}
                   </p>
                 ) : (
-                  <ul className="flex flex-col gap-3.5">
-                    {reservations.map((reservation) => (
-                      <ReservationItem
-                        key={reservation.id}
-                        nickname={reservation.nickname}
-                        headCount={reservation.headCount}
-                        activeTab={activeTab}
-                        isPast={isSchedulePast}
-                        onApprove={handleReservationAction(reservation, 'confirmed')}
-                        onDecline={handleReservationAction(reservation, 'declined')}
-                      />
-                    ))}
-                  </ul>
+                  <>
+                    <ul className="flex flex-col gap-3.5">
+                      {reservations.map((reservation) => (
+                        <ReservationItem
+                          key={reservation.id}
+                          nickname={reservation.nickname}
+                          headCount={reservation.headCount}
+                          activeTab={activeTab}
+                          isPast={isSchedulePast}
+                          onApprove={handleReservationAction(reservation, 'confirmed')}
+                          onDecline={handleReservationAction(reservation, 'declined')}
+                        />
+                      ))}
+                    </ul>
+                    {cursorId !== null && <div ref={sentinelRef} className="h-1" />}
+                  </>
                 )}
               </div>
             </div>
