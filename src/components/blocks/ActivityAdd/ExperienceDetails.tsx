@@ -49,7 +49,6 @@ export function ExperienceDetail({ data }: ActivityDetailProps) {
         <Input
           name="price"
           placeholder="체험 금액을 입력해주세요"
-          defaultValue={initdisplay}
           onChange={(e) => {
             const rawValue = e.target.value.replace(/[^0-9]/g, '');
             setDisplayPrice(totalPriceToString(Number(rawValue)));
