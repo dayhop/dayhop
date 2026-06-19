@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import CloseIcon from '@/assets/icon/CloseIcon.svg';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -8,17 +8,9 @@ import { SelectField } from '@/components/ui/SelectField';
 import { cn } from '@/utils/cn';
 import { showToast } from '@/utils/toast';
 import { ReservationItem } from './ReservationItem';
-import { isPastTime } from '../Calendar/utils';
-import {
-  getMyActivityReservedSchedule,
-  getMyActivityReservations,
-  patchMyActivityReservationStatus,
-} from '@/lib/api/my-activities';
-import type {
-  GetMyActivityReservationsParams,
-  GetMyActivityReservedScheduleResponse,
-  MyActivityReservation,
-} from '@/lib/api/my-activities/type';
+import { patchMyActivityReservationStatus } from '@/lib/api/my-activities';
+import type { MyActivityReservation } from '@/lib/api/my-activities/type';
+import { useReservationModal, type TabStatus } from './useReservationModal';
 
 interface CalendarMyActivitiesModalProps {
   activityId: number;
@@ -28,8 +20,6 @@ interface CalendarMyActivitiesModalProps {
   className?: string;
   overlayClassName?: string;
 }
-
-type TabStatus = GetMyActivityReservationsParams['status'];
 
 type PendingAction = {
   type: 'confirmed' | 'declined';
@@ -47,8 +37,8 @@ function formatDate(date: string) {
   return `${String(year).slice(2)}년 ${Number(month)}월 ${Number(day)}일`;
 }
 
-function formatTimeOption(schedule: GetMyActivityReservedScheduleResponse) {
-  return `${schedule.startTime} - ${schedule.endTime}`;
+function formatTimeOption(startTime: string, endTime: string) {
+  return `${startTime} - ${endTime}`;
 }
 
 export const CalendarMyActivitiesModal = ({
@@ -59,133 +49,23 @@ export const CalendarMyActivitiesModal = ({
   className,
   overlayClassName,
 }: CalendarMyActivitiesModalProps) => {
-  const [activeTab, setActiveTab] = useState<TabStatus>('pending');
-  const [schedules, setSchedules] = useState<GetMyActivityReservedScheduleResponse[]>([]);
-  const [selectedTime, setSelectedTime] = useState<string>('');
-  const [reservations, setReservations] = useState<MyActivityReservation[]>([]);
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [cursorId, setCursorId] = useState<number | null>(null);
-  const isFetchingMoreRef = useRef(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // 초기 로드: date/activityId 변경 시 스케줄 목록 리셋
-  useEffect(() => {
-    let ignore = false;
-    async function loadSchedules() {
-      try {
-        const data = await getMyActivityReservedSchedule(activityId, { date });
-        if (ignore) return;
-        setSchedules(data);
-        setSelectedTime(data.length > 0 ? formatTimeOption(data[0]) : '');
-      } catch {
-        if (!ignore) {
-          setSchedules([]);
-          setSelectedTime('');
-          showToast.error('스케줄을 불러오는 데 실패했습니다.');
-        }
-      }
-    }
-    loadSchedules();
-    return () => {
-      ignore = true;
-    };
-  }, [activityId, date]);
-
-  // 승인/거절 후 슬롯별 카운트 갱신 (스케줄 목록은 유지)
-  useEffect(() => {
-    if (refreshTrigger === 0) return;
-    let ignore = false;
-    async function refreshScheduleCounts() {
-      try {
-        const data = await getMyActivityReservedSchedule(activityId, { date });
-        if (ignore) return;
-        setSchedules((prev) =>
-          prev.map((prevSlot) => data.find((s) => s.scheduleId === prevSlot.scheduleId) ?? prevSlot)
-        );
-      } catch {
-        if (!ignore) showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
-      }
-    }
-    refreshScheduleCounts();
-    return () => {
-      ignore = true;
-    };
-  }, [activityId, date, refreshTrigger]);
-
-  const selectedSchedule = schedules.find((s) => formatTimeOption(s) === selectedTime);
-  const selectedScheduleId = selectedSchedule?.scheduleId;
-  const isSchedulePast = selectedSchedule ? isPastTime(date, selectedSchedule.endTime) : false;
-
-  // 탭/스케줄/리프레시 변경 시 예약 목록 조회
-  useEffect(() => {
-    let ignore = false;
-    async function loadReservations() {
-      if (selectedScheduleId === undefined) {
-        setReservations([]);
-        setCursorId(null);
-        return;
-      }
-      try {
-        const data = await getMyActivityReservations(activityId, {
-          scheduleId: selectedScheduleId,
-          status: activeTab,
-        });
-        if (ignore) return;
-        setReservations(data.reservations);
-        setCursorId(data.cursorId);
-      } catch {
-        if (!ignore) {
-          setReservations([]);
-          setCursorId(null);
-          showToast.error('예약 목록을 불러오는 데 실패했습니다.');
-        }
-      }
-    }
-    loadReservations();
-    return () => {
-      ignore = true;
-    };
-  }, [activityId, selectedScheduleId, activeTab, refreshTrigger]);
-
-  const loadMore = useCallback(async () => {
-    if (isFetchingMoreRef.current || cursorId === null || selectedScheduleId === undefined) return;
-    isFetchingMoreRef.current = true;
-    try {
-      const data = await getMyActivityReservations(activityId, {
-        scheduleId: selectedScheduleId,
-        status: activeTab,
-        cursorId,
-      });
-      setReservations((prev) => [...prev, ...data.reservations]);
-      setCursorId(data.cursorId);
-    } catch {
-      showToast.error('예약 목록을 불러오는 데 실패했습니다.');
-    } finally {
-      isFetchingMoreRef.current = false;
-    }
-  }, [cursorId, selectedScheduleId, activityId, activeTab]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) loadMore();
-      },
-      { root: scrollContainerRef.current, threshold: 0 }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [loadMore]);
-
-  const refreshAfterAction = () => {
-    setRefreshTrigger((prev) => prev + 1);
-    onReservationChange?.();
-  };
+  const {
+    activeTab,
+    setActiveTab,
+    schedules,
+    selectedTime,
+    setSelectedTime,
+    selectedSchedule,
+    selectedScheduleId,
+    isSchedulePast,
+    reservations,
+    cursorId,
+    sentinelRef,
+    scrollContainerRef,
+    refreshAfterAction,
+  } = useReservationModal({ activityId, date, onReservationChange });
 
   const handleReservationAction =
     (reservation: MyActivityReservation, type: 'confirmed' | 'declined') => () => {
@@ -267,7 +147,7 @@ export const CalendarMyActivitiesModal = ({
                 예약 시간
               </h3>
               <SelectField
-                list={schedules.map(formatTimeOption)}
+                list={schedules.map((s) => formatTimeOption(s.startTime, s.endTime))}
                 onSelectOption={setSelectedTime}
                 selectedOption={selectedTime}
                 defaultMessage={
