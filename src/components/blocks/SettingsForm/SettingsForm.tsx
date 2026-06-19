@@ -37,6 +37,7 @@ export const SettingsForm = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
+  const [currentPassword, setCurrentPassword] = useState('');
 
   if (!user) return null;
 
@@ -47,8 +48,12 @@ export const SettingsForm = () => {
 
   const getNicknameError = () => (!formData.nickname.trim() ? '닉네임을 입력해주세요.' : '');
 
-  const getPasswordError = () =>
-    formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '';
+  const getPasswordError = () => {
+    if (!formData.newPassword) return '';
+    if (formData.newPassword === currentPassword) return '기존 비밀번호와 동일합니다.';
+    if (formData.newPassword.length < 8) return '8자 이상 입력해주세요.';
+    return '';
+  };
 
   const getConfirmPasswordError = () =>
     formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '';
@@ -61,12 +66,14 @@ export const SettingsForm = () => {
   // 비밀번호 인증 성공 → 수정 모드 전환
   const handlePasswordConfirm = async (password: string) => {
     await postLogin({ email: user.email, password });
+    setCurrentPassword(password);
     setFormData({ ...INITIAL_FORM, nickname: user.nickname });
     setIsEditMode(true);
     setIsPasswordModalOpen(false);
   };
 
   const handleEditCancel = () => {
+    setCurrentPassword('');
     setFormData(INITIAL_FORM);
     setErrors(INITIAL_ERRORS);
     setIsEditMode(false);
@@ -100,6 +107,7 @@ export const SettingsForm = () => {
         newPassword: formData.newPassword || undefined,
       });
       login(updatedUser);
+      setCurrentPassword('');
       setIsEditMode(false);
       setFormData(INITIAL_FORM);
       showToast.success('수정되었습니다.');
