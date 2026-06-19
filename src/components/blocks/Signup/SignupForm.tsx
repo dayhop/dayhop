@@ -81,12 +81,13 @@ export function SignupForm() {
       nickname: formData.name,
       password: formData.password,
     };
-    try {
-      const res = await postSignUp(requestBody);
-      showToast.success('회원가입에 성공했습니다.');
-      router.push('/');
-      return res;
-    } catch {}
+    const res = await postSignUp(requestBody);
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
+    }
+    showToast.success('회원가입에 성공했습니다.');
+    router.push('/');
   };
 
   return (

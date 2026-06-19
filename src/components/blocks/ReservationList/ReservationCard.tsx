@@ -26,14 +26,14 @@ export function ReservationCard({ data }: ReservationCardProps) {
     const body = {
       status: 'canceled' as const,
     };
-    try {
-      await patchMyReservation({ reservationId: id }, body);
-      showToast.success('예약이 취소되었습니다.');
-      //TODO 최신데이터 반영방법
-      window.location.reload();
-    } catch {
-      showToast.error('예약 취소에 실패했습니다.');
+    const res = await patchMyReservation({ reservationId: id }, body);
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
     }
+    showToast.success('예약이 취소되었습니다.');
+    //TODO 최신데이터 반영방법
+    window.location.reload();
   };
 
   return (

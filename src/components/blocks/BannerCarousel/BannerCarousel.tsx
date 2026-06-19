@@ -23,20 +23,15 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
     if (initialActivities) return;
 
     const fetchBannerActivities = async () => {
-      try {
-        const data = await getActivities({
-          method: 'offset',
-          sort: 'latest',
-          page: 1,
-          size: 4,
-        });
+      const res = await getActivities({
+        method: 'offset',
+        sort: 'latest',
+        page: 1,
+        size: 4,
+      });
 
-        setActivities(data.activities);
-      } catch {
-        setActivities([]);
-      } finally {
-        setIsLoading(false);
-      }
+      setActivities(res.success ? res.data.activities : []);
+      setIsLoading(false);
     };
 
     fetchBannerActivities();
