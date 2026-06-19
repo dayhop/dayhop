@@ -167,7 +167,10 @@ export default function ActivityEditPage({ params }: EditPageProps) {
           isOpen={isOpen}
         />
       )}
-      <form ref={formRef} className="flex flex-col justify-center gap-6">
+      <form
+        ref={formRef}
+        className="mx-auto mb-10 flex max-w-175 grow flex-col justify-center gap-6 lg:mt-5 lg:mb-20"
+      >
         <div className="py-2.5 text-lg font-bold">내 체험 수정</div>
         <ExperienceDetail data={initData} key={initData?.id || 'loading'} />
         <DateForm ref={dateRef} data={initData} />
