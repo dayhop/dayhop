@@ -67,7 +67,10 @@ export const CalendarMyActivitiesModal = ({
       setPendingAction({
         type,
         execute: async () => {
-          await patchMyActivityReservationStatus(activityId, reservation.id, { status: type });
+          const res = await patchMyActivityReservationStatus(activityId, reservation.id, {
+            status: type,
+          });
+          if (!res.success) throw new Error(res.message || '예약 상태 변경에 실패했습니다.');
           refreshAfterAction();
         },
       });
@@ -80,8 +83,11 @@ export const CalendarMyActivitiesModal = ({
       await pendingAction.execute();
       setActiveTab(isConfirmed ? 'confirmed' : 'declined');
       showToast.success(isConfirmed ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
-    } catch {
-      showToast.error(isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.');
+    } catch (e) {
+      const message = e instanceof Error ? e.message : undefined;
+      showToast.error(
+        message || (isConfirmed ? '예약 승인에 실패했습니다.' : '예약 거절에 실패했습니다.')
+      );
     } finally {
       setPendingAction(null);
     }

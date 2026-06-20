@@ -68,7 +68,7 @@ export function useReservationModal({
         if (!res.success) {
           setSchedules([]);
           setSelectedTime('');
-          showToast.error('스케줄을 불러오는 데 실패했습니다.');
+          showToast.error(res.message || '스케줄을 불러오는 데 실패했습니다.');
           return;
         }
         setSchedules(res.data);
@@ -95,7 +95,7 @@ export function useReservationModal({
         const res = await getMyActivityReservedSchedule(activityId, { date });
         if (ignore) return;
         if (!res.success) {
-          showToast.error('스케줄 정보를 갱신하는 데 실패했습니다.');
+          showToast.error(res.message || '스케줄 정보를 갱신하는 데 실패했습니다.');
           return;
         }
         setSchedules((prev) =>
@@ -130,7 +130,7 @@ export function useReservationModal({
         if (!res.success) {
           setReservations([]);
           setCursorId(null);
-          showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+          showToast.error(res.message || '예약 목록을 불러오는 데 실패했습니다.');
           return;
         }
         setReservations(res.data.reservations);
@@ -173,7 +173,7 @@ export function useReservationModal({
       }
 
       if (!res.success) {
-        showToast.error('예약 목록을 불러오는 데 실패했습니다.');
+        showToast.error(res.message || '예약 목록을 불러오는 데 실패했습니다.');
         return;
       }
       setReservations((prev) => [...prev, ...res.data.reservations]);
