@@ -40,44 +40,44 @@ const PAGE_CONFIG: Record<string, PageConfig> = {
 
 const DEFAULT_CONTENT_CLASS = 'px-6 md:px-0';
 
-const isSubPage = (pathname: string) => pathname !== '/mypage';
-const isEditable = (pathname: string) => pathname === '/mypage' || pathname === '/mypage/info';
-
 const PageHeader = ({
   config,
   onAction,
 }: {
   config: PageConfig;
   onAction: (href: string) => void;
-}) => (
-  <div
-    className={cn(
-      'mb-6 flex flex-col justify-between gap-3 px-6 md:mb-8 md:flex-row md:items-center md:px-0 lg:mb-10',
-      config.headerClassName
-    )}
-  >
-    <div className="mt-2.5 flex flex-col gap-2.5">
-      <h2 className="text-text-primary text-lg leading-[1.2] font-bold">{config.title}</h2>
-      <p className="text-text-tertiary text-sm font-medium">{config.description}</p>
+}) => {
+  const { title, description, action, headerClassName } = config;
+  return (
+    <div
+      className={cn(
+        'mb-6 flex flex-col justify-between gap-3 px-6 md:mb-8 md:flex-row md:items-center md:px-0 lg:mb-10',
+        headerClassName
+      )}
+    >
+      <div className="mt-2.5 flex flex-col gap-2.5">
+        <h2 className="text-text-primary text-lg leading-[1.2] font-bold">{title}</h2>
+        <p className="text-text-tertiary text-sm font-medium">{description}</p>
+      </div>
+      {action && (
+        <Button
+          variant="primary"
+          size="md"
+          className="w-auto shrink-0 px-5"
+          onClick={() => onAction(action.href)}
+        >
+          {action.label}
+        </Button>
+      )}
     </div>
-    {config.action && (
-      <Button
-        variant="primary"
-        size="md"
-        className="w-auto shrink-0 px-5"
-        onClick={() => onAction(config.action!.href)}
-      >
-        {config.action.label}
-      </Button>
-    )}
-  </div>
-);
+  );
+};
 
 export default function MyPageLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const subPage = isSubPage(pathname);
-  const editable = isEditable(pathname);
+  const isSubPage = pathname !== '/mypage';
+  const isEditable = pathname === '/mypage' || pathname === '/mypage/info';
   const pageConfig = PAGE_CONFIG[pathname];
 
   useEffect(() => {
@@ -94,6 +94,13 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
     return () => mq.removeEventListener('change', handleChange);
   }, [pathname, router]);
 
+  const pageContent = (
+    <>
+      {pageConfig && <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />}
+      <div className={cn(DEFAULT_CONTENT_CLASS, pageConfig?.contentClassName)}>{children}</div>
+    </>
+  );
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -101,38 +108,27 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
         {/* PC / Tablet */}
         <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
           <aside className="w-55 shrink-0 lg:w-72.5">
-            <ProfileCard editable={editable} />
+            <ProfileCard editable={isEditable} />
           </aside>
-          <main className="min-w-0 flex-1">
-            {pageConfig && (
-              <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />
-            )}
-            <div className={cn(DEFAULT_CONTENT_CLASS, pageConfig?.contentClassName)}>
-              {children}
-            </div>
-          </main>
+          <main className="min-w-0 flex-1">{pageContent}</main>
         </div>
 
         {/* Mobile */}
         <div className="md:hidden">
-          {!subPage ? (
+          {!isSubPage ? (
             <div className="px-6">
-              <ProfileCard editable={editable} />
+              <ProfileCard editable={isEditable} />
             </div>
           ) : (
             <div>
               <button
+                type="button"
                 onClick={() => router.push('/mypage')}
                 className="text-text-primary bg-primary-100 mb-4 ml-6 flex h-7.5 w-7.5 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium"
               >
                 <ChevronPrev className="h-4 w-4" />
               </button>
-              {pageConfig && (
-                <PageHeader config={pageConfig} onAction={(href) => router.push(href)} />
-              )}
-              <div className={cn(DEFAULT_CONTENT_CLASS, pageConfig?.contentClassName)}>
-                {children}
-              </div>
+              {pageContent}
             </div>
           )}
         </div>
