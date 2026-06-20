@@ -37,7 +37,6 @@ export const SettingsForm = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
-  const [currentPassword, setCurrentPassword] = useState('');
 
   if (!user) return null;
 
@@ -50,7 +49,6 @@ export const SettingsForm = () => {
 
   const getPasswordError = () => {
     if (!formData.newPassword) return '';
-    if (formData.newPassword === currentPassword) return '기존 비밀번호와 동일합니다.';
     if (formData.newPassword.length < 8) return '8자 이상 입력해주세요.';
     return '';
   };
@@ -69,14 +67,12 @@ export const SettingsForm = () => {
     if (!res.success) {
       throw new Error(res.message);
     }
-    setCurrentPassword(password);
     setFormData({ ...INITIAL_FORM, nickname: user.nickname });
     setIsEditMode(true);
     setIsPasswordModalOpen(false);
   };
 
   const handleEditCancel = () => {
-    setCurrentPassword('');
     setFormData(INITIAL_FORM);
     setErrors(INITIAL_ERRORS);
     setIsEditMode(false);
@@ -114,7 +110,6 @@ export const SettingsForm = () => {
         return;
       }
       login(res.data);
-      setCurrentPassword('');
       setIsEditMode(false);
       setFormData(INITIAL_FORM);
       showToast.success('수정되었습니다.');
