@@ -10,6 +10,7 @@ export interface ConfirmModalProps {
   message: ReactNode;
   confirmText?: string;
   cancelText?: string;
+  isLoading?: boolean;
 }
 
 export const ConfirmModal = ({
@@ -19,6 +20,7 @@ export const ConfirmModal = ({
   message,
   confirmText = '확인',
   cancelText = '취소',
+  isLoading = false,
 }: ConfirmModalProps) => {
   if (!isOpen) return null;
 
@@ -35,11 +37,23 @@ export const ConfirmModal = ({
 
         {/* 버튼, cdd개발에서도 같은 단위의 컴포넌트를 사용해도 되는가. */}
         <div className="flex w-full gap-2">
-          <Button variant="secondary" size="md" onClick={onClose} className="flex-1 px-4 md:px-8">
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={onClose}
+            disabled={isLoading}
+            className="flex-1 px-4 md:px-8"
+          >
             {cancelText}
           </Button>
-          <Button variant="primary" size="md" onClick={onConfirm} className="flex-1 px-4 md:px-8">
-            {confirmText}
+          <Button
+            variant="primary"
+            size="md"
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="flex-1 px-4 md:px-8"
+          >
+            {isLoading ? '처리 중...' : confirmText}
           </Button>
         </div>
       </div>
