@@ -32,7 +32,7 @@ export function useReservationModal({
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [cursorId, setCursorId] = useState<number | null>(null);
   const isFetchingMoreRef = useRef(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const currentParamsRef = useRef({
     activeTab,
@@ -190,18 +190,25 @@ export function useReservationModal({
     }
   }, [cursorId, selectedScheduleId, activityId, activeTab]);
 
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) loadMore();
-      },
-      { root: scrollContainerRef.current, threshold: 0 }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [loadMore]);
+  const sentinelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+      if (node && scrollContainerRef.current) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) loadMore();
+          },
+          { root: scrollContainerRef.current, threshold: 0 }
+        );
+        observer.observe(node);
+        observerRef.current = observer;
+      }
+    },
+    [loadMore]
+  );
 
   const refreshAfterAction = () => {
     setRefreshTrigger((prev) => prev + 1);
