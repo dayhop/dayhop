@@ -32,12 +32,14 @@ async function compressImage(file: File): Promise<File> {
       canvas.height = Math.round(img.height * scale);
       canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
       URL.revokeObjectURL(url);
+      // JPEG는 투명도 미지원 → PNG/WebP/GIF는 PNG로 유지
+      const outputType = file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png';
       canvas.toBlob(
         (blob) => {
-          resolve(blob ? new File([blob], file.name, { type: 'image/jpeg' }) : file);
+          resolve(blob ? new File([blob], file.name, { type: outputType }) : file);
         },
-        'image/jpeg',
-        0.85
+        outputType,
+        outputType === 'image/jpeg' ? 0.85 : undefined
       );
     };
     img.onerror = () => {
