@@ -19,6 +19,7 @@ export function DateField({ data, setFormData, isLabel = true }: DateFieldProp) 
       <input
         id={uniqueId}
         value={data}
+        max="9999-12-31"
         type={data ? 'date' : inputType}
         placeholder="yyyy/mm/dd"
         onFocus={() => setInputType('date')}

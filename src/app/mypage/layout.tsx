@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Header, Footer } from '@/components/layout';
 import { ProfileCard } from '@/components/blocks/ProfileCard';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -103,7 +102,6 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
       <div className="min-h-[calc(100vh-250px)] py-8 md:min-h-[calc(100vh-178px)] md:pt-10 md:pb-15 lg:pb-20">
         {/* PC / Tablet */}
         <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
@@ -134,7 +132,6 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
           )}
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

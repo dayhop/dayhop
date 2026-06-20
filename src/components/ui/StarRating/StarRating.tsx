@@ -38,10 +38,10 @@ export const StarRating = ({
     const formattedRating = rating.toFixed(1);
     return (
       <div
-        className={`inline-flex items-center gap-1 ${className}`}
+        className={`inline-flex shrink-0 items-center gap-1 ${className}`}
         aria-label={`평점 ${formattedRating}점`}
       >
-        <IconStar className="text-yellow h-4 w-4 [&_path]:fill-current" />
+        <IconStar className="text-yellow h-4 w-4 shrink-0 overflow-visible [&_path]:fill-current" />
         <span className="text-text-primary text-sm font-semibold">{formattedRating}</span>
         {reviewCount !== undefined && (
           <span className="text-text-tertiary text-sm">({reviewCount})</span>
@@ -57,7 +57,7 @@ export const StarRating = ({
     <div
       role="radiogroup"
       aria-label="별점 평가"
-      className={`inline-flex items-center gap-1 ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1 ${className}`}
       onMouseLeave={() => setHoverRating(null)}
     >
       {Array.from({ length: maxStars }).map((_, index) => {
@@ -75,10 +75,10 @@ export const StarRating = ({
             onMouseEnter={() => setHoverRating(starValue)}
             onFocus={() => setHoverRating(starValue)}
             onBlur={() => setHoverRating(null)}
-            className="text-text-tertiary focus-visible:ring-primary cursor-pointer rounded-md p-0.5 transition-all duration-150 focus:outline-none focus-visible:ring-2"
+            className="text-text-tertiary focus-visible:ring-primary shrink-0 cursor-pointer rounded-md p-0.5 transition-all duration-150 focus:outline-none focus-visible:ring-2"
           >
             <IconStar
-              className={`h-6 w-6 transition-colors duration-150 [&_path]:fill-current ${
+              className={`h-6 w-6 shrink-0 overflow-visible transition-colors duration-150 [&_path]:fill-current ${
                 isHighlighted ? 'text-yellow' : 'text-text-tertiary'
               }`}
             />

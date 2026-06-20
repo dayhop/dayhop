@@ -45,7 +45,7 @@ export function ActivityCard({ data }: ActivityCardProps) {
         <StarRating rating={rating} reviewCount={reviewCount} className="[&_span]:text-white" />
         <div className="text-lg font-bold md:text-4xl md:leading-10.5">{title}</div>
         <div className="flex items-center gap-1">
-          <span className="text-md font-bold md:text-xl">{totalPriceToString(price)}</span>
+          <span className="text-md font-bold md:text-xl">{`₩ ${totalPriceToString(price)}`}</span>
           <span className="leading-6 text-[#A1A1A1]">/ 인</span>
         </div>
       </div>

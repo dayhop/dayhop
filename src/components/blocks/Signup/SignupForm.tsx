@@ -14,9 +14,11 @@ import { AuthField } from '../AuthField/AuthField';
 import { showToast } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import { generateRandomNickname } from '@/utils/randomNickname';
+import { Modal } from '@/components/ui/Modal';
 
 export function SignupForm() {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -86,81 +88,94 @@ export function SignupForm() {
       showToast.error(res.message);
       return;
     }
-    showToast.success('회원가입에 성공했습니다.');
-    router.push('/');
+    setIsOpen(true);
+  };
+
+  const handleClickSuccessSignUp = () => {
+    router.push('/login');
   };
 
   return (
-    <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleformSubmit}>
-      <AuthField
-        title="이메일"
-        errorMessage={errorMessage.email}
-        isError={!!errorMessage.email}
-        handleChange={handleChange}
-        handleFocusout={handleFocusout}
-        placeholder="이메일을 입력해 주세요"
-        label="email"
-      />
-      <div className="flex items-end gap-2">
+    <div>
+      {isOpen && (
+        <Modal className="flex flex-col gap-10 p-10">
+          <div className="text-lg font-semibold">회원가입에 성공했습니다. 로그인해주세요.</div>
+          <Button size="md" onClick={handleClickSuccessSignUp}>
+            로그인하러 가기
+          </Button>
+        </Modal>
+      )}
+      <form className="flex w-full max-w-140 flex-col gap-5" onSubmit={handleformSubmit}>
         <AuthField
-          title="닉네임"
-          errorMessage={errorMessage.name}
-          isError={!!errorMessage.name}
+          title="이메일"
+          errorMessage={errorMessage.email}
+          isError={!!errorMessage.email}
           handleChange={handleChange}
           handleFocusout={handleFocusout}
-          placeholder="닉네임을 입력해 주세요"
-          label="name"
-          value={formData.name}
-          className="w-180"
+          placeholder="이메일을 입력해 주세요"
+          label="email"
+        />
+        <div className="flex items-end gap-2">
+          <AuthField
+            title="닉네임"
+            errorMessage={errorMessage.name}
+            isError={!!errorMessage.name}
+            handleChange={handleChange}
+            handleFocusout={handleFocusout}
+            placeholder="닉네임을 입력해 주세요"
+            label="name"
+            value={formData.name}
+            className="w-180"
+          />
+          <Button
+            className="mt-7 w-40 p-0 text-sm"
+            onClick={() => {
+              const nickname = generateRandomNickname();
+              setFormData((prev) => ({ ...prev, name: nickname }));
+              setErrorMessage((prev) => ({ ...prev, name: '' }));
+            }}
+            type="button"
+          >
+            랜덤 닉네임
+          </Button>
+        </div>
+
+        <AuthField
+          title="비밀번호"
+          type="password"
+          errorMessage={errorMessage.password}
+          isError={!!errorMessage.password}
+          handleChange={handleChange}
+          handleFocusout={handleFocusout}
+          placeholder="8자 이상 입력해 주세요"
+          label="password"
+        />
+        <AuthField
+          title="비밀번호 확인"
+          type="password"
+          errorMessage={errorMessage.passwordConfirm}
+          isError={!!errorMessage.passwordConfirm}
+          handleChange={handleChange}
+          handleFocusout={handleFocusout}
+          placeholder="비밀번호를 한 번 더 입력해 주세요"
+          label="passwordConfirm"
         />
         <Button
-          className="mt-7 w-40 p-0 text-sm"
-          onClick={() => {
-            const nickname = generateRandomNickname();
-            setFormData((prev) => ({ ...prev, name: nickname }));
-            setErrorMessage((prev) => ({ ...prev, name: '' }));
-          }}
-          type="button"
+          type="submit"
+          disabled={
+            !!errorMessage.email ||
+            !!errorMessage.name ||
+            !!errorMessage.password ||
+            !!errorMessage.passwordConfirm ||
+            formData.email === '' ||
+            formData.name === '' ||
+            formData.password === '' ||
+            formData.passwordConfirm === ''
+          }
         >
-          랜덤 닉네임
+          회원가입하기
         </Button>
-      </div>
-
-      <AuthField
-        title="비밀번호"
-        type="password"
-        errorMessage={errorMessage.password}
-        isError={!!errorMessage.password}
-        handleChange={handleChange}
-        handleFocusout={handleFocusout}
-        placeholder="8자 이상 입력해 주세요"
-        label="password"
-      />
-      <AuthField
-        title="비밀번호 확인"
-        type="password"
-        errorMessage={errorMessage.passwordConfirm}
-        isError={!!errorMessage.passwordConfirm}
-        handleChange={handleChange}
-        handleFocusout={handleFocusout}
-        placeholder="비밀번호를 한 번 더 입력해 주세요"
-        label="passwordConfirm"
-      />
-      <Button
-        type="submit"
-        disabled={
-          !!errorMessage.email ||
-          !!errorMessage.name ||
-          !!errorMessage.password ||
-          !!errorMessage.passwordConfirm ||
-          formData.email === '' ||
-          formData.name === '' ||
-          formData.password === '' ||
-          formData.passwordConfirm === ''
-        }
-      >
-        회원가입하기
-      </Button>
-    </form>
+      </form>
+    </div>
   );
 }

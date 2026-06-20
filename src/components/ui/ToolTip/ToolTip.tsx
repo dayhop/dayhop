@@ -50,7 +50,7 @@ export function ToolTip({
 
   return createPortal(
     <div
-      className="pointer-events-none absolute z-50"
+      className="pointer-events-none absolute z-30"
       style={{ left: position.x, top: position.y }}
     >
       <div
