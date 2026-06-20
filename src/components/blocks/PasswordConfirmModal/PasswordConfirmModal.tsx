@@ -43,7 +43,8 @@ export const PasswordConfirmModal = ({ isOpen, onClose, onConfirm }: PasswordCon
       onClose={handleClose}
       className="w-[320px] max-w-[calc(100vw-32px)] px-4 py-8 md:w-100 md:p-8"
     >
-      <h2 className="mb-2.5 text-lg font-bold">비밀번호 확인</h2>
+      <h2 className="mb-1 text-lg font-bold">비밀번호 확인</h2>
+      <p className="mb-5">본인 확인을 위해 비밀번호를 입력해 주세요.</p>
       <Input
         type="password"
         placeholder="현재 비밀번호를 입력해 주세요"

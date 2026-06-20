@@ -4,15 +4,20 @@ import { ActivityCategory, ActivityScheduleInput } from '@/types/api';
 import { showToast } from '@/utils/toast';
 import { RefObject } from 'react';
 
+interface DetailForm {
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  price: number;
+}
+
 export const validateFormField = (
-  title: string,
-  category: string,
-  description: string,
-  address: string,
-  price: number,
+  detailForm: DetailForm,
   schedules: ActivityScheduleInput[],
   bannerImageCount: number
 ) => {
+  const { title, category, description, address, price } = detailForm;
   if (
     !title ||
     !category ||
@@ -35,7 +40,8 @@ export const getDetailFormData = (formData: FormData) => {
   const category = String(formData.get('category') || '').trim() as ActivityCategory;
   const description = String(formData.get('description') || '').trim();
   const address = String(formData.get('address') || '').trim();
-  const price = Number(formData.get('price'));
+  const stringPrice = String(formData.get('price') || '0');
+  const price = changePriceToNumber(stringPrice);
 
   return {
     title,
@@ -82,4 +88,10 @@ export const handleIsEdited = (
   } else {
     return false;
   }
+};
+
+//'원'이랑 쉼표 붙은 가격 가져와서 숫자로 변환
+export const changePriceToNumber = (formatPrice: string) => {
+  const price = Number(formatPrice.replace(/[^0-9]/g, ''));
+  return price;
 };

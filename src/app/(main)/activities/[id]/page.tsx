@@ -1,7 +1,6 @@
 import { getActivity } from '@/lib/api/activities';
 import { ActivityDetailClient } from '@/components/blocks/ActivityDetailClient';
 import { notFound } from 'next/navigation';
-import { Header } from '@/components/layout';
 
 export default async function ActivityDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,10 +24,5 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     schedules: activity.schedules || [],
   };
 
-  return (
-    <>
-      <Header />
-      <ActivityDetailClient activity={processedActivity} />
-    </>
-  );
+  return <ActivityDetailClient activity={processedActivity} />;
 }

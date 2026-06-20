@@ -1,3 +1,5 @@
+'use client';
+
 import Left from '@/assets/icon/left_arrow.svg';
 import Right from '@/assets/icon/right_arrow.svg';
 

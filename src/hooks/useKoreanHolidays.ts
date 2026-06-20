@@ -9,6 +9,7 @@ export const useKoreanHolidays = (year: number, monthIndex: number) => {
   const [holidays, setHolidays] = useState<string[]>([]);
 
   useEffect(() => {
+    let ignore = false;
     const controller = new AbortController();
 
     const fetchHolidays = async () => {
@@ -24,17 +25,23 @@ export const useKoreanHolidays = (year: number, monthIndex: number) => {
 
         if (!Array.isArray(data)) throw new Error('공휴일 응답 데이터가 배열 형식이 아닙니다.');
 
+        if (ignore) return;
         setHolidays(data.map((holiday) => holiday.date));
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') return;
+        if (ignore) return;
         console.error('공휴일 조회 실패', error);
         setHolidays([]);
       }
     };
 
-    fetchHolidays();
+    const timer = setTimeout(fetchHolidays, 300);
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+      controller.abort();
+      clearTimeout(timer);
+    };
   }, [year, monthIndex]);
 
   return holidays;

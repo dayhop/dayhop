@@ -575,11 +575,11 @@ export function ReservationPaycard({
           cancelText="취소"
           onConfirm={() => {
             setPaymentStatus(null);
-            router.push('/my-reservations');
+            router.push('/mypage/reservations');
           }}
           onClose={() => {
             setPaymentStatus(null);
-            router.replace(window.location.pathname);
+            window.history.replaceState(null, '', window.location.pathname);
           }}
         />
       )}
@@ -588,7 +588,7 @@ export function ReservationPaycard({
         <Modal
           onClose={() => {
             setPaymentStatus(null);
-            router.replace(window.location.pathname);
+            window.history.replaceState(null, '', window.location.pathname);
           }}
           className="w-[320px] max-w-[calc(100vw-32px)] !p-8 md:w-[400px]"
         >
@@ -602,7 +602,7 @@ export function ReservationPaycard({
               size="md"
               onClick={() => {
                 setPaymentStatus(null);
-                router.replace(window.location.pathname);
+                window.history.replaceState(null, '', window.location.pathname);
               }}
               className="w-full"
             >
