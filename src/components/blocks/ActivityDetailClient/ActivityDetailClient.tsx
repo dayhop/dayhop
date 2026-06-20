@@ -67,6 +67,7 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                   alt={activity.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 600px"
+                  quality={90}
                   className="object-cover transition-transform duration-300 hover:scale-105"
                   priority
                 />
