@@ -58,15 +58,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     const { bannerFile, detailFiles } = imgCurrnet;
 
     //유효성 검사
-    const isValid = validateFormField(
-      detailFormData.title,
-      detailFormData.category,
-      detailFormData.description,
-      detailFormData.address,
-      detailFormData.price,
-      schedules,
-      bannerImageCount
-    );
+    const isValid = validateFormField(detailFormData, schedules, bannerImageCount);
 
     //유효하지 않는다면 종료
     if (!isValid) return;
@@ -144,7 +136,8 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     );
     if (!isEdited) {
       setIsOpen(false);
-      return showToast.error('수정 사항이 없습니다.');
+      showToast.error('수정 사항이 없습니다.');
+      return;
     }
 
     const patchRes = await patchMyActivity(id, submitData);
@@ -176,13 +169,21 @@ export default function ActivityEditPage({ params }: EditPageProps) {
           isOpen={isOpen}
         />
       )}
-      <form ref={formRef} className="flex flex-col justify-center gap-6">
+      <form
+        ref={formRef}
+        className="mx-auto mb-10 flex max-w-175 grow flex-col justify-center gap-6 lg:mt-5 lg:mb-20"
+      >
         <div className="py-2.5 text-lg font-bold">내 체험 수정</div>
         <ExperienceDetail data={initData} key={initData?.id || 'loading'} />
         <DateForm ref={dateRef} data={initData} />
         <ImgUpload mode="banner" ref={bannerRef} initialUrls={bannerInitialUrls} />
         <ImgUpload mode="detail" ref={detailRef} initialUrls={detailInitialUrls} />
-        <Button type="button" onClick={() => setIsOpen(true)} size="md" className="mx-auto w-40">
+        <Button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          size="md"
+          className="mx-auto mt-5 w-40"
+        >
           수정하기
         </Button>
       </form>
