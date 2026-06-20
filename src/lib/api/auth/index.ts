@@ -12,7 +12,7 @@ export const postLogin = async (body: T.LoginRequest): Promise<ApiResult<T.Login
   if (result.success) {
     (await cookies()).set('accessToken', result.data.accessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 15,
@@ -20,7 +20,7 @@ export const postLogin = async (body: T.LoginRequest): Promise<ApiResult<T.Login
 
     (await cookies()).set('refreshToken', result.data.refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
@@ -44,9 +44,10 @@ export const postRefreshToken = async (): Promise<T.TokenResponse> => {
   try {
     (await cookies()).set('accessToken', data.accessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       path: '/',
     });
+    //RT o, AT x
   } catch (cookieError) {
     //TODO: 에러처리방법
     console.error('서버 컴포넌트 렌더링 중이라 쿠키 갱신 생략됨 (미들웨어가 처리함)');
