@@ -147,6 +147,7 @@ export default function ActivityEditPage({ params }: EditPageProps) {
     }
     setIsOpen(false);
     showToast.success('체험 수정이 완료되었습니다.');
+    router.refresh();
     router.back();
   };
 
