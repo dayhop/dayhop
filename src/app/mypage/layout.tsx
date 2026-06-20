@@ -123,6 +123,7 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
             <div>
               <button
                 type="button"
+                aria-label="마이페이지로 돌아가기"
                 onClick={() => router.push('/mypage')}
                 className="text-text-primary bg-primary-100 mb-4 ml-6 flex h-7.5 w-7.5 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium"
               >
