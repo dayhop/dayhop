@@ -30,6 +30,10 @@ export default function ReservationListPage() {
     setActiveStatus(button);
   };
 
+  const handleDelete = (id: number) => {
+    setReservationList((prev) => prev.filter((r) => r.id !== id));
+  };
+
   // 필터 변경 시
   useEffect(() => {
     //바로 한 번 초기화
@@ -102,7 +106,7 @@ export default function ReservationListPage() {
       <div className="flex flex-col gap-7.5 px-6 md:px-0">
         {reservationList.length !== 0
           ? reservationList.map((reservation) => (
-              <ReservationCard key={reservation.id} data={reservation} />
+              <ReservationCard key={reservation.id} data={reservation} onDelete={handleDelete} />
             ))
           : !isLoading && (
               <div className="py-10 text-center text-gray-500">예약 내역이 없습니다.</div>
