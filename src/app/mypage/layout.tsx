@@ -101,36 +101,34 @@ export default function MyPageLayout({ children }: { children: React.ReactNode }
   );
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="min-h-[calc(100vh-250px)] py-8 md:min-h-[calc(100vh-178px)] md:pt-10 md:pb-15 lg:pb-20">
-        {/* PC / Tablet */}
-        <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
-          <aside className="w-55 shrink-0 lg:w-72.5">
-            <ProfileCard editable={isEditable} />
-          </aside>
-          <main className="min-w-0 flex-1">{pageContent}</main>
-        </div>
+    <div className="min-h-[calc(100vh-250px)] py-8 md:min-h-[calc(100vh-178px)] md:pt-10 md:pb-15 lg:pb-20">
+      {/* PC / Tablet */}
+      <div className="mx-auto hidden max-w-260 px-7.5 md:flex md:gap-7.5 lg:gap-12.5">
+        <aside className="w-55 shrink-0 lg:w-72.5">
+          <ProfileCard editable={isEditable} />
+        </aside>
+        <main className="min-w-0 flex-1">{pageContent}</main>
+      </div>
 
-        {/* Mobile */}
-        <div className="md:hidden">
-          {!isSubPage ? (
-            <div className="px-6">
-              <ProfileCard editable={isEditable} />
-            </div>
-          ) : (
-            <div>
-              <button
-                type="button"
-                aria-label="마이페이지로 돌아가기"
-                onClick={() => router.push('/mypage')}
-                className="text-text-primary bg-primary-100 mb-4 ml-6 flex h-7.5 w-7.5 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium"
-              >
-                <ChevronPrev className="h-4 w-4" />
-              </button>
-              {pageContent}
-            </div>
-          )}
-        </div>
+      {/* Mobile */}
+      <div className="md:hidden">
+        {!isSubPage ? (
+          <div className="px-6">
+            <ProfileCard editable={isEditable} />
+          </div>
+        ) : (
+          <div>
+            <button
+              type="button"
+              aria-label="마이페이지로 돌아가기"
+              onClick={() => router.push('/mypage')}
+              className="text-text-primary bg-primary-100 mb-4 ml-6 flex h-7.5 w-7.5 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium"
+            >
+              <ChevronPrev className="h-4 w-4" />
+            </button>
+            {pageContent}
+          </div>
+        )}
       </div>
     </div>
   );
