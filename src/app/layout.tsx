@@ -5,6 +5,7 @@ import { pretendard } from '@/lib/fonts';
 import './globals.css';
 import AuthProvider from '@/providers/AuthProvider';
 import { serverInstance } from '@/lib/api/instance';
+import { LayoutWrapper } from '@/components/layout';
 
 export const metadata: Metadata = {
   title: 'DayHOP',
@@ -30,7 +31,7 @@ export default async function RootLayout({
     <html lang="ko" className={pretendard.variable}>
       <body className="font-sans">
         <AuthProvider initialUser={user}>
-          {children}
+          <LayoutWrapper>{children}</LayoutWrapper>
           <Toast />
         </AuthProvider>
       </body>
