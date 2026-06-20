@@ -575,7 +575,6 @@ export function ReservationPaycard({
           cancelText="취소"
           onConfirm={() => {
             setPaymentStatus(null);
-            window.history.replaceState(null, '', window.location.pathname);
             router.push('/mypage/reservations');
           }}
           onClose={() => {

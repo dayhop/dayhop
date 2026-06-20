@@ -7,7 +7,9 @@ const EXCLUDED_PATHS = ['/login', '/signup', '/oauth', '/map'];
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isExcluded = EXCLUDED_PATHS.some((path) => pathname?.startsWith(path));
+  const isExcluded = EXCLUDED_PATHS.some(
+    (path) => pathname === path || pathname?.startsWith(path + '/')
+  );
 
   if (isExcluded) {
     return <>{children}</>;
