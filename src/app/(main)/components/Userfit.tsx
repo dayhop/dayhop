@@ -9,9 +9,8 @@ import { ActivityCategory, ActivityItem } from '@/types/api';
 import { getMyUser } from '@/lib/api/users';
 
 /**
- * 단어의 마지막 글자에 받침(종성)이 있는지에 따라 '을' 또는 '를'을 반환합니다.
- * @param word 조사를 붙일 단어
- * @returns '을' 또는 '를'
+ * @param word
+ * @returns
  */
 const getObjectParticle = (word: string) => {
   const lastChar = word.charCodeAt(word.length - 1);
@@ -44,7 +43,7 @@ export function Userfit() {
       //요청
       const fitRes = await getActivities({
         method: 'cursor',
-        category: userfitCategory, // 상태 대신 지역 변수를 사용해야 합니다.
+        category: userfitCategory,
         size: 10,
       });
       if (!fitRes.success) return;
@@ -56,8 +55,8 @@ export function Userfit() {
 
       const userfitItems = fitcategorydata.activities.filter((item) => !viewedIdSet.has(item.id));
 
-      // 다보면기록 리셋
-      if (userfitItems.length === 0) {
+      // 4개 미만이면 기록 리셋 후 전체에서 노출
+      if (userfitItems.length < 4) {
         localStorage.removeItem('clicks');
         setActivitiesList(fitcategorydata.activities.slice(0, 4));
       } else {

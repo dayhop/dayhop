@@ -25,6 +25,7 @@ export function SelectField({
   disabled = false,
 }: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const selectedIndex = selectedOption ? list.indexOf(selectedOption) : null;
   const displayedMessage = selectedOption || defaultMessage;
   const dropDownRef = useRef<HTMLDivElement>(null);
 
@@ -69,16 +70,16 @@ export function SelectField({
         </button>
         {isOpen && (
           <div className="border-border-default absolute z-50 mt-2 flex max-h-64 w-full flex-col gap-1 overflow-y-auto rounded-2xl border bg-white p-3 shadow-[0_2px_6px_0_rgba(0,0,0,0.02)]">
-            {list.map((item) => {
+            {list.map((item, index) => {
               return (
                 <Button
                   onClick={() => {
                     onSelectOption(item);
                     setIsOpen(false);
                   }}
-                  key={item}
+                  key={`${item}-${index}`}
                   variant="text"
-                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 ${displayedMessage === item ? 'bg-[#f2f9ff]' : ''}`}
+                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 ${selectedIndex === index ? 'bg-[#f2f9ff]' : ''}`}
                 >
                   {item}
                 </Button>
