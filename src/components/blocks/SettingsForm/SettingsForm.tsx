@@ -12,9 +12,19 @@ import { showToast } from '@/utils/toast';
 const INITIAL_FORM = { nickname: '', newPassword: '', confirmPassword: '' };
 const INITIAL_ERRORS = { nickname: '', newPassword: '', confirmPassword: '' };
 
-const FormField = ({ label, children }: { label: string; children: React.ReactNode }) => (
+const FormField = ({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) => (
   <div className="flex flex-col gap-2.5">
-    <label className="text-text-primary text-base font-medium">{label}</label>
+    <label htmlFor={htmlFor} className="text-text-primary text-base font-medium">
+      {label}
+    </label>
     {children}
   </div>
 );
@@ -27,6 +37,7 @@ export const SettingsForm = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
+  const [currentPassword, setCurrentPassword] = useState('');
 
   if (!user) return null;
 
@@ -37,18 +48,35 @@ export const SettingsForm = () => {
 
   const getNicknameError = () => (!formData.nickname.trim() ? '닉네임을 입력해주세요.' : '');
 
-  const getPasswordError = () =>
-    formData.newPassword && formData.newPassword.length < 8 ? '8자 이상 입력해주세요.' : '';
+  const getPasswordError = () => {
+    if (!formData.newPassword) return '';
+    if (formData.newPassword === currentPassword) return '기존 비밀번호와 동일합니다.';
+    if (formData.newPassword.length < 8) return '8자 이상 입력해주세요.';
+    return '';
+  };
 
   const getConfirmPasswordError = () =>
     formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '';
 
+  // 수정하기 클릭 → 비밀번호 확인 모달 열기
   const handleEditStart = () => {
+    setIsPasswordModalOpen(true);
+  };
+
+  // 비밀번호 인증 성공 → 수정 모드 전환
+  const handlePasswordConfirm = async (password: string) => {
+    const res = await postLogin({ email: user.email, password });
+    if (!res.success) {
+      throw new Error(res.message);
+    }
+    setCurrentPassword(password);
     setFormData({ ...INITIAL_FORM, nickname: user.nickname });
     setIsEditMode(true);
+    setIsPasswordModalOpen(false);
   };
 
   const handleEditCancel = () => {
+    setCurrentPassword('');
     setFormData(INITIAL_FORM);
     setErrors(INITIAL_ERRORS);
     setIsEditMode(false);
@@ -66,7 +94,8 @@ export const SettingsForm = () => {
     setErrors((prev) => ({ ...prev, confirmPassword: getConfirmPasswordError() }));
   };
 
-  const handleSaveClick = () => {
+  // 저장하기 → 바로 저장 (비밀번호 재확인 없음)
+  const handleSaveClick = async () => {
     const newErrors = {
       nickname: getNicknameError(),
       newPassword: getPasswordError(),
@@ -74,34 +103,31 @@ export const SettingsForm = () => {
     };
     setErrors(newErrors);
     if (newErrors.nickname || newErrors.newPassword || newErrors.confirmPassword) return;
-    setIsPasswordModalOpen(true);
-  };
 
-  const handlePasswordConfirm = async (password: string) => {
-    const loginRes = await postLogin({ email: user.email, password });
-    if (!loginRes.success) {
-      throw new Error(loginRes.message);
+    try {
+      const res = await patchMyUser({
+        nickname: formData.nickname || undefined,
+        newPassword: formData.newPassword || undefined,
+      });
+      if (!res.success) {
+        showToast.error(res.message);
+        return;
+      }
+      login(res.data);
+      setCurrentPassword('');
+      setIsEditMode(false);
+      setFormData(INITIAL_FORM);
+      showToast.success('수정되었습니다.');
+    } catch {
+      showToast.error('수정에 실패했습니다.');
     }
-    const res = await patchMyUser({
-      nickname: formData.nickname || undefined,
-      newPassword: formData.newPassword || undefined,
-    });
-    if (!res.success) {
-      showToast.error(res.message);
-      setIsPasswordModalOpen(false);
-      return;
-    }
-    login(res.data);
-    setIsEditMode(false);
-    setFormData(INITIAL_FORM);
-    showToast.success('수정되었습니다.');
-    setIsPasswordModalOpen(false);
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <FormField label="닉네임">
+      <FormField label="닉네임" htmlFor="nickname">
         <Input
+          id="nickname"
           value={isEditMode ? formData.nickname : user.nickname}
           disabled={!isEditMode}
           isWarning={!!errors.nickname}
@@ -111,12 +137,13 @@ export const SettingsForm = () => {
         />
       </FormField>
 
-      <FormField label="이메일">
-        <Input value={user.email} disabled />
+      <FormField label="이메일" htmlFor="email">
+        <Input id="email" value={user.email} disabled />
       </FormField>
 
-      <FormField label="새 비밀번호">
+      <FormField label="새 비밀번호" htmlFor="newPassword">
         <Input
+          id="newPassword"
           type="password"
           placeholder="새 비밀번호를 입력해 주세요"
           value={formData.newPassword}
@@ -128,8 +155,9 @@ export const SettingsForm = () => {
         />
       </FormField>
 
-      <FormField label="비밀번호 확인">
+      <FormField label="비밀번호 확인" htmlFor="confirmPassword">
         <Input
+          id="confirmPassword"
           type="password"
           placeholder="비밀번호를 한 번 더 입력해 주세요"
           value={formData.confirmPassword}
