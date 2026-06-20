@@ -25,7 +25,7 @@ export function SelectField({
   disabled = false,
 }: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const selectedIndex = selectedOption ? list.indexOf(selectedOption) : null;
   const displayedMessage = selectedOption || defaultMessage;
   const dropDownRef = useRef<HTMLDivElement>(null);
 
@@ -75,7 +75,6 @@ export function SelectField({
                 <Button
                   onClick={() => {
                     onSelectOption(item);
-                    setSelectedIndex(index);
                     setIsOpen(false);
                   }}
                   key={`${item}-${index}`}
