@@ -54,7 +54,6 @@ export function useReservationModal({
     setCursorId(null);
   }
 
-  // currentParamsRef를 최신 파라미터로 동기화
   useEffect(() => {
     currentParamsRef.current = { activeTab, selectedScheduleId };
   }, [activeTab, selectedScheduleId]);

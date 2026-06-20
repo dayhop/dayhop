@@ -43,7 +43,6 @@ async function compressImage(file: File): Promise<File> {
       canvas.height = Math.round(img.height * scale);
       canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
       URL.revokeObjectURL(url);
-      // JPEG는 투명도 미지원 → PNG/WebP/GIF는 PNG로 유지
       const outputType = file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png';
       canvas.toBlob(
         (blob) => {
@@ -104,6 +103,19 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  const resetEditState = () => {
+    setIsEditConfirmOpen(false);
+    setPreviewUrl(null);
+    setPendingFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleConfirmDelete = async () => {
     const res = await patchMyUser({ profileImageUrl: null });
     if (!res.success) {
@@ -116,17 +128,21 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
     showToast.success('프로필 이미지가 삭제되었습니다.');
   };
 
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+  const handleDeleteClick = () => {
+    if (!user?.profileImageUrl) {
+      showToast.error('삭제할 프로필 이미지가 없습니다.');
+      return;
+    }
+    setIsConfirmOpen(true);
+  };
 
-  const handleCancelEdit = () => {
-    setIsEditConfirmOpen(false);
-    setPreviewUrl(null);
-    setPendingFile(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPreviewUrl(URL.createObjectURL(file));
+    const compressed = await compressImage(file);
+    setPendingFile(compressed);
+    setIsEditConfirmOpen(true);
   };
 
   const handleConfirmEdit = async () => {
@@ -136,20 +152,17 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
       const uploadRes = await postMyUserProfile({ image: pendingFile });
       if (!uploadRes.success) {
         showToast.error(uploadRes.message);
-        handleCancelEdit();
+        resetEditState();
         return;
       }
       const res = await patchMyUser({ profileImageUrl: uploadRes.data.profileImageUrl });
       if (!res.success) {
         showToast.error(res.message);
-        handleCancelEdit();
+        resetEditState();
         return;
       }
       login(res.data);
-      setPreviewUrl(null);
-      setPendingFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      setIsEditConfirmOpen(false);
+      resetEditState();
       showToast.success('프로필 이미지가 변경되었습니다.');
     } finally {
       setIsUploading(false);
@@ -171,13 +184,7 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
     <div>
       <Popover trigger={triggerEl} ariaLabel="메뉴 열기">
         <ProfileMenu
-          onDeleteClick={() => {
-            if (!user?.profileImageUrl) {
-              showToast.error('삭제할 프로필 이미지가 없습니다.');
-              return;
-            }
-            setIsConfirmOpen(true);
-          }}
+          onDeleteClick={handleDeleteClick}
           onEditClick={() => fileInputRef.current?.click()}
         />
       </Popover>
@@ -187,14 +194,7 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
         type="file"
         accept="image/jpeg,image/png,image/gif,image/webp"
         className="hidden"
-        onChange={async (e) => {
-          const file = e.target.files?.[0];
-          if (!file) return;
-          setPreviewUrl(URL.createObjectURL(file));
-          const compressed = await compressImage(file);
-          setPendingFile(compressed);
-          setIsEditConfirmOpen(true);
-        }}
+        onChange={handleFileChange}
       />
 
       <ConfirmModal
@@ -206,7 +206,7 @@ export const ProfileImage = ({ editable = false }: ProfileImageProps) => {
 
       <ConfirmModal
         isOpen={isEditConfirmOpen}
-        onClose={handleCancelEdit}
+        onClose={resetEditState}
         onConfirm={handleConfirmEdit}
         isLoading={isUploading}
         message="프로필 이미지를 변경하시겠습니까?"
