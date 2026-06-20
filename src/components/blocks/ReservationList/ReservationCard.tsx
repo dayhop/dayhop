@@ -107,7 +107,7 @@ export function ReservationCard({ data }: ReservationCardProps) {
             alt="배너 이미지"
             fill
             sizes="(min-width: 1024px) 280px, 160px"
-            quality={90}
+            quality={80}
             className="object-cover"
             onError={() => setImgError(true)}
           />

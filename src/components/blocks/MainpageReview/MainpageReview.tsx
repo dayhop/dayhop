@@ -147,8 +147,8 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                 src={item.activity.bannerImageUrl}
                 alt={item.activity.title}
                 fill
-                sizes="110px"
-                quality={90}
+                sizes="220px"
+                quality={80}
                 className="object-cover"
               />
             </div>

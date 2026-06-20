@@ -21,7 +21,7 @@ export const ActivityCard = ({ activity, onClick }: ActivityCardProps) => {
           alt={activity.title}
           fill
           sizes="262px"
-          quality={90}
+          quality={80}
           className="object-cover"
         />
       </div>
