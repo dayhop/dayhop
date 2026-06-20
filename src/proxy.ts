@@ -32,7 +32,7 @@ export async function proxy(request: NextRequest) {
         const response = NextResponse.rewrite(request.nextUrl);
         response.cookies.set('accessToken', data.accessToken, {
           httpOnly: true,
-          secure: true,
+          secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           path: '/',
           maxAge: 60 * 15,
