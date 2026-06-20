@@ -39,10 +39,9 @@ serverInstance.interceptors.response.use(
 
       originalRequest._retry = true;
       try {
-        const response = await postRefreshToken();
-        const newToken = (await cookies()).get('accessToken')?.value;
-        if (newToken) {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        const { accessToken: newAccessToken } = await postRefreshToken();
+        if (newAccessToken) {
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
         return serverInstance(originalRequest);
       } catch (refreshError) {
