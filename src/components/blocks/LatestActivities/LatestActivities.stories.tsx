@@ -5,6 +5,11 @@ import { LatestActivities } from './LatestActivities';
 const meta = {
   title: 'Blocks/LatestActivities',
   component: LatestActivities,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 } satisfies Meta<typeof LatestActivities>;
 
 export default meta;
@@ -57,5 +62,11 @@ export const Default: Story = {
         updatedAt: '2026-06-17T00:00:00.000Z',
       },
     ],
+  },
+};
+
+export const Empty: Story = {
+  args: {
+    activities: [],
   },
 };
