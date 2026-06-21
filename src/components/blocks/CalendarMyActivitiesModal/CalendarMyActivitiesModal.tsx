@@ -13,6 +13,7 @@ import type { MyActivityReservation } from '@/lib/api/my-activities/type';
 import { useReservationModal, formatTimeOption, type TabStatus } from './useReservationModal';
 
 interface CalendarMyActivitiesModalProps {
+  isOpen: boolean;
   activityId: number;
   date: string; // YYYY-MM-DD
   onClose: () => void;
@@ -38,6 +39,7 @@ function formatDate(date: string) {
 }
 
 export const CalendarMyActivitiesModal = ({
+  isOpen,
   activityId,
   date,
   onClose,
@@ -57,6 +59,7 @@ export const CalendarMyActivitiesModal = ({
     isSchedulePast,
     reservations,
     cursorId,
+    isLoading,
     sentinelRef,
     scrollContainerRef,
     refreshAfterAction,
@@ -98,8 +101,16 @@ export const CalendarMyActivitiesModal = ({
       <Modal
         onClose={onClose}
         ariaLabel="예약 현황 모달"
-        className={className}
-        overlayClassName={overlayClassName}
+        className={cn(
+          className,
+          'transition-transform duration-300 ease-out lg:transition-none',
+          isOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'
+        )}
+        overlayClassName={cn(
+          overlayClassName,
+          'transition-opacity duration-300 lg:transition-none',
+          !isOpen && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-none'
+        )}
       >
         {/* 헤더 */}
         <div className="mb-3 flex items-center justify-between px-6">
@@ -140,7 +151,7 @@ export const CalendarMyActivitiesModal = ({
 
           <div
             ref={scrollContainerRef}
-            className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col"
+            className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:items-start md:gap-5 lg:min-w-85 lg:flex-col lg:items-stretch"
           >
             {/* 예약 시간 */}
             <div className="flex flex-col gap-3 md:flex-1">
@@ -164,7 +175,11 @@ export const CalendarMyActivitiesModal = ({
                 예약 내역
               </h3>
               <div className="flex min-h-25 flex-col">
-                {reservations.length === 0 ? (
+                {isLoading ? (
+                  <p className="text-text-placeholder py-10 text-center text-sm md:p-0 md:pt-5">
+                    예약 내역을 불러오는 중입니다...
+                  </p>
+                ) : reservations.length === 0 ? (
                   <p className="text-text-tertiary py-10 text-center text-sm md:p-0 md:pt-5">
                     {isSchedulePast && activeTab === 'confirmed'
                       ? '완료된 예약은 조회할 수 없습니다.'
