@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar } from '@/components/blocks/Calendar';
 import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
@@ -37,6 +37,13 @@ function getTimestamp(): number {
   return Date.now();
 }
 
+const MONTH_SEARCH_CAP = 12;
+
+const parseScheduleDate = (dateStr: string): Date => {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
 export function ReservationPaycard({
   activityId,
   price,
@@ -53,6 +60,7 @@ export function ReservationPaycard({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'fail' | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const scheduleCacheRef = useRef<Map<string, ScheduleDate[]>>(new Map());
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -76,31 +84,108 @@ export function ReservationPaycard({
   // 공휴일 정보 가져오기
   const holidays = useKoreanHolidays(currentMonth.getFullYear(), currentMonth.getMonth());
 
+  const fetchMonthSchedules = useCallback(
+    async (year: string, month: string): Promise<ScheduleDate[]> => {
+      const key = `${activityId}-${year}-${month}`;
+      const cached = scheduleCacheRef.current.get(key);
+      if (cached) return cached;
+
+      const res = await getActivityAvailableSchedule(activityId, { year, month });
+      let list: ScheduleDate[] = [];
+      if (res.success) {
+        const data = res.data;
+        list = Array.isArray(data) ? data : [data as unknown as ScheduleDate];
+      }
+      scheduleCacheRef.current.set(key, list);
+      return list;
+    },
+    [activityId]
+  );
+
+  const findAdjacentAvailableDate = useCallback(
+    async (fromDate: Date, direction: 1 | -1, inclusive: boolean): Promise<Date | null> => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      const fromStart = new Date(fromDate);
+      fromStart.setHours(0, 0, 0, 0);
+
+      let searchMonth = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+
+      for (let i = 0; i < MONTH_SEARCH_CAP; i++) {
+        const year = String(searchMonth.getFullYear());
+        const month = String(searchMonth.getMonth() + 1).padStart(2, '0');
+        const monthSchedules = await fetchMonthSchedules(year, month);
+
+        const candidates = monthSchedules
+          .filter((s) => s.times.length > 0)
+          .map((s) => parseScheduleDate(s.date))
+          .filter((date) => {
+            if (date < todayStart) return false;
+            const diff = date.getTime() - fromStart.getTime();
+            if (direction === 1) return inclusive ? diff >= 0 : diff > 0;
+            return inclusive ? diff <= 0 : diff < 0;
+          })
+          .sort((a, b) =>
+            direction === 1 ? a.getTime() - b.getTime() : b.getTime() - a.getTime()
+          );
+
+        if (candidates.length > 0) return candidates[0];
+
+        searchMonth = new Date(searchMonth.getFullYear(), searchMonth.getMonth() + direction, 1);
+      }
+
+      return null;
+    },
+    [fetchMonthSchedules]
+  );
+
   // 해당 월의 예약 가능한 스케줄 조회
   useEffect(() => {
     let isMounted = true;
-    const fetchSchedules = async () => {
+    const loadSchedules = async () => {
       const year = String(currentMonth.getFullYear());
       const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
-      const res = await getActivityAvailableSchedule(activityId, { year, month });
-      if (!isMounted) return;
-      if (!res.success) {
-        setSchedules([]);
-        return;
-      }
-      const data = res.data;
-      if (Array.isArray(data)) {
-        setSchedules(data);
-      } else {
-        setSchedules([data as unknown as ScheduleDate]);
-      }
+      const list = await fetchMonthSchedules(year, month);
+      if (isMounted) setSchedules(list);
     };
 
-    fetchSchedules();
+    loadSchedules();
     return () => {
       isMounted = false;
     };
-  }, [activityId, currentMonth]);
+  }, [currentMonth, fetchMonthSchedules]);
+
+  // 첫 렌더 시 가장 빠른 예약 가능일로 이동
+  useEffect(() => {
+    let cancelled = false;
+    const initToFirstAvailable = async () => {
+      const firstDate = await findAdjacentAvailableDate(new Date(), 1, true);
+      if (cancelled || !firstDate) return;
+      setCurrentMonth(new Date(firstDate.getFullYear(), firstDate.getMonth(), 1));
+      setSelectedDate(firstDate);
+      setSelectedScheduleId(undefined);
+    };
+
+    initToFirstAvailable();
+    return () => {
+      cancelled = true;
+    };
+  }, [findAdjacentAvailableDate]);
+
+  const handleNavigateToAdjacentDate = async (direction: 1 | -1) => {
+    const base = selectedDate ?? new Date();
+    const target = await findAdjacentAvailableDate(base, direction, false);
+    if (!target) {
+      showToast.error(
+        direction === 1 ? '이후 예약 가능한 날짜가 없습니다.' : '이전 예약 가능한 날짜가 없습니다.'
+      );
+      return;
+    }
+    setCurrentMonth(new Date(target.getFullYear(), target.getMonth(), 1));
+    setSelectedDate(target);
+    setSelectedScheduleId(undefined);
+  };
 
   // 스케줄 유무 및 과거 날짜 여부 확인하여 캘린더 날짜 비활성화
   const isDateDisabled = (date: Date) => {
@@ -244,6 +329,10 @@ export function ReservationPaycard({
     setIsSubmitting(false);
   };
 
+  const headerDateLabel = selectedDate
+    ? selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : undefined;
+
   return (
     <>
       {/* 1. 데스크톱 뷰 카드 (lg 이상일 때만 보임) */}
@@ -271,6 +360,9 @@ export function ReservationPaycard({
               setSelectedScheduleId(undefined);
             }}
             onMonthChange={setCurrentMonth}
+            onNavigatePrev={() => handleNavigateToAdjacentDate(-1)}
+            onNavigateNext={() => handleNavigateToAdjacentDate(1)}
+            headerTitle={headerDateLabel}
             holidays={holidays}
             isDateDisabled={isDateDisabled}
             headerVariant="secondary"
@@ -469,6 +561,9 @@ export function ReservationPaycard({
                   setSelectedScheduleId(undefined);
                 }}
                 onMonthChange={setCurrentMonth}
+                onNavigatePrev={() => handleNavigateToAdjacentDate(-1)}
+                onNavigateNext={() => handleNavigateToAdjacentDate(1)}
+                headerTitle={headerDateLabel}
                 holidays={holidays}
                 isDateDisabled={isDateDisabled}
                 headerVariant="secondary"
