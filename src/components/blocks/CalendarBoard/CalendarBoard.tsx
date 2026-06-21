@@ -174,6 +174,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
         selectableMonths={SELECTABLE_MONTHS}
         holidays={holidays}
         isDateClickable={isDateClickable}
+        clickableDateClassName="hover:bg-(--color-bg-surface)"
         renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
         className={wrapperClassName}

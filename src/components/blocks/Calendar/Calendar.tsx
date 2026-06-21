@@ -38,6 +38,7 @@ export const Calendar = ({
   defaultClassName,
   pointClassName,
   isDatePoint,
+  clickableDateClassName,
 }: CalendarProps) => {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
 
@@ -133,7 +134,8 @@ export const Calendar = ({
             isSunday: date.getDay() === 0,
           };
           const isDisabled = isDateDisabled?.(date) ?? false;
-          const isNotClickable = isDateClickable ? !isDateClickable(date) : false;
+          const isClickable = isDateClickable ? isDateClickable(date) : false;
+          const isNotClickable = isDateClickable ? !isClickable : false;
           const hasPoint = isDatePoint?.(date) ?? false;
 
           const dateCellVariantClass = dateInfo.isSelected
@@ -166,10 +168,11 @@ export const Calendar = ({
               aria-pressed={dateInfo.isSelected}
               aria-disabled={isDisabled}
               className={cn(
-                'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
+                'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) transition-colors duration-150 md:text-base',
                 isDisabled && 'cursor-not-allowed opacity-40',
                 !dateInfo.isCurrentMonth && 'opacity-40',
                 isNotClickable && 'pointer-events-none cursor-default',
+                isClickable && clickableDateClassName,
                 dateClassName
               )}
             >

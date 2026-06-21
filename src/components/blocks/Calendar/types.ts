@@ -39,6 +39,7 @@ export type CalendarProps = {
   defaultClassName?: string;
   pointClassName?: string;
   isDatePoint?: (date: Date) => boolean;
+  clickableDateClassName?: string;
 };
 
 export type CalendarHeaderProps = {
