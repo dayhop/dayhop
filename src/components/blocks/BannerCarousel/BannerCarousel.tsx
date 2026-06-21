@@ -18,6 +18,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   const [activities, setActivities] = useState<ActivityItem[]>(initialActivities ?? []);
   const [isLoading, setIsLoading] = useState(!initialActivities);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (initialActivities) return;
@@ -38,14 +39,14 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   }, [initialActivities]);
 
   useEffect(() => {
-    if (activities.length <= 1) return;
+    if (activities.length <= 1 || isHovered) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === activities.length - 1 ? 0 : prev + 1));
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [activities.length]);
+  }, [activities.length, isHovered]);
 
   if (isLoading) {
     return (
@@ -74,7 +75,11 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   };
 
   return (
-    <section className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible">
+    <section
+      className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative xl:hidden">
         <div
           className="flex gap-4 transition-transform duration-500 ease-in-out [--slide-gap:16px] [--slide-width:343px] md:gap-6 md:[--slide-gap:24px] md:[--slide-width:696px]"
