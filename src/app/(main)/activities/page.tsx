@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { BannerCarousel } from '@/components/blocks/BannerCarousel';
 import { SearchInput } from '@/components/blocks/SearchInput';
 import { ActivityCard } from '@/components/ui/ActivityCard';
 import { Pagination } from '@/components/ui/pagination';
@@ -54,7 +53,6 @@ function ActivitiesPageContent() {
   const initialKeyword = searchParams.get('keyword') ?? '';
 
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [bannerActivities, setBannerActivities] = useState<ActivityItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory | '전체'>('전체');
   const [keyword, setKeyword] = useState(initialKeyword);
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,21 +60,6 @@ function ActivitiesPageContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const paginationCount = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-
-  useEffect(() => {
-    const fetchBannerActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: 1,
-        size: 4,
-      });
-
-      setBannerActivities(res.success ? res.data.activities : []);
-    };
-
-    fetchBannerActivities();
-  }, []);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -110,21 +93,32 @@ function ActivitiesPageContent() {
   };
 
   const handleSearch = (value: string) => {
-    setKeyword(value.trim());
+    const trimmed = value.trim();
+    setKeyword(trimmed);
     setCurrentPage(1);
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (trimmed) {
+      params.set('keyword', trimmed);
+    } else {
+      params.delete('keyword');
+    }
+    const query = params.toString();
+    router.replace(query ? `/activities?${query}` : '/activities');
   };
 
   const handleReset = () => {
     setKeyword('');
     setCurrentPage(1);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('keyword');
+    const query = params.toString();
+    router.replace(query ? `/activities?${query}` : '/activities');
   };
 
   return (
     <main className="flex w-full flex-col items-center pb-24">
-      <section className="w-full px-4 pt-6 md:px-6 xl:px-0">
-        <BannerCarousel activities={bannerActivities} />
-      </section>
-
       <section className="mt-16 w-full px-4 md:px-6">
         <SearchInput onSearch={handleSearch} onReset={handleReset} initialValue={keyword} />
       </section>
