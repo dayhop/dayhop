@@ -19,9 +19,9 @@ const avatarSizeClassName = {
 };
 
 const avatarSizes = {
-  sm: '(min-width: 768px) 24px, 20px',
-  md: '30px',
-  lg: '(min-width: 1024px) 120px, (min-width: 768px) 100px, 120px',
+  sm: '(min-width: 768px) 48px, 40px',
+  md: '60px',
+  lg: '(min-width: 1024px) 240px, (min-width: 768px) 200px, 240px',
 };
 
 export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', className }: AvatarProps) => {
@@ -46,6 +46,7 @@ export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', classNam
           alt={alt}
           fill
           sizes={avatarSizes[size]}
+          quality={80}
           className="object-cover"
           onError={handleImageError}
         />

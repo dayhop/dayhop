@@ -30,13 +30,22 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
-        port: '',
-        pathname: '/**',
+        hostname: 'sprint-fe-project.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/globalnomad/**',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 80],
+    deviceSizes: [640, 828, 1200, 1920],
+    imageSizes: [16, 32, 64, 128, 256, 384],
   },
   reactCompiler: true,
+
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '4mb',
+    },
+  },
 
   webpack(config) {
     const fileLoaderRule = config.module.rules.find(

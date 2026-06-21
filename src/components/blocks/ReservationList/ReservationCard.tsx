@@ -6,15 +6,15 @@ import Image from 'next/image';
 import { ReviewFormModal } from '../ReviewForm';
 import { ScheduleChangeModal } from './ScheduleChangeModal';
 import { useState } from 'react';
-import { patchMyReservation } from '@/lib/api/my-reservations';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { showToast } from '@/utils/toast';
 import defaultThumbnail from '@/assets/images/card-thumnail.png';
 
 interface ReservationCardProps {
   data: Reservation;
+  onDelete: (id: number) => void;
 }
-export function ReservationCard({ data }: ReservationCardProps) {
+export function ReservationCard({ data, onDelete }: ReservationCardProps) {
   const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -23,17 +23,23 @@ export function ReservationCard({ data }: ReservationCardProps) {
   const cardImg = imgError || !activity.bannerImageUrl ? defaultThumbnail : activity.bannerImageUrl;
 
   const handleClickReservationDelete = async (id: number) => {
-    const body = {
-      status: 'canceled' as const,
-    };
-    const res = await patchMyReservation({ reservationId: id }, body);
-    if (!res.success) {
-      showToast.error(res.message);
-      return;
+    try {
+      const res = await fetch('/api/reservations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservationId: id, status: 'canceled' }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast.error(data.message ?? '예약 취소에 실패했습니다.');
+        return;
+      }
+      showToast.success('예약이 취소되었습니다.');
+      setIsDeleteModalOpen(false);
+      onDelete(id);
+    } catch {
+      showToast.error('예약 취소에 실패했습니다.');
     }
-    showToast.success('예약이 취소되었습니다.');
-    //TODO 최신데이터 반영방법
-    window.location.reload();
   };
 
   return (
@@ -106,6 +112,8 @@ export function ReservationCard({ data }: ReservationCardProps) {
             src={cardImg}
             alt="배너 이미지"
             fill
+            sizes="(min-width: 1024px) 280px, 160px"
+            quality={80}
             className="object-cover"
             onError={() => setImgError(true)}
           />

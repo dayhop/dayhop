@@ -107,6 +107,8 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                       src={item.review.user.profileImageUrl}
                       alt={item.review.user.nickname}
                       fill
+                      sizes="24px"
+                      quality={80}
                       className="object-cover"
                     />
                   )}
@@ -127,6 +129,8 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                 src={item.activity.bannerImageUrl}
                 alt={item.activity.title}
                 fill
+                sizes="220px"
+                quality={80}
                 className="object-cover"
               />
             </Link>

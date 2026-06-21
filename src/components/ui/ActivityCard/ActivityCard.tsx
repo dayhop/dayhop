@@ -34,6 +34,7 @@ export const ActivityCard = ({ activity }: ActivityCardProps) => {
           alt={activity.title}
           fill
           sizes="262px"
+          quality={80}
           className="object-cover"
         />
       </div>
