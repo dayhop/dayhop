@@ -1,20 +1,19 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-
-import { BannerCarousel } from '@/components/blocks/BannerCarousel';
-import { SearchInput } from '@/components/blocks/SearchInput';
-import { ActivityCard } from '@/components/ui/ActivityCard';
-import { Pagination } from '@/components/ui/pagination';
-import { getActivities } from '@/lib/api/activities';
+import { useSearchParams } from 'next/navigation';
 
 import CategoryCulture from '@/assets/icon/category-culture.svg';
 import CategoryFood from '@/assets/icon/category-food.svg';
+import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
 import CategorySports from '@/assets/icon/category-sports.svg';
 import CategoryTour from '@/assets/icon/category-tour.svg';
-import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
+import { BannerCarousel } from '@/components/blocks/BannerCarousel';
+import { SearchInput } from '@/components/blocks/SearchInput';
+import { ActivityCard } from '@/components/ui/ActivityCard';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Pagination } from '@/components/ui/pagination';
+import { getActivities, getActivityReviews } from '@/lib/api/activities';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
 
@@ -22,6 +21,12 @@ type CategoryItem = {
   label: ActivityCategory | '전체';
   value: ActivityCategory | '전체';
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | null;
+};
+
+type HoverReview = {
+  nickname: string;
+  rating: number;
+  content: string;
 };
 
 const CATEGORIES: CategoryItem[] = [
@@ -49,11 +54,11 @@ const getSearchResultText = (keyword: string) => {
 };
 
 function ActivitiesPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialKeyword = searchParams.get('keyword') ?? '';
 
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [activityReviews, setActivityReviews] = useState<Record<number, HoverReview>>({});
   const [bannerActivities, setBannerActivities] = useState<ActivityItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory | '전체'>('전체');
   const [keyword, setKeyword] = useState(initialKeyword);
@@ -92,12 +97,52 @@ function ActivitiesPageContent() {
       });
 
       if (res.success) {
-        setActivities(res.data.activities);
+        const nextActivities = res.data.activities;
+
+        setActivities(nextActivities);
         setTotalCount(res.data.totalCount);
+
+        const reviewEntries = await Promise.all(
+          nextActivities.map(async (activity) => {
+            try {
+              const reviewRes = await getActivityReviews(activity.id, {
+                page: 1,
+                size: 10,
+              });
+
+              if (!reviewRes.success || reviewRes.data.reviews.length === 0) {
+                return [activity.id, undefined] as const;
+              }
+
+              const reviews = reviewRes.data.reviews;
+              const randomReview = reviews[Math.floor(Math.random() * reviews.length)];
+
+              return [
+                activity.id,
+                {
+                  nickname: randomReview.user.nickname,
+                  rating: randomReview.rating,
+                  content: randomReview.content,
+                },
+              ] as const;
+            } catch {
+              return [activity.id, undefined] as const;
+            }
+          })
+        );
+
+        setActivityReviews(
+          Object.fromEntries(reviewEntries.filter((entry) => entry[1] !== undefined)) as Record<
+            number,
+            HoverReview
+          >
+        );
       } else {
         setActivities([]);
+        setActivityReviews({});
         setTotalCount(0);
       }
+
       setIsLoading(false);
     };
 
@@ -184,7 +229,7 @@ function ActivitiesPageContent() {
               <ActivityCard
                 key={activity.id}
                 activity={activity}
-                onClick={() => router.push(`/activities/${activity.id}`)}
+                hoverReview={activityReviews[activity.id]}
               />
             ))}
           </div>

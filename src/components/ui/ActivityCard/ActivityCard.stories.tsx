@@ -32,3 +32,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const WithReview: Story = {
+  args: {
+    activity: mockActivity,
+    hoverReview: {
+      nickname: '데이호퍼',
+      rating: 5,
+      content: '정말 재밌는 체험이었어요! 직원분들도 친절하시고 다음에 또 방문하고 싶습니다.',
+    },
+  },
+};
