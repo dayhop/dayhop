@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
 import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
 import {
@@ -59,6 +59,14 @@ function buildDateDataMap(
 
 export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current !== null) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
   const [refreshKey, setRefreshKey] = useState(0);
@@ -118,6 +126,23 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
     setSelectedDate(undefined);
   };
 
+  const handleDateSelect = (date: Date) => {
+    if (closeTimerRef.current !== null) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setSelectedDate(date);
+    setTimeout(() => setIsModalOpen(true), 0);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    closeTimerRef.current = setTimeout(() => {
+      setSelectedDate(undefined);
+      closeTimerRef.current = null;
+    }, 300);
+  };
+
   const isDateClickable = useCallback(
     (date: Date) => dateDataMap.has(toLocalDateString(date)),
     [dateDataMap]
@@ -142,7 +167,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
     <>
       <Calendar
         value={selectedDate}
-        onSelectDate={setSelectedDate}
+        onSelectDate={handleDateSelect}
         onMonthChange={handleMonthChange}
         holidays={holidays}
         isDateClickable={isDateClickable}
@@ -159,9 +184,10 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
       />
       {selectedDate && (
         <CalendarMyActivitiesModal
+          isOpen={isModalOpen}
           activityId={activityId}
           date={toLocalDateString(selectedDate)}
-          onClose={() => setSelectedDate(undefined)}
+          onClose={handleModalClose}
           onReservationChange={() => setRefreshKey((k) => k + 1)}
           className="flex max-h-[70vh] w-full flex-col rounded-t-[30px] px-0 py-7.5 shadow-[0_4px_24px_0_rgba(156,180,202,0.20)] lg:pointer-events-auto lg:max-w-85"
           overlayClassName="items-end lg:absolute lg:bg-transparent lg:pointer-events-none lg:inset-auto lg:right-[27px] lg:bottom-[-13px] z-49"
