@@ -13,10 +13,12 @@ import { NotificationPopover } from '@/components/blocks/Notification';
 import { postLogout } from '@/lib/api/auth';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { usePathname } from 'next/navigation';
 
 export const Header = () => {
   const { user, isLogin: isLoggedIn, logout, isLoading: isAuthLoading } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
@@ -103,6 +105,7 @@ export const Header = () => {
     if (next) setHasUnread(false);
   };
 
+  const isActivityForm = pathname === '/activity-add' || pathname.startsWith('/activity-edit/');
   return (
     //로그아웃 컨펌모달
     <div>
@@ -129,7 +132,16 @@ export const Header = () => {
 
           {/* 우측 영역 */}
           <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
-            {isAuthLoading ? (
+            {isActivityForm ? (
+              // 분기: 액티비티 폼 페이지
+              <button
+                className="cursor-pointer rounded-full px-3 py-2 hover:bg-gray-100"
+                onClick={() => router.back()}
+              >
+                {' '}
+                ◀ 뒤로가기{' '}
+              </button>
+            ) : isAuthLoading ? (
               <div className="h-10 w-24 animate-pulse rounded-lg bg-gray-50" />
             ) : isLoggedIn && user ? (
               // 분기: 로그인 상태

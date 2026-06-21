@@ -8,8 +8,8 @@ import { useState, Suspense } from 'react';
 import { postOauthSignUp } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
-import { REDIRECT_SIGNUP_URI } from '@/app/(auth)/components/Oauth';
 import { generateRandomNickname } from '@/utils/randomNickname';
+import { getBaseUrl } from '@/utils/getBaseUrl';
 
 function KakaoSignUpForm() {
   const { login } = useAuthStore();
@@ -19,6 +19,9 @@ function KakaoSignUpForm() {
 
   const params = useSearchParams();
   const token = params.get('code');
+
+  const BASE_URL = getBaseUrl();
+  const KAKAO_SIGNUP_REDIRECT_URI = `${BASE_URL}/oauth/kakao/signup/`;
 
   const handleClickSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +36,7 @@ function KakaoSignUpForm() {
     }
     const res = await postOauthSignUp('kakao', {
       nickname: nickname,
-      redirectUri: REDIRECT_SIGNUP_URI,
+      redirectUri: KAKAO_SIGNUP_REDIRECT_URI,
       token: token,
     });
     if (!res.success) {

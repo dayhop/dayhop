@@ -1,4 +1,4 @@
-import { ImgUploadRef } from '@/components/blocks/ActivityAdd/ImgUploader';
+import { ImgUploadRef } from '@/components/blocks/ActivityForm/ImgUploader';
 import { ActivityResponse } from '@/lib/api/activities/type';
 import { ActivityCategory, ActivityScheduleInput } from '@/types/api';
 import { showToast } from '@/utils/toast';
