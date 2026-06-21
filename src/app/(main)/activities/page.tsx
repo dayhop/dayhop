@@ -14,6 +14,8 @@ import { ActivityCard } from '@/components/ui/ActivityCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Pagination } from '@/components/ui/pagination';
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
+import { useClickLogger } from '@/hooks/useClickLogger';
+import { useClickMost } from '@/hooks/useClickMost';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
 
@@ -55,6 +57,8 @@ const getSearchResultText = (keyword: string) => {
 
 function ActivitiesPageContent() {
   const searchParams = useSearchParams();
+  const { handleUpdateLog } = useClickLogger();
+  const { handleUpdateMostClick } = useClickMost();
   const initialKeyword = searchParams.get('keyword') ?? '';
 
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -101,13 +105,14 @@ function ActivitiesPageContent() {
 
         setActivities(nextActivities);
         setTotalCount(res.data.totalCount);
+        setIsLoading(false);
 
-        const reviewEntries = await Promise.all(
+        Promise.all(
           nextActivities.map(async (activity) => {
             try {
               const reviewRes = await getActivityReviews(activity.id, {
                 page: 1,
-                size: 10,
+                size: 1,
               });
 
               if (!reviewRes.success || reviewRes.data.reviews.length === 0) {
@@ -128,21 +133,20 @@ function ActivitiesPageContent() {
               return [activity.id, undefined] as const;
             }
           })
-        );
-
-        setActivityReviews(
-          Object.fromEntries(reviewEntries.filter((entry) => entry[1] !== undefined)) as Record<
-            number,
-            HoverReview
-          >
-        );
+        ).then((reviewEntries) => {
+          setActivityReviews(
+            Object.fromEntries(reviewEntries.filter((entry) => entry[1] !== undefined)) as Record<
+              number,
+              HoverReview
+            >
+          );
+        });
       } else {
         setActivities([]);
         setActivityReviews({});
         setTotalCount(0);
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
 
     fetchActivities();
@@ -229,6 +233,10 @@ function ActivitiesPageContent() {
                 key={activity.id}
                 activity={activity}
                 hoverReview={activityReviews[activity.id]}
+                onClick={() => {
+                  handleUpdateLog(activity.id, activity.category);
+                  handleUpdateMostClick(activity.id);
+                }}
               />
             ))}
           </div>

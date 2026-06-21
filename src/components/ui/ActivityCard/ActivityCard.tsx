@@ -4,8 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { StarRating } from '@/components/ui/StarRating';
-import { useClickLogger } from '@/hooks/useClickLogger';
-import { useClickMost } from '@/hooks/useClickMost';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
 
@@ -18,21 +16,14 @@ interface HoverReview {
 interface ActivityCardProps {
   activity: ActivityItem;
   hoverReview?: HoverReview;
+  onClick?: () => void;
 }
 
-export const ActivityCard = ({ activity, hoverReview }: ActivityCardProps) => {
-  const { handleUpdateLog } = useClickLogger();
-  const { handleUpdateMostClick } = useClickMost();
-
-  const handleClick = () => {
-    handleUpdateLog(activity.id, activity.category);
-    handleUpdateMostClick(activity.id);
-  };
-
+export const ActivityCard = ({ activity, hoverReview, onClick }: ActivityCardProps) => {
   return (
     <Link
       href={`/activities/${activity.id}`}
-      onClick={handleClick}
+      onClick={onClick}
       className="group block w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
     >
       <div className="relative h-[230px] w-full overflow-hidden">
@@ -46,12 +37,11 @@ export const ActivityCard = ({ activity, hoverReview }: ActivityCardProps) => {
 
         <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/60" />
 
-        <div className="absolute inset-0 z-10 flex items-start justify-center px-5 pt-8 text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
+        <div className="absolute inset-0 z-10 flex items-start justify-center px-5 pt-6 text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
           {hoverReview ? (
             <div className="w-full">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-bold">{hoverReview.nickname}</p>
-
                 <p className="text-sm font-semibold">⭐ {hoverReview.rating.toFixed(1)}</p>
               </div>
 
