@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import ChevronLeft from '@/assets/icon/ChevronLeft.svg';
 import ChevronRight from '@/assets/icon/ChevronRight.svg';
 import { cn } from '@/utils/cn';
@@ -44,16 +45,24 @@ export const CalendarHeader = ({
   const currentYear = currentMonth.getFullYear();
   const currentMonthNum = currentMonth.getMonth() + 1;
 
-  const selectYears = selectableMonths
-    ? [...new Set(selectableMonths.map((m) => parseInt(m.split('-')[0])))].sort((a, b) => a - b)
-    : [];
+  const selectYears = useMemo(
+    () =>
+      selectableMonths
+        ? [...new Set(selectableMonths.map((m) => parseInt(m.split('-')[0])))].sort((a, b) => a - b)
+        : [],
+    [selectableMonths]
+  );
 
-  const selectMonths = selectableMonths
-    ? selectableMonths
-        .filter((m) => parseInt(m.split('-')[0]) === currentYear)
-        .map((m) => parseInt(m.split('-')[1]))
-        .sort((a, b) => a - b)
-    : [];
+  const selectMonths = useMemo(
+    () =>
+      selectableMonths
+        ? selectableMonths
+            .filter((m) => parseInt(m.split('-')[0]) === currentYear)
+            .map((m) => parseInt(m.split('-')[1]))
+            .sort((a, b) => a - b)
+        : [],
+    [selectableMonths, currentYear]
+  );
 
   const handleYearChange = (year: number) => {
     const monthsForYear = selectableMonths!
