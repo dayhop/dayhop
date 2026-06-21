@@ -32,7 +32,7 @@ export const findRemove = (
   initData: ActivityResponse
 ) => {
   const currentDetailUrls = detailRef.current?.getCurrentUrls?.() ?? [];
-  const subImageIdsToRemove = initData.subImages
+  const subImageIdsToRemove = (initData.subImages ?? [])
     .filter((img) => !currentDetailUrls.includes(img.imageUrl))
     .map((img) => img.id);
 

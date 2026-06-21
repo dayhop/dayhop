@@ -47,7 +47,7 @@ export function ImgUpload({ mode, ref, initialUrls }: ImgUploadProps) {
 
   const handleFileSelect = (newFile: File) => {
     const isDuplicate = images.some(
-      (img) => img.file?.name === newFile.name && img.file.size === newFile.size
+      (img) => img.file?.name === newFile.name && img.file?.size === newFile.size
     );
     if (isDuplicate) {
       showToast.error('이미 추가된 이미지 입니다.');

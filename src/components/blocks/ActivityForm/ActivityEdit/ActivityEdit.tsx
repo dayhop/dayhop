@@ -33,7 +33,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [initData, setInitData] = useState<ActivityResponse>();
   const [resetKey, setResetKey] = useState(0);
-  const [resetButtonBottom, setResetButtonBottm] = useState<number>(10);
+  const [resetButtonBottom, setResetButtonBottom] = useState<number>(10);
 
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
@@ -106,23 +106,25 @@ export function ActivityEdit({ activityId }: EditPageProps) {
 
     //add와 diff
     const subImageIdsToRemove = findRemove(detailRef, initData);
-    const schedulesToAdd = schedules.filter(
-      (s) =>
-        initData.schedules.findIndex(
-          (init) =>
-            init.date === s.date && init.startTime === s.startTime && init.endTime === s.endTime
-        ) === -1
-    );
-
-    const scheduleIdsToRemove = initData.schedules
-      .filter(
-        (init) =>
-          schedules.findIndex(
-            (s) =>
-              s.date === init.date && s.startTime === init.startTime && s.endTime === init.endTime
+    const schedulesToAdd =
+      schedules.filter(
+        (s) =>
+          initData.schedules.findIndex(
+            (init) =>
+              init.date === s.date && init.startTime === s.startTime && init.endTime === s.endTime
           ) === -1
-      )
-      .map((init) => init.id);
+      ) || [];
+
+    const scheduleIdsToRemove =
+      initData.schedules
+        .filter(
+          (init) =>
+            schedules.findIndex(
+              (s) =>
+                s.date === init.date && s.startTime === init.startTime && s.endTime === init.endTime
+            ) === -1
+        )
+        .map((init) => init.id) || [];
 
     //데이터 세팅
     const submitData: PatchMyActivityRequest = {
@@ -166,9 +168,9 @@ export function ActivityEdit({ activityId }: EditPageProps) {
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-          setResetButtonBottm(120);
+          setResetButtonBottom(120);
         } else {
-          setResetButtonBottm(30);
+          setResetButtonBottom(30);
         }
       },
       { threshold: 0.1 }
