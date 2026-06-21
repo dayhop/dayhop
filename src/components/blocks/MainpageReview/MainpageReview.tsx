@@ -128,6 +128,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                       alt={item.review.user.nickname}
                       fill
                       sizes="24px"
+                      quality={80}
                       className="object-cover"
                     />
                   )}
