@@ -150,7 +150,7 @@ export const CalendarMyActivitiesModal = ({
 
           <div
             ref={scrollContainerRef}
-            className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:gap-5 lg:min-w-85 lg:flex-col"
+            className="custom-textarea-scrollbar flex max-h-90 flex-col gap-7.5 overflow-y-auto px-6 pt-7.5 md:flex-row md:items-start md:gap-5 lg:min-w-85 lg:flex-col lg:items-stretch"
           >
             {/* 예약 시간 */}
             <div className="flex flex-col gap-3 md:flex-1">
