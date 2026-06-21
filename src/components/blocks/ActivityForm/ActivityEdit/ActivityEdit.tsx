@@ -1,8 +1,8 @@
 'use client';
 
-import { DateForm, DateFormRef } from '@/components/blocks/ActivityAdd/DateForm';
-import { ExperienceDetail } from '@/components/blocks/ActivityAdd/ExperienceDetails';
-import { ImgUpload, ImgUploadRef } from '@/components/blocks/ActivityAdd/ImgUploader';
+import { DateForm, DateFormRef } from '@/components/blocks/ActivityForm/DateForm';
+import { ExperienceDetail } from '@/components/blocks/ActivityForm/ExperienceDetails';
+import { ImgUpload, ImgUploadRef } from '@/components/blocks/ActivityForm/ImgUploader';
 import { Button } from '@/components/ui/Button';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { getActivity, postActivitiesImage } from '@/lib/api/activities';

@@ -1,4 +1,4 @@
-import { ActivityEdit } from '@/components/blocks/ActivityEdit/ActivityEdit';
+import { ActivityEdit } from '@/components/blocks/ActivityForm/ActivityEdit/ActivityEdit';
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
