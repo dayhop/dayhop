@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CalendarStatusBadge } from '@/components/ui/CalendarStatusBadge';
 import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
 import {
@@ -60,6 +60,13 @@ function buildDateDataMap(
 export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current !== null) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [dateDataMap, setDateDataMap] = useState<Map<string, ReservationCount>>(new Map());
   const [refreshKey, setRefreshKey] = useState(0);
@@ -120,13 +127,20 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
   };
 
   const handleDateSelect = (date: Date) => {
+    if (closeTimerRef.current !== null) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
     setSelectedDate(date);
     setTimeout(() => setIsModalOpen(true), 0);
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    setTimeout(() => setSelectedDate(undefined), 300);
+    closeTimerRef.current = setTimeout(() => {
+      setSelectedDate(undefined);
+      closeTimerRef.current = null;
+    }, 300);
   };
 
   const isDateClickable = useCallback(
