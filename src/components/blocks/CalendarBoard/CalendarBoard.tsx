@@ -15,7 +15,7 @@ import type {
 import { showToast } from '@/utils/toast';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
-import { isPastTime, toLocalDateString } from '../Calendar/utils';
+import { buildSelectableMonths, isPastTime, toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 
 interface CalendarBoardProps {
@@ -55,19 +55,6 @@ function buildDateDataMap(
   });
 
   return map;
-}
-
-function buildSelectableMonths(): string[] {
-  const today = new Date();
-  const startYear = today.getFullYear() - 1;
-  const endYear = today.getFullYear() + 1;
-  const months: string[] = [];
-  for (let y = startYear; y <= endYear; y++) {
-    for (let m = 1; m <= 12; m++) {
-      months.push(`${y}-${String(m).padStart(2, '0')}`);
-    }
-  }
-  return months;
 }
 
 const SELECTABLE_MONTHS = buildSelectableMonths();

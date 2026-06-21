@@ -77,11 +77,29 @@ export const CalendarHeader = ({
         <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
         <div className={cn('flex items-center justify-between', contentClassName)}>
           {selectableMonths ? (
-            <strong className={cn('flex items-center gap-0.5 font-medium', titleClassName)}>
+            <strong className={cn('flex items-center gap-1 font-medium', titleClassName)}>
+              <select
+                value={currentMonthNum}
+                onChange={(e) => handleMonthChange(Number(e.target.value))}
+                className={cn(
+                  selectClass,
+                  'bg-transparent text-left text-base font-medium md:text-base'
+                )}
+                aria-label="월 선택"
+              >
+                {selectMonths.map((m) => (
+                  <option key={m} value={m}>
+                    {new Date(currentYear, m - 1, 1).toLocaleString('en-US', { month: 'long' })}
+                  </option>
+                ))}
+              </select>
               <select
                 value={currentYear}
                 onChange={(e) => handleYearChange(Number(e.target.value))}
-                className={selectClass}
+                className={cn(
+                  selectClass,
+                  'bg-transparent text-left text-base font-medium md:text-base'
+                )}
                 aria-label="년도 선택"
               >
                 {selectYears.map((y) => (
@@ -90,20 +108,6 @@ export const CalendarHeader = ({
                   </option>
                 ))}
               </select>
-              년
-              <select
-                value={currentMonthNum}
-                onChange={(e) => handleMonthChange(Number(e.target.value))}
-                className={cn(selectClass, 'ml-0.5')}
-                aria-label="월 선택"
-              >
-                {selectMonths.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-              월
             </strong>
           ) : (
             <strong className={cn('font-medium', titleClassName)}>

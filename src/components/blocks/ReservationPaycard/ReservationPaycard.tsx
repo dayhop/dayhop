@@ -7,7 +7,7 @@ import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
 import { Button } from '@/components/ui/Button';
 import { getActivityAvailableSchedule, postActivityReservations } from '@/lib/api/activities';
 import type { ScheduleDate } from '@/lib/api/activities/type';
-import { toLocalDateString } from '../Calendar/utils';
+import { buildSelectableMonths, toLocalDateString } from '../Calendar/utils';
 import { cn } from '@/utils/cn';
 import { totalPriceToString } from '@/utils/priceFormat';
 import { showToast } from '@/utils/toast';
@@ -35,6 +35,9 @@ interface ReservationPaycardProps {
 function getTimestamp(): number {
   return Date.now();
 }
+
+// NOTE: selectableMonths 사용 시 SELECTABLE_MONTHS 선언이 필요합니다.
+// const SELECTABLE_MONTHS = buildSelectableMonths(0, 24);
 
 export function ReservationPaycard({
   activityId,
