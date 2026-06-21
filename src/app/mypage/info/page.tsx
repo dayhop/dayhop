@@ -3,7 +3,8 @@ import { SettingsForm } from '@/components/blocks/SettingsForm';
 
 export default async function InfoPage() {
   const cookieStore = await cookies();
-  const isOAuth = cookieStore.get('loginProvider')?.value === 'kakao';
+  const loginProvider = cookieStore.get('loginProvider')?.value;
+  const isOAuth = !!loginProvider && loginProvider !== 'email';
 
   return <SettingsForm isOAuth={isOAuth} />;
 }
