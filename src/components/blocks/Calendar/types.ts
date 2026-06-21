@@ -16,6 +16,9 @@ export type CalendarProps = {
   defaultMonth?: Date;
   onSelectDate?: (date: Date) => void;
   onMonthChange?: (date: Date) => void;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  headerTitle?: React.ReactNode;
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
   renderDateExtra?: (dateInfo: CalendarDateInfo) => React.ReactNode;
@@ -42,6 +45,7 @@ export type CalendarProps = {
 
 export type CalendarHeaderProps = {
   currentMonth: Date;
+  title?: React.ReactNode;
   variant?: CalendarHeaderVariant;
   onPrevMonth: () => void;
   onNextMonth: () => void;

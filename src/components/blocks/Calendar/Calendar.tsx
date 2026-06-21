@@ -15,6 +15,9 @@ export const Calendar = ({
   defaultMonth = new Date(),
   onSelectDate,
   onMonthChange,
+  onNavigatePrev,
+  onNavigateNext,
+  headerTitle,
   holidays = [],
   renderDateCell,
   renderDateExtra,
@@ -74,12 +77,20 @@ export const Calendar = ({
   const valueString = resolvedValue?.toDateString();
 
   const handlePrevMonth = () => {
+    if (onNavigatePrev) {
+      onNavigatePrev();
+      return;
+    }
     const prevMonth = new Date(year, month - 1, 1);
     setCurrentMonth(prevMonth);
     onMonthChange?.(prevMonth);
   };
 
   const handleNextMonth = () => {
+    if (onNavigateNext) {
+      onNavigateNext();
+      return;
+    }
     const nextMonth = new Date(year, month + 1, 1);
     setCurrentMonth(nextMonth);
     onMonthChange?.(nextMonth);
@@ -89,6 +100,7 @@ export const Calendar = ({
     <div className={className}>
       <CalendarHeader
         currentMonth={currentMonth}
+        title={headerTitle}
         variant={headerVariant}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}

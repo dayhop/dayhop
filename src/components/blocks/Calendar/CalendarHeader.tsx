@@ -8,6 +8,7 @@ import type { CalendarHeaderProps } from './types';
 
 export const CalendarHeader = ({
   currentMonth,
+  title,
   variant = 'default',
   onPrevMonth,
   onNextMonth,
@@ -45,7 +46,7 @@ export const CalendarHeader = ({
         <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
         <div className={cn('flex items-center justify-between', contentClassName)}>
           <strong className={cn('font-medium', titleClassName)}>
-            {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+            {title ?? currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
           </strong>
           <div className={cn('flex items-center gap-3', navigationClassName)}>
             {prevButton} {nextButton}
@@ -63,7 +64,7 @@ export const CalendarHeader = ({
       <strong
         className={cn('text-base font-bold text-(--color-text-primary) md:text-xl', titleClassName)}
       >
-        {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
+        {title ?? `${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`}
       </strong>
       {nextButton}
     </div>
