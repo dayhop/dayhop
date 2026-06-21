@@ -136,6 +136,14 @@ export const Calendar = ({
           const isNotClickable = isDateClickable ? !isDateClickable(date) : false;
           const hasPoint = isDatePoint?.(date) ?? false;
 
+          const dateCellVariantClass = dateInfo.isSelected
+            ? cn('bg-primary text-(--color-white)', selectedClassName)
+            : dateInfo.isToday
+              ? cn('bg-primary-100 text-primary-500', todayClassName)
+              : dateInfo.isHoliday || dateInfo.isSunday
+                ? cn('text-red-500', holidayClassName)
+                : cn(defaultClassName);
+
           return (
             <button
               key={date.toISOString()}
@@ -174,43 +182,14 @@ export const Calendar = ({
                     dateCellClassName
                   )}
                 >
-                  {dateInfo.isSelected ? (
-                    <span
-                      className={cn(
-                        'bg-primary mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-(--color-white) md:mt-4.5',
-                        selectedClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  ) : dateInfo.isToday ? (
-                    <span
-                      className={cn(
-                        'bg-primary-100 text-primary-500 mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
-                        todayClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  ) : dateInfo.isHoliday || dateInfo.isSunday ? (
-                    <span
-                      className={cn(
-                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-red-500 md:mt-4.5',
-                        holidayClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  ) : (
-                    <span
-                      className={cn(
-                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
-                        defaultClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  )}
+                  <span
+                    className={cn(
+                      'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
+                      dateCellVariantClass
+                    )}
+                  >
+                    <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
+                  </span>
                   {renderDateExtra?.(dateInfo)}
                 </span>
               )}
