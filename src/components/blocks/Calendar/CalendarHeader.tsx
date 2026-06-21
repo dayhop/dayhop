@@ -85,7 +85,7 @@ export const CalendarHeader = ({
   }
 
   const selectClass =
-    'appearance-none bg-transparent text-base font-bold text-(--color-text-primary) md:text-xl cursor-pointer outline-none';
+    'text-base font-bold text-(--color-text-primary) md:text-xl cursor-pointer text-center bg-primary-100 rounded-sm';
 
   return (
     <div
