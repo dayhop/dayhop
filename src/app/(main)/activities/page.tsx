@@ -16,6 +16,8 @@ import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
 import { EmptyState } from '@/components/ui/EmptyState';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
+import { useClickRecent } from '@/hooks/useClickRecnet';
+import { useClickLogger } from '@/hooks/useClickLogger';
 
 type CategoryItem = {
   label: ActivityCategory | '전체';
@@ -51,6 +53,8 @@ function ActivitiesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialKeyword = searchParams.get('keyword') ?? '';
+  const { handleUpdateRecentClick } = useClickRecent();
+  const { handleUpdateLog } = useClickLogger();
 
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory | '전체'>('전체');
@@ -178,7 +182,11 @@ function ActivitiesPageContent() {
               <ActivityCard
                 key={activity.id}
                 activity={activity}
-                onClick={() => router.push(`/activities/${activity.id}`)}
+                onClick={() => {
+                  router.push(`/activities/${activity.id}`);
+                  handleUpdateLog(activity.id, activity.category);
+                  handleUpdateRecentClick(activity.id);
+                }}
               />
             ))}
           </div>

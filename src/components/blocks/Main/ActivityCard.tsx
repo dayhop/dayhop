@@ -2,7 +2,7 @@
 
 import { StarRating } from '@/components/ui/StarRating';
 import { useClickLogger } from '@/hooks/useClickLogger';
-import { useClickMost } from '@/hooks/useClickMost';
+import { useClickRecent } from '@/hooks/useClickRecnet';
 import { ActivityCategory } from '@/types/api';
 import { totalPriceToString } from '@/utils/priceFormat';
 import { useRouter } from 'next/navigation';
@@ -21,9 +21,10 @@ interface ActivityCardProps {
 
 export function ActivityCard({ data }: ActivityCardProps) {
   const router = useRouter();
-  const { id, title, price, bannerImageUrl, rating, reviewCount, category } = data;
+  const { handleUpdateRecentClick } = useClickRecent();
   const { handleUpdateLog } = useClickLogger();
-  const { handleUpdateMostClick } = useClickMost();
+
+  const { id, title, price, bannerImageUrl, rating, reviewCount, category } = data;
 
   if (!bannerImageUrl) {
     return <div className="h-45 w-46.5 animate-pulse rounded-2xl bg-gray-200 md:h-96 md:w-96" />;
@@ -37,7 +38,7 @@ export function ActivityCard({ data }: ActivityCardProps) {
       }}
       onClick={() => {
         handleUpdateLog(id, category);
-        handleUpdateMostClick(id);
+        handleUpdateRecentClick(id);
         router.push(`/activities/${id}`);
       }}
     >
