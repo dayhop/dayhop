@@ -15,6 +15,7 @@ export const Calendar = ({
   defaultMonth = new Date(),
   onSelectDate,
   onMonthChange,
+  selectableMonths,
   holidays = [],
   renderDateCell,
   renderDateExtra,
@@ -85,6 +86,11 @@ export const Calendar = ({
     onMonthChange?.(nextMonth);
   };
 
+  const handleMonthSelect = (date: Date) => {
+    setCurrentMonth(date);
+    onMonthChange?.(date);
+  };
+
   return (
     <div className={className}>
       <CalendarHeader
@@ -92,6 +98,8 @@ export const Calendar = ({
         variant={headerVariant}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
+        onMonthSelect={handleMonthSelect}
+        selectableMonths={selectableMonths}
         className={headerClassName}
         contentClassName={headerContentClassName}
         titleClassName={headerTitleClassName}

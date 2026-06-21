@@ -11,6 +11,8 @@ export const CalendarHeader = ({
   variant = 'default',
   onPrevMonth,
   onNextMonth,
+  onMonthSelect,
+  selectableMonths,
   className,
   contentClassName,
   titleClassName,
@@ -39,6 +41,33 @@ export const CalendarHeader = ({
     </button>
   );
 
+  const currentYear = currentMonth.getFullYear();
+  const currentMonthNum = currentMonth.getMonth() + 1;
+
+  const selectYears = selectableMonths
+    ? [...new Set(selectableMonths.map((m) => parseInt(m.split('-')[0])))].sort((a, b) => a - b)
+    : [];
+
+  const selectMonths = selectableMonths
+    ? selectableMonths
+        .filter((m) => parseInt(m.split('-')[0]) === currentYear)
+        .map((m) => parseInt(m.split('-')[1]))
+        .sort((a, b) => a - b)
+    : [];
+
+  const handleYearChange = (year: number) => {
+    const monthsForYear = selectableMonths!
+      .filter((m) => parseInt(m.split('-')[0]) === year)
+      .map((m) => parseInt(m.split('-')[1]))
+      .sort((a, b) => a - b);
+    const month = monthsForYear.includes(currentMonthNum) ? currentMonthNum : monthsForYear[0];
+    onMonthSelect?.(new Date(year, month - 1, 1));
+  };
+
+  const handleMonthChange = (month: number) => {
+    onMonthSelect?.(new Date(currentYear, month - 1, 1));
+  };
+
   if (variant === 'secondary') {
     return (
       <div className={cn('mb-2', className)}>
@@ -55,16 +84,58 @@ export const CalendarHeader = ({
     );
   }
 
+  const selectClass =
+    'appearance-none bg-transparent text-base font-bold text-(--color-text-primary) md:text-xl cursor-pointer outline-none';
+
   return (
     <div
       className={cn('mb-5 flex items-center justify-center gap-2.5 md:mb-10 md:gap-7.5', className)}
     >
       {prevButton}
-      <strong
-        className={cn('text-base font-bold text-(--color-text-primary) md:text-xl', titleClassName)}
-      >
-        {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
-      </strong>
+      {selectableMonths ? (
+        <strong
+          className={cn(
+            'flex items-center gap-0.5 text-base font-bold text-(--color-text-primary) md:text-xl',
+            titleClassName
+          )}
+        >
+          <select
+            value={currentYear}
+            onChange={(e) => handleYearChange(Number(e.target.value))}
+            className={selectClass}
+            aria-label="년도 선택"
+          >
+            {selectYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+          년
+          <select
+            value={currentMonthNum}
+            onChange={(e) => handleMonthChange(Number(e.target.value))}
+            className={cn(selectClass, 'ml-0.5')}
+            aria-label="월 선택"
+          >
+            {selectMonths.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+          월
+        </strong>
+      ) : (
+        <strong
+          className={cn(
+            'text-base font-bold text-(--color-text-primary) md:text-xl',
+            titleClassName
+          )}
+        >
+          {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
+        </strong>
+      )}
       {nextButton}
     </div>
   );

@@ -57,6 +57,21 @@ function buildDateDataMap(
   return map;
 }
 
+function buildSelectableMonths(): string[] {
+  const today = new Date();
+  const startYear = today.getFullYear() - 1;
+  const endYear = today.getFullYear() + 1;
+  const months: string[] = [];
+  for (let y = startYear; y <= endYear; y++) {
+    for (let m = 1; m <= 12; m++) {
+      months.push(`${y}-${String(m).padStart(2, '0')}`);
+    }
+  }
+  return months;
+}
+
+const SELECTABLE_MONTHS = buildSelectableMonths();
+
 export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -169,6 +184,7 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
         value={selectedDate}
         onSelectDate={handleDateSelect}
         onMonthChange={handleMonthChange}
+        selectableMonths={SELECTABLE_MONTHS}
         holidays={holidays}
         isDateClickable={isDateClickable}
         renderDateExtra={renderDateExtra}
