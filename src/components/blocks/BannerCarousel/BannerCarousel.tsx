@@ -121,7 +121,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
               src={currentActivity.bannerImageUrl}
               alt={currentActivity.title}
               fill
-              sizes="(min-width: 1280px) 1200px, 100vw"
+              sizes="(min-width: 1280px) 1920px, 100vw"
               quality={80}
               priority
               className="object-cover"

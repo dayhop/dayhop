@@ -87,7 +87,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                       src={subImages[0].imageUrl}
                       alt={`${activity.title} sub 0`}
                       fill
-                      sizes="(max-width: 768px) 50vw, 300px"
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      quality={80}
                       className="object-cover transition-transform duration-300 hover:scale-105"
                     />
                   </div>
@@ -103,7 +104,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                           src={sub.imageUrl}
                           alt={`${activity.title} sub ${index}`}
                           fill
-                          sizes="(max-width: 768px) 50vw, 300px"
+                          sizes="(max-width: 768px) 100vw, 600px"
+                          quality={80}
                           className="object-cover transition-transform duration-300 hover:scale-105"
                         />
                       </div>
@@ -117,7 +119,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                         src={subImages[0].imageUrl}
                         alt={`${activity.title} sub 0`}
                         fill
-                        sizes="(max-width: 768px) 50vw, 300px"
+                        sizes="(max-width: 768px) 100vw, 600px"
+                        quality={80}
                         className="object-cover transition-transform duration-300 hover:scale-105"
                       />
                     </div>
@@ -126,7 +129,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                         src={subImages[1].imageUrl}
                         alt={`${activity.title} sub 1`}
                         fill
-                        sizes="(max-width: 768px) 25vw, 150px"
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        quality={80}
                         className="object-cover transition-transform duration-300 hover:scale-105"
                       />
                     </div>
@@ -135,7 +139,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                         src={subImages[2].imageUrl}
                         alt={`${activity.title} sub 2`}
                         fill
-                        sizes="(max-width: 768px) 25vw, 150px"
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        quality={80}
                         className="object-cover transition-transform duration-300 hover:scale-105"
                       />
                     </div>
@@ -152,7 +157,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                           src={sub.imageUrl}
                           alt={`${activity.title} sub ${index}`}
                           fill
-                          sizes="(max-width: 768px) 25vw, 150px"
+                          sizes="(max-width: 768px) 50vw, 300px"
+                          quality={80}
                           className="object-cover transition-transform duration-300 hover:scale-105"
                         />
                       </div>
