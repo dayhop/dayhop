@@ -15,6 +15,7 @@ export const Calendar = ({
   defaultMonth = new Date(),
   onSelectDate,
   onMonthChange,
+  selectableMonths,
   holidays = [],
   renderDateCell,
   renderDateExtra,
@@ -37,6 +38,8 @@ export const Calendar = ({
   defaultClassName,
   pointClassName,
   isDatePoint,
+  clickableDateClassName,
+  clickableDateCellClassName,
 }: CalendarProps) => {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
 
@@ -85,6 +88,11 @@ export const Calendar = ({
     onMonthChange?.(nextMonth);
   };
 
+  const handleMonthSelect = (date: Date) => {
+    setCurrentMonth(date);
+    onMonthChange?.(date);
+  };
+
   return (
     <div className={className}>
       <CalendarHeader
@@ -92,6 +100,8 @@ export const Calendar = ({
         variant={headerVariant}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
+        onMonthSelect={handleMonthSelect}
+        selectableMonths={selectableMonths}
         className={headerClassName}
         contentClassName={headerContentClassName}
         titleClassName={headerTitleClassName}
@@ -125,8 +135,17 @@ export const Calendar = ({
             isSunday: date.getDay() === 0,
           };
           const isDisabled = isDateDisabled?.(date) ?? false;
-          const isNotClickable = isDateClickable ? !isDateClickable(date) : false;
+          const isClickable = isDateClickable ? isDateClickable(date) : !isDisabled;
+          const isNotClickable = isDateClickable ? !isClickable : false;
           const hasPoint = isDatePoint?.(date) ?? false;
+
+          const dateCellVariantClass = dateInfo.isSelected
+            ? cn('bg-primary text-(--color-white)', selectedClassName)
+            : dateInfo.isToday
+              ? cn('bg-primary-100 text-primary-500', todayClassName)
+              : dateInfo.isHoliday || dateInfo.isSunday
+                ? cn('text-red-500', holidayClassName)
+                : cn(defaultClassName);
 
           return (
             <button
@@ -150,10 +169,11 @@ export const Calendar = ({
               aria-pressed={dateInfo.isSelected}
               aria-disabled={isDisabled}
               className={cn(
-                'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) md:text-base',
+                'flex h-full w-full cursor-pointer justify-center text-[12px] font-medium text-(--color-calendar-primary) transition-colors duration-150 md:text-base',
                 isDisabled && 'cursor-not-allowed opacity-40',
                 !dateInfo.isCurrentMonth && 'opacity-40',
                 isNotClickable && 'pointer-events-none cursor-default',
+                isClickable && clickableDateClassName,
                 dateClassName
               )}
             >
@@ -166,43 +186,15 @@ export const Calendar = ({
                     dateCellClassName
                   )}
                 >
-                  {dateInfo.isSelected ? (
-                    <span
-                      className={cn(
-                        'bg-primary mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-(--color-white) md:mt-4.5',
-                        selectedClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  ) : dateInfo.isToday ? (
-                    <span
-                      className={cn(
-                        'bg-primary-100 text-primary-500 mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
-                        todayClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  ) : dateInfo.isHoliday || dateInfo.isSunday ? (
-                    <span
-                      className={cn(
-                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full text-red-500 md:mt-4.5',
-                        holidayClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  ) : (
-                    <span
-                      className={cn(
-                        'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
-                        defaultClassName
-                      )}
-                    >
-                      <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
-                    </span>
-                  )}
+                  <span
+                    className={cn(
+                      'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
+                      dateCellVariantClass,
+                      isClickable && clickableDateCellClassName
+                    )}
+                  >
+                    <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
+                  </span>
                   {renderDateExtra?.(dateInfo)}
                 </span>
               )}

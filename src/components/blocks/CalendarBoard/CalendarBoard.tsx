@@ -15,7 +15,7 @@ import type {
 import { showToast } from '@/utils/toast';
 import { Calendar } from '../Calendar/Calendar';
 import type { CalendarDateInfo } from '../Calendar/types';
-import { isPastTime, toLocalDateString } from '../Calendar/utils';
+import { buildSelectableMonths, isPastTime, toLocalDateString } from '../Calendar/utils';
 import { CalendarMyActivitiesModal } from '../CalendarMyActivitiesModal';
 
 interface CalendarBoardProps {
@@ -56,6 +56,8 @@ function buildDateDataMap(
 
   return map;
 }
+
+const SELECTABLE_MONTHS = buildSelectableMonths();
 
 export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -169,8 +171,10 @@ export const CalendarBoard = ({ activityId, wrapperClassName }: CalendarBoardPro
         value={selectedDate}
         onSelectDate={handleDateSelect}
         onMonthChange={handleMonthChange}
+        selectableMonths={SELECTABLE_MONTHS}
         holidays={holidays}
         isDateClickable={isDateClickable}
+        clickableDateClassName="hover:bg-(--color-bg-surface)"
         renderDateExtra={renderDateExtra}
         isDatePoint={isDateClickable}
         className={wrapperClassName}
