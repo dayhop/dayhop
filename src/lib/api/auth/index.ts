@@ -25,6 +25,14 @@ export const postLogin = async (body: T.LoginRequest): Promise<ApiResult<T.Login
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
+
+    (await cookies()).set('loginProvider', 'email', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
   }
 
   return result;
@@ -59,5 +67,6 @@ export const postRefreshToken = async (): Promise<T.TokenResponse> => {
 export const postLogout = async () => {
   (await cookies()).delete('accessToken');
   (await cookies()).delete('refreshToken');
+  (await cookies()).delete('loginProvider');
   return;
 };

@@ -21,6 +21,13 @@ const setAuthCookies = async (accessToken: string, refreshToken: string) => {
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
   });
+  cookieStore.set('loginProvider', 'kakao', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+  });
 };
 
 export const postOauthApp = async (
