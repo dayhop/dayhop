@@ -19,6 +19,14 @@ const mockActivity: ActivityItem = {
   updatedAt: '2025-06-01T00:00:00.000Z',
 };
 
+const mockActivities: ActivityItem[] = Array.from({ length: 8 }, (_, index) => ({
+  ...mockActivity,
+  id: index + 1,
+  title: `테스트 체험 ${index + 1}`,
+  price: 30000 + index * 1000,
+  bannerImageUrl: `https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80&ix=${index}`,
+}));
+
 const meta = {
   title: 'UI/ActivityCard',
   component: ActivityCard,
@@ -32,3 +40,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const ResponsiveGrid: Story = {
+  render: () => (
+    <div className="mx-auto w-full max-w-[1200px] px-4 md:px-6 xl:px-0">
+      <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {mockActivities.map((activity) => (
+          <ActivityCard key={activity.id} activity={activity} />
+        ))}
+      </div>
+    </div>
+  ),
+};

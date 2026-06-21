@@ -6,16 +6,17 @@ import Image from 'next/image';
 import { ReviewFormModal } from '../ReviewForm';
 import { ScheduleChangeModal } from './ScheduleChangeModal';
 import { useState } from 'react';
-import { patchMyReservation } from '@/lib/api/my-reservations';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { showToast } from '@/utils/toast';
 import defaultThumbnail from '@/assets/images/card-thumnail.png';
 
 interface ReservationCardProps {
   data: Reservation;
+  onDelete: (id: number) => void;
 }
-export function ReservationCard({ data }: ReservationCardProps) {
-  const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
+export function ReservationCard({ data, onDelete }: ReservationCardProps) {
+  const { activity, startTime, endTime, date, totalPrice, status, headCount, id, reviewSubmitted } =
+    data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
@@ -23,17 +24,23 @@ export function ReservationCard({ data }: ReservationCardProps) {
   const cardImg = imgError || !activity.bannerImageUrl ? defaultThumbnail : activity.bannerImageUrl;
 
   const handleClickReservationDelete = async (id: number) => {
-    const body = {
-      status: 'canceled' as const,
-    };
-    const res = await patchMyReservation({ reservationId: id }, body);
-    if (!res.success) {
-      showToast.error(res.message);
-      return;
+    try {
+      const res = await fetch('/api/reservations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservationId: id, status: 'canceled' }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast.error(data.message ?? '예약 취소에 실패했습니다.');
+        return;
+      }
+      showToast.success('예약이 취소되었습니다.');
+      setIsDeleteModalOpen(false);
+      onDelete(id);
+    } catch {
+      showToast.error('예약 취소에 실패했습니다.');
     }
-    showToast.success('예약이 취소되었습니다.');
-    //TODO 최신데이터 반영방법
-    window.location.reload();
   };
 
   return (
@@ -90,15 +97,24 @@ export function ReservationCard({ data }: ReservationCardProps) {
                 </Button>
               </div>
             )}
-            {status === 'completed' && (
-              <Button
-                size="sm"
-                className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
-                onClick={() => setIsReviewModalOpen(true)}
-              >
-                후기 작성
-              </Button>
-            )}
+            {status === 'completed' &&
+              (reviewSubmitted ? (
+                <Button
+                  size="sm"
+                  disabled
+                  className="hidden w-fit cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:flex"
+                >
+                  작성 완료
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
+                  onClick={() => setIsReviewModalOpen(true)}
+                >
+                  후기 작성
+                </Button>
+              ))}
           </div>
         </div>
         <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
@@ -127,15 +143,24 @@ export function ReservationCard({ data }: ReservationCardProps) {
           </Button>
         </div>
       )}
-      {status === 'completed' && (
-        <Button
-          size="sm"
-          className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden"
-          onClick={() => setIsReviewModalOpen(true)}
-        >
-          후기 작성
-        </Button>
-      )}
+      {status === 'completed' &&
+        (reviewSubmitted ? (
+          <Button
+            size="sm"
+            disabled
+            className="w-full cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:hidden"
+          >
+            작성 완료
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden"
+            onClick={() => setIsReviewModalOpen(true)}
+          >
+            후기 작성
+          </Button>
+        ))}
     </div>
   );
 }

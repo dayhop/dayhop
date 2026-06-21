@@ -29,7 +29,11 @@ const FormField = ({
   </div>
 );
 
-export const SettingsForm = () => {
+interface SettingsFormProps {
+  isOAuth?: boolean;
+}
+
+export const SettingsForm = ({ isOAuth = false }: SettingsFormProps) => {
   const user = useAuthStore((state) => state.user);
   const login = useAuthStore((state) => state.login);
 
@@ -56,9 +60,13 @@ export const SettingsForm = () => {
   const getConfirmPasswordError = () =>
     formData.newPassword !== formData.confirmPassword ? '비밀번호가 일치하지 않습니다.' : '';
 
-  // 수정하기 클릭 → 비밀번호 확인 모달 열기
   const handleEditStart = () => {
-    setIsPasswordModalOpen(true);
+    if (isOAuth) {
+      setFormData({ ...INITIAL_FORM, nickname: user.nickname });
+      setIsEditMode(true);
+    } else {
+      setIsPasswordModalOpen(true);
+    }
   };
 
   // 비밀번호 인증 성공 → 수정 모드 전환
@@ -142,7 +150,7 @@ export const SettingsForm = () => {
           type="password"
           placeholder="새 비밀번호를 입력해 주세요"
           value={formData.newPassword}
-          disabled={!isEditMode}
+          disabled={!isEditMode || isOAuth}
           isWarning={!!errors.newPassword}
           warningText={errors.newPassword}
           onChange={handleChange('newPassword')}
@@ -156,7 +164,7 @@ export const SettingsForm = () => {
           type="password"
           placeholder="비밀번호를 한 번 더 입력해 주세요"
           value={formData.confirmPassword}
-          disabled={!isEditMode}
+          disabled={!isEditMode || isOAuth}
           isWarning={!!errors.confirmPassword}
           warningText={errors.confirmPassword}
           onChange={handleChange('confirmPassword')}
@@ -181,11 +189,13 @@ export const SettingsForm = () => {
         )}
       </div>
 
-      <PasswordConfirmModal
-        isOpen={isPasswordModalOpen}
-        onClose={() => setIsPasswordModalOpen(false)}
-        onConfirm={handlePasswordConfirm}
-      />
+      {!isOAuth && (
+        <PasswordConfirmModal
+          isOpen={isPasswordModalOpen}
+          onClose={() => setIsPasswordModalOpen(false)}
+          onConfirm={handlePasswordConfirm}
+        />
+      )}
     </div>
   );
 };

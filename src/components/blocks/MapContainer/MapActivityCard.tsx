@@ -112,7 +112,8 @@ export function MapActivityCard({
               alt={selectedActivity.title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 128px, 144px"
+              sizes="(max-width: 768px) 256px, 288px"
+              quality={80}
               priority
             />
           </div>
