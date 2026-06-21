@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import type { ComponentType, SVGProps } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import CategoryCulture from '@/assets/icon/category-culture.svg';
 import CategoryFood from '@/assets/icon/category-food.svg';
@@ -49,7 +49,6 @@ const getSearchResultText = (keyword: string) => {
 };
 
 function ActivitiesPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialKeyword = searchParams.get('keyword') ?? '';
 
@@ -65,14 +64,18 @@ function ActivitiesPageContent() {
 
   useEffect(() => {
     const fetchBannerActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: 1,
-        size: 4,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: 1,
+          size: 4,
+        });
 
-      setBannerActivities(res.success ? res.data.activities : []);
+        setBannerActivities(res.success ? res.data.activities : []);
+      } catch {
+        setBannerActivities([]);
+      }
     };
 
     fetchBannerActivities();
@@ -98,6 +101,9 @@ function ActivitiesPageContent() {
           return;
         }
 
+        setActivities([]);
+        setTotalCount(0);
+      } catch {
         setActivities([]);
         setTotalCount(0);
       } finally {
@@ -186,11 +192,7 @@ function ActivitiesPageContent() {
           <>
             <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activities.map((activity) => (
-                <ActivityCard
-                  key={activity.id}
-                  activity={activity}
-                  onClick={() => router.push(`/activities/${activity.id}`)}
-                />
+                <ActivityCard key={activity.id} activity={activity} />
               ))}
             </div>
 

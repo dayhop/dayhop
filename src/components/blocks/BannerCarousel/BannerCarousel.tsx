@@ -20,7 +20,9 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
   useEffect(() => {
     if (initialActivities) return;
@@ -35,6 +37,8 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
         });
 
         setActivities(res.success ? res.data.activities : []);
+      } catch {
+        setActivities([]);
       } finally {
         setIsLoading(false);
       }
@@ -44,15 +48,16 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   }, [initialActivities]);
 
   useEffect(() => {
-    if (activities.length <= 1 || isPaused) return;
+    if (activities.length <= 1 || isPaused || isAnimating) return;
 
     const interval = setInterval(() => {
+      setIsAnimating(true);
       setIsTransitionEnabled(true);
       setCurrentIndex((prev) => prev + 1);
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [activities.length, isPaused]);
+  }, [activities.length, isPaused, isAnimating]);
 
   if (isLoading) {
     return null;
@@ -70,6 +75,8 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   const currentActivity = activities[currentIndex % activities.length] || activities[0];
 
   const handleTransitionEnd = () => {
+    setIsAnimating(false);
+
     if (currentIndex !== activities.length) return;
 
     setIsTransitionEnabled(false);
@@ -83,6 +90,10 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   };
 
   const handlePrev = () => {
+    if (isAnimating) return;
+
+    setIsAnimating(true);
+
     if (currentIndex === 0) {
       setIsTransitionEnabled(false);
       setCurrentIndex(activities.length);
@@ -102,31 +113,45 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   };
 
   const handleNext = () => {
+    if (isAnimating) return;
+
+    setIsAnimating(true);
     setIsTransitionEnabled(true);
     setCurrentIndex((prev) => prev + 1);
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLElement>) => {
     setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
     setIsPaused(true);
   };
 
+  const resetTouchState = () => {
+    setTouchStartX(null);
+    setTouchStartY(null);
+    setIsPaused(false);
+  };
+
   const handleTouchEnd = (e: React.TouchEvent<HTMLElement>) => {
-    if (touchStartX === null) return;
+    if (touchStartX === null || touchStartY === null) {
+      resetTouchState();
+      return;
+    }
 
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
 
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
         handleNext();
       } else {
         handlePrev();
       }
     }
 
-    setTouchStartX(null);
-    setIsPaused(false);
+    resetTouchState();
   };
 
   return (
@@ -136,6 +161,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={resetTouchState}
     >
       <div className="relative xl:hidden">
         <div
@@ -236,6 +262,9 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
               key={activity.id}
               type="button"
               onClick={() => {
+                if (isAnimating) return;
+
+                setIsAnimating(true);
                 setIsTransitionEnabled(true);
                 setCurrentIndex(index);
               }}

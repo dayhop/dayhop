@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -21,14 +21,8 @@ interface MainpageReviewProps {
 }
 
 export const MainpageReview = ({ items }: MainpageReviewProps) => {
-  const router = useRouter();
-
   const [reviews, setReviews] = useState<MainReviewItem[]>(items ?? []);
   const [isLoading, setIsLoading] = useState(!items);
-
-  const moveToActivity = (activityId: number) => {
-    router.push(`/activities/${activityId}`);
-  };
 
   useEffect(() => {
     if (items) return;
@@ -96,10 +90,9 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
       <div className="grid gap-y-12 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-20">
         {reviews.map((item) => (
           <article key={item.review.id} className="flex justify-between gap-5">
-            <button
-              type="button"
-              className="w-[190px] cursor-pointer text-left min-[744px]:w-[360px] min-[1280px]:w-[330px]"
-              onClick={() => moveToActivity(item.activity.id)}
+            <Link
+              href={`/activities/${item.activity.id}`}
+              className="block w-[190px] cursor-pointer text-left min-[744px]:w-[360px] min-[1280px]:w-[330px]"
             >
               <p className="mb-1 text-sm text-gray-400">{item.activity.category}</p>
 
@@ -123,13 +116,12 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
                 <StarRating mode="display" rating={item.review.rating} />
               </div>
-            </button>
+            </Link>
 
-            <button
-              type="button"
+            <Link
+              href={`/activities/${item.activity.id}`}
               aria-label={`${item.activity.title} 상세 보기`}
               className="relative h-[160px] w-[110px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
-              onClick={() => moveToActivity(item.activity.id)}
             >
               <Image
                 src={item.activity.bannerImageUrl}
@@ -137,7 +129,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                 fill
                 className="object-cover"
               />
-            </button>
+            </Link>
           </article>
         ))}
       </div>
