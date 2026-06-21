@@ -56,7 +56,11 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
     return () => clearInterval(interval);
   }, [activities.length, isPaused, isHovered]);
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <section className="relative mx-auto h-[234px] w-full max-w-[1200px] animate-pulse rounded-3xl bg-gray-100 md:h-[290px] xl:h-[390px]" />
+    );
+  }
 
   if (!activities.length) {
     return (

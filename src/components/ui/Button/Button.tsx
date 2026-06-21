@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
+import { Spinner } from '@/components/ui/Spinner';
 const buttonVariants = cva(
   'inline-flex items-center cursor-pointer transition-colors disabled:pointer-events-none font-medium w-full',
   {
@@ -47,11 +48,24 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants> & {
     className?: string;
     Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    isLoading?: boolean;
   };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, selected, Icon, children, type = 'button', style, ...props },
+    {
+      className,
+      variant,
+      size,
+      selected,
+      Icon,
+      children,
+      type = 'button',
+      style,
+      isLoading = false,
+      disabled,
+      ...props
+    },
     ref
   ) => {
     const hasIcon = Boolean(Icon);
@@ -60,6 +74,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         type={type}
+        disabled={disabled || isLoading}
         className={cn(
           buttonVariants({
             variant,
@@ -72,7 +87,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         style={{ ...style }}
         {...props}
       >
-        {Icon && (
+        {isLoading && <Spinner className="h-5 w-5" />}
+        {Icon && !isLoading && (
           <span className="inline-flex h-5 w-5 items-center justify-center">
             <Icon
               className={cn(

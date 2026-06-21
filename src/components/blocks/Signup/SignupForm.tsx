@@ -19,6 +19,7 @@ import { Modal } from '@/components/ui/Modal';
 export function SignupForm() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -78,6 +79,8 @@ export function SignupForm() {
 
   const handleformSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const requestBody = {
       email: formData.email,
       nickname: formData.name,
@@ -86,6 +89,7 @@ export function SignupForm() {
     const res = await postSignUp(requestBody);
     if (!res.success) {
       showToast.error(res.message);
+      setIsSubmitting(false);
       return;
     }
     setIsOpen(true);
@@ -162,6 +166,7 @@ export function SignupForm() {
         />
         <Button
           type="submit"
+          isLoading={isSubmitting}
           disabled={
             !!errorMessage.email ||
             !!errorMessage.name ||

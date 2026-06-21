@@ -26,9 +26,8 @@ export function ToolTip({
       const targetElement = document.getElementById(targetId);
       const rel = targetElement?.getBoundingClientRect();
       if (targetElement && rel) {
-        const anchorX = rel.x + window.scrollX + rel.width / 3;
-        const anchorY =
-          placement === 'top' ? rel.y + window.scrollY : rel.y + window.scrollY + rel.height;
+        const anchorX = rel.x + rel.width / 3;
+        const anchorY = placement === 'top' ? rel.y : rel.y + rel.height;
         setPosition({ x: anchorX, y: anchorY });
       }
     };
@@ -36,9 +35,15 @@ export function ToolTip({
     updatePosition();
     window.addEventListener('resize', updatePosition);
     window.addEventListener('scroll', updatePosition, true);
+
+    // 캐러셀 등 늦게 렌더되는 요소로 인한 레이아웃 변화 감지
+    const observer = new ResizeObserver(updatePosition);
+    observer.observe(document.body);
+
     return () => {
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition, true);
+      observer.disconnect();
     };
   }, [targetId, placement]);
 
@@ -49,10 +54,7 @@ export function ToolTip({
   if (!isOpen || !position) return null;
 
   return createPortal(
-    <div
-      className="pointer-events-none absolute z-30"
-      style={{ left: position.x, top: position.y }}
-    >
+    <div className="pointer-events-none fixed z-30" style={{ left: position.x, top: position.y }}>
       <div
         className={`pointer-events-auto absolute flex w-max ${
           placement === 'top' ? 'bottom-0 mb-1 flex-col-reverse' : 'top-0 mt-1 flex-col'

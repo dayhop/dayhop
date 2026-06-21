@@ -12,6 +12,7 @@ import CategoryTour from '@/assets/icon/category-tour.svg';
 import { BannerCarousel } from '@/components/blocks/BannerCarousel';
 import { SearchInput } from '@/components/blocks/SearchInput';
 import { ActivityCard } from '@/components/ui/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/ui/ActivityCard/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Pagination } from '@/components/ui/pagination';
 import { getActivities } from '@/lib/api/activities';
@@ -207,7 +208,13 @@ function ActivitiesPageContent() {
           </div>
         )}
 
-        {isLoading ? null : activities.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+              <ActivityCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : activities.length > 0 ? (
           <>
             <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activities.map((activity) => (
