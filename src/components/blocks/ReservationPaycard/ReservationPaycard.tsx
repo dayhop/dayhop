@@ -269,6 +269,7 @@ export function ReservationPaycard({
             holidays={holidays}
             isDateDisabled={isDateDisabled}
             headerVariant="secondary"
+            clickableDateCellClassName="hover:bg-(--color-bg-surface) hover:text-(--color-text-primary)"
             className="w-full text-sm"
             selectedClassName="bg-primary text-white"
           />
@@ -467,6 +468,7 @@ export function ReservationPaycard({
                 holidays={holidays}
                 isDateDisabled={isDateDisabled}
                 headerVariant="secondary"
+                clickableDateCellClassName="hover:bg-(--color-bg-surface) hover:text-(--color-text-primary)"
                 className="w-full text-sm"
                 selectedClassName="bg-primary text-white"
               />

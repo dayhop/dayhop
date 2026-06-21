@@ -39,6 +39,7 @@ export const Calendar = ({
   pointClassName,
   isDatePoint,
   clickableDateClassName,
+  clickableDateCellClassName,
 }: CalendarProps) => {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(defaultValue);
 
@@ -134,7 +135,7 @@ export const Calendar = ({
             isSunday: date.getDay() === 0,
           };
           const isDisabled = isDateDisabled?.(date) ?? false;
-          const isClickable = isDateClickable ? isDateClickable(date) : false;
+          const isClickable = isDateClickable ? isDateClickable(date) : !isDisabled;
           const isNotClickable = isDateClickable ? !isClickable : false;
           const hasPoint = isDatePoint?.(date) ?? false;
 
@@ -188,7 +189,8 @@ export const Calendar = ({
                   <span
                     className={cn(
                       'mt-2.5 flex h-11.5 w-11.5 items-center justify-center rounded-full md:mt-4.5',
-                      dateCellVariantClass
+                      dateCellVariantClass,
+                      isClickable && clickableDateCellClassName
                     )}
                   >
                     <span className={cn(hasPoint && pointClassName)}>{dateInfo.dateNumber}</span>
