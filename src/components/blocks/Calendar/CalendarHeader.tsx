@@ -9,6 +9,7 @@ import type { CalendarHeaderProps } from './types';
 
 export const CalendarHeader = ({
   currentMonth,
+  title,
   variant = 'default',
   onPrevMonth,
   onNextMonth,
@@ -85,7 +86,9 @@ export const CalendarHeader = ({
       <div className={cn('mb-2', className)}>
         <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
         <div className={cn('flex items-center justify-between', contentClassName)}>
-          {selectableMonths ? (
+          {title ? (
+            <strong className={cn('font-medium', titleClassName)}>{title}</strong>
+          ) : selectableMonths ? (
             <strong className={cn('flex items-center gap-1 font-medium', titleClassName)}>
               <select
                 value={currentMonthNum}
@@ -136,7 +139,16 @@ export const CalendarHeader = ({
       className={cn('mb-5 flex items-center justify-center gap-2.5 md:mb-10 md:gap-7.5', className)}
     >
       {prevButton}
-      {selectableMonths ? (
+      {title ? (
+        <strong
+          className={cn(
+            'text-base font-bold text-(--color-text-primary) md:text-xl',
+            titleClassName
+          )}
+        >
+          {title}
+        </strong>
+      ) : selectableMonths ? (
         <strong
           className={cn(
             'flex items-center gap-0.5 text-base font-bold text-(--color-text-primary) md:text-xl',
