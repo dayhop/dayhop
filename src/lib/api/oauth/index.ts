@@ -5,7 +5,11 @@ import { safeApi } from '../safeApi';
 import type { ApiResult } from '../result';
 import * as T from './type';
 
-const setAuthCookies = async (accessToken: string, refreshToken: string) => {
+const setAuthCookies = async (
+  accessToken: string,
+  refreshToken: string,
+  provider: T.OauthProvider
+) => {
   const cookieStore = await cookies();
   cookieStore.set('accessToken', accessToken, {
     httpOnly: true,
@@ -21,7 +25,7 @@ const setAuthCookies = async (accessToken: string, refreshToken: string) => {
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
   });
-  cookieStore.set('loginProvider', 'kakao', {
+  cookieStore.set('loginProvider', provider, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -43,7 +47,7 @@ export const postOauthSignUp = async (
     serverInstance.post<T.SignUpWithOauthResponse>(`/oauth/sign-up/${provider}`, body)
   );
   if (result.success) {
-    await setAuthCookies(result.data.accessToken, result.data.refreshToken);
+    await setAuthCookies(result.data.accessToken, result.data.refreshToken, provider);
   }
   return result;
 };
@@ -56,7 +60,7 @@ export const postOauthSignIn = async (
     serverInstance.post<T.SignInWithOauthResponse>(`/oauth/sign-in/${provider}`, body)
   );
   if (result.success) {
-    await setAuthCookies(result.data.accessToken, result.data.refreshToken);
+    await setAuthCookies(result.data.accessToken, result.data.refreshToken, provider);
   }
   return result;
 };

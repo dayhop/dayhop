@@ -76,13 +76,17 @@ export const ReservationListClient = ({
     [activeStatus, cursorId]
   );
 
+  const handleDelete = (id: number) => {
+    setReservationList((prev) => prev.filter((r) => r.id !== id));
+  };
+
   return (
     <div className="flex flex-col gap-3.5">
       <NavigationButton activeStatus={activeStatus} onClickButton={onClickNavigationButton} />
       <div className="flex flex-col gap-7.5 px-6 md:px-0">
         {reservationList.length !== 0 ? (
           reservationList.map((reservation) => (
-            <ReservationCard key={reservation.id} data={reservation} />
+            <ReservationCard key={reservation.id} data={reservation} onDelete={handleDelete} />
           ))
         ) : (
           <div className="py-10 text-center text-gray-500">예약 내역이 없습니다.</div>
