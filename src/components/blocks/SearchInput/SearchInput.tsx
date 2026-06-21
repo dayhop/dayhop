@@ -7,6 +7,7 @@ import IconLocation from '@/assets/icon/icon_location.svg';
 import IconPin from '@/assets/icon/icon_pin.svg';
 import { Button } from '@/components/ui/Button';
 import { ToolTip } from '@/components/ui/ToolTip';
+import { showToast } from '@/utils/toast';
 import './SearchInput.css';
 
 export interface SearchInputProps {
@@ -41,12 +42,12 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    const value = e.target.value;
+    setInputValue(value);
     setShowTooltip(false); // 입력 시작 시 가이드 툴팁 숨김
-    if (isSearched && e.target.value === '') {
-      // 입력값이 직접 지워지면 초기화
+    if (isSearched) {
+      // 입력값이 수정되면 검색하기 버튼으로 복귀
       setIsSearched(false);
-      onReset?.();
     }
   };
 
@@ -58,10 +59,12 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
       onReset?.();
     } else {
       // 검색 실행
-      onSearch?.(inputValue);
-      if (inputValue.trim()) {
-        setIsSearched(true);
+      if (!inputValue.trim()) {
+        showToast.error('검색어를 입력해주세요');
+        return;
       }
+      onSearch?.(inputValue);
+      setIsSearched(true);
     }
   }, [isSearched, inputValue, onSearch, onReset]);
 
