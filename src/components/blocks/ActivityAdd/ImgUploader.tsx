@@ -3,6 +3,7 @@
 import { ImgLimit } from '@/components/ui/ActivityAdd/ImgLimit';
 import { PreviewImg } from '@/components/ui/ActivityAdd/PreviewImg';
 import { UploadImg } from '@/components/ui/ActivityAdd/UploadImg';
+import { showToast } from '@/utils/toast';
 import { Ref, useEffect, useImperativeHandle, useState } from 'react';
 
 interface ImageItem {
@@ -45,6 +46,13 @@ export function ImgUpload({ mode, ref, initialUrls }: ImgUploadProps) {
   );
 
   const handleFileSelect = (newFile: File) => {
+    const isDuplicate = images.some(
+      (img) => img.file?.name === newFile.name && img.file.size === newFile.size
+    );
+    if (isDuplicate) {
+      showToast.error('이미 추가된 이미지 입니다.');
+      return;
+    }
     const newImage: ImageItem = {
       id: crypto.randomUUID(),
       url: URL.createObjectURL(newFile),

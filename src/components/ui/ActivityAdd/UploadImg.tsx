@@ -1,5 +1,4 @@
 import ImgAddIcon from '@/assets/icon/ImgAddIcon.svg';
-import { showToast } from '@/utils/toast';
 import { ChangeEvent } from 'react';
 
 interface UploadImgProp {
@@ -20,6 +19,9 @@ export function UploadImg({ onFileSelect }: UploadImgProp) {
         accept="image/png, image/jpeg, image/webp"
         className="hidden"
         onChange={handleFileChange}
+        onClick={(e) => {
+          e.currentTarget.value = '';
+        }}
       />
       <ImgAddIcon />
       <div className="text-text-tertiary hidden text-sm md:flex">file Upload</div>
