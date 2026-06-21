@@ -68,14 +68,48 @@ export const CalendarHeader = ({
     onMonthSelect?.(new Date(currentYear, month - 1, 1));
   };
 
+  const selectClass =
+    'text-base font-bold text-(--color-text-primary) md:text-xl cursor-pointer text-center bg-primary-100 rounded-sm';
+
   if (variant === 'secondary') {
     return (
       <div className={cn('mb-2', className)}>
         <em className={cn('mb-2.5 block text-sm font-bold not-italic', labelClassName)}> 날짜 </em>
         <div className={cn('flex items-center justify-between', contentClassName)}>
-          <strong className={cn('font-medium', titleClassName)}>
-            {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-          </strong>
+          {selectableMonths ? (
+            <strong className={cn('flex items-center gap-0.5 font-medium', titleClassName)}>
+              <select
+                value={currentYear}
+                onChange={(e) => handleYearChange(Number(e.target.value))}
+                className={selectClass}
+                aria-label="년도 선택"
+              >
+                {selectYears.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+              년
+              <select
+                value={currentMonthNum}
+                onChange={(e) => handleMonthChange(Number(e.target.value))}
+                className={cn(selectClass, 'ml-0.5')}
+                aria-label="월 선택"
+              >
+                {selectMonths.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              월
+            </strong>
+          ) : (
+            <strong className={cn('font-medium', titleClassName)}>
+              {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+            </strong>
+          )}
           <div className={cn('flex items-center gap-3', navigationClassName)}>
             {prevButton} {nextButton}
           </div>
@@ -83,9 +117,6 @@ export const CalendarHeader = ({
       </div>
     );
   }
-
-  const selectClass =
-    'text-base font-bold text-(--color-text-primary) md:text-xl cursor-pointer text-center bg-primary-100 rounded-sm';
 
   return (
     <div
