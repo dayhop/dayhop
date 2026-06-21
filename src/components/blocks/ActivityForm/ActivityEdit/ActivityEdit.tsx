@@ -10,15 +10,17 @@ import { ActivityResponse } from '@/lib/api/activities/type';
 import { patchMyActivity } from '@/lib/api/my-activities';
 import { PatchMyActivityRequest } from '@/lib/api/my-activities/type';
 import { showToast } from '@/utils/toast';
-import { use, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import RollbackIcon from '@/assets/icon/rollback_icon.svg';
+
 import {
   getDetailFormData,
   getImgCurrnet,
   handleIsEdited,
   validateFormField,
-} from '@/app/(myactivity)/util';
+} from '@/utils/ActivityForm/util';
+import { findRemove } from '@/utils/ActivityForm/ImageUpload';
+import { ResetButton } from './ResetButton';
 
 interface EditPageProps {
   activityId: number;
@@ -26,15 +28,17 @@ interface EditPageProps {
 export function ActivityEdit({ activityId }: EditPageProps) {
   const router = useRouter();
 
-  const dateRef = useRef<DateFormRef>(null);
-  const bannerRef = useRef<ImgUploadRef>(null);
-  const detailRef = useRef<ImgUploadRef>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const observerRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [initData, setInitData] = useState<ActivityResponse>();
   const [resetKey, setResetKey] = useState(0);
   const [resetButtonBottom, setResetButtonBottm] = useState<number>(10);
+
+  const dateRef = useRef<DateFormRef>(null);
+  const bannerRef = useRef<ImgUploadRef>(null);
+  const detailRef = useRef<ImgUploadRef>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const bannerInitialUrls = useMemo(
     () => (initData?.bannerImageUrl ? [initData.bannerImageUrl] : undefined),
@@ -45,6 +49,14 @@ export function ActivityEdit({ activityId }: EditPageProps) {
     [initData]
   );
 
+  useEffect(() => {
+    const getInitData = async () => {
+      const res = await getActivity(activityId);
+      if (res.success) setInitData(res.data);
+    };
+    getInitData();
+  }, [activityId]);
+
   const handleSubmit = async () => {
     if (!initData) return;
     if (!formRef.current) {
@@ -53,56 +65,47 @@ export function ActivityEdit({ activityId }: EditPageProps) {
 
     const formData = new FormData(formRef.current);
 
-    //detail에 있는 거 가져옴
+    //유저가 입력한 form 취합
     const detailFormData = getDetailFormData(formData);
-
-    //유효성 검사를 위한 배너 이미지와 스케줄 가져오기
-    const bannerImageCount = bannerRef.current?.getCurrentUrls?.().length ?? 0;
     const schedules = dateRef.current?.getValues?.() || [];
-
-    //배너, 디테일 현재 가져오기
     const imgCurrnet = getImgCurrnet(bannerRef, detailRef);
     const { bannerFile, detailFiles } = imgCurrnet;
 
     //유효성 검사
-    const isValid = validateFormField(detailFormData, schedules, bannerImageCount);
+    const bannerCurrentCount = bannerRef.current?.getCurrentUrls?.()?.length ?? 0;
+    const isValid = validateFormField(detailFormData, schedules, bannerCurrentCount);
 
     //유효하지 않는다면 종료
     if (!isValid) return;
 
     //================================
 
-    //배너 업로드
-    let bannerImageUrl = initData.bannerImageUrl;
+    // 배너: 새 파일이 있으면 업로드, 없으면 기존 URL 유지
+    let bannerImageUrl: string;
     if (bannerFile.length > 0) {
-      const bannerRes = await postActivitiesImage(bannerFile[0]);
-      if (!bannerRes.success) {
-        showToast.error(bannerRes.message);
+      const bannerUpload = await postActivitiesImage(bannerFile[0]);
+      if (!bannerUpload.success) {
+        showToast.error(bannerUpload.message);
         return;
       }
-      bannerImageUrl = bannerRes.data.activityImageUrl;
+      bannerImageUrl = bannerUpload.data.activityImageUrl;
+    } else {
+      bannerImageUrl = initData.bannerImageUrl;
     }
 
-    //디테일 파일 업로드
-    const detailUploadResponse = await Promise.all(
-      detailFiles.map((file) => postActivitiesImage(file))
-    );
-    const failedUpload = detailUploadResponse.find((r) => !r.success);
-    if (failedUpload && !failedUpload.success) {
-      showToast.error(failedUpload.message);
+    // 디테일: 새로 추가된 파일만 업로드
+    const detailUploadRes = await Promise.all(detailFiles.map((file) => postActivitiesImage(file)));
+    const detailFailed = detailUploadRes.find((r) => !r.success);
+    if (detailFailed && !detailFailed.success) {
+      showToast.error(detailFailed.message);
       return;
     }
-
-    //add와 diff
-    const subImageUrlsToAdd = detailUploadResponse.flatMap((r) =>
+    const subImageUrls = detailUploadRes.flatMap((r) =>
       r.success ? [r.data.activityImageUrl] : []
     );
-    const currentDetailUrls = detailRef.current?.getCurrentUrls?.() ?? [];
-    const subImageIdsToRemove = initData.subImages
-      .filter((img) => !currentDetailUrls.includes(img.imageUrl))
-      .map((img) => img.id);
 
-    // 스케줄
+    //add와 diff
+    const subImageIdsToRemove = findRemove(detailRef, initData);
     const schedulesToAdd = schedules.filter(
       (s) =>
         initData.schedules.findIndex(
@@ -126,7 +129,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
       ...detailFormData,
       bannerImageUrl,
       subImageIdsToRemove,
-      subImageUrlsToAdd,
+      subImageUrlsToAdd: subImageUrls,
       scheduleIdsToRemove,
       schedulesToAdd,
     };
@@ -136,7 +139,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
       detailFormData,
       initData,
       subImageIdsToRemove,
-      subImageUrlsToAdd,
+      subImageUrls,
       scheduleIdsToRemove,
       schedulesToAdd,
       bannerImageUrl
@@ -158,20 +161,6 @@ export function ActivityEdit({ activityId }: EditPageProps) {
     router.back();
   };
 
-  const observerRef = useRef<HTMLDivElement>(null);
-
-  const handleReset = () => {
-    setResetKey((prev) => prev + 1);
-  };
-
-  useEffect(() => {
-    const getInitData = async () => {
-      const res = await getActivity(activityId);
-      if (res.success) setInitData(res.data);
-    };
-    getInitData();
-  }, [activityId]);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -189,6 +178,10 @@ export function ActivityEdit({ activityId }: EditPageProps) {
     return () => observer.disconnect();
   }, []);
 
+  const handleReset = () => {
+    setResetKey((prev) => prev + 1);
+  };
+
   return (
     <div className="mx-6">
       {isOpen && (
@@ -199,17 +192,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
           isOpen={isOpen}
         />
       )}
-      <div
-        className="fixed right-10 z-50 transition-all duration-300 ease-in-out"
-        style={{ bottom: `${resetButtonBottom}px` }}
-      >
-        <Button
-          className="bg-primary flex h-15 w-15 items-center justify-center rounded-full p-0 text-white shadow-lg"
-          onClick={handleReset}
-        >
-          <RollbackIcon className="text-bg" />
-        </Button>
-      </div>
+      <ResetButton onReset={handleReset} resetButtonBottom={resetButtonBottom} />
       <form
         ref={formRef}
         className="mx-auto mb-10 flex max-w-175 grow flex-col justify-center gap-6 lg:mt-5 lg:mb-20"

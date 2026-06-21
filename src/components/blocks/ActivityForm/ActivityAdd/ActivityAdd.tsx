@@ -10,7 +10,8 @@ import { ActivityScheduleInput, PostActivitiesData } from '@/lib/api/activities/
 import { showToast } from '@/utils/toast';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getDetailFormData, validateFormField } from '@/app/(myactivity)/util';
+import { getDetailFormData, validateFormField } from '@/utils/ActivityForm/util';
+import { uploadActivityImages } from '@/utils/ActivityForm/ImageUpload';
 
 export function ActivityAdd() {
   const router = useRouter();
@@ -33,34 +34,21 @@ export function ActivityAdd() {
       dateRef.current?.getValues() || ([] as ActivityScheduleInput[]);
     const bannerFile = bannerRef.current?.getValues() || [];
     const detailFiles = detailRef.current?.getValues() || [];
-    const isValid = validateFormField(detailFormData, schedules, bannerFile.length);
 
+    const isValid = validateFormField(detailFormData, schedules, bannerFile.length);
     if (!isValid) return;
 
+    const ImgUpload = await uploadActivityImages(bannerFile, detailFiles);
+
+    if (!ImgUpload.success) {
+      showToast.error(ImgUpload.message || '');
+      return;
+    }
+
+    const { bannerImageUrl, subImageUrls } = ImgUpload.data!;
+    const { title, category, description, address, price } = detailFormData;
+
     try {
-      //이미지 업로드
-      const bannerUpload = await postActivitiesImage(bannerFile[0]);
-      if (!bannerUpload.success) {
-        showToast.error(bannerUpload.message);
-        return;
-      }
-
-      const detailUploadResponses = await Promise.all(
-        detailFiles.map((file) => postActivitiesImage(file))
-      );
-      const failedDetail = detailUploadResponses.find((r) => !r.success);
-      if (failedDetail && !failedDetail.success) {
-        showToast.error(failedDetail.message);
-        return;
-      }
-
-      const bannerImageUrl = bannerUpload.data.activityImageUrl;
-      const subImageUrls = detailUploadResponses.map((r) =>
-        r.success ? r.data.activityImageUrl : ''
-      );
-
-      const { title, category, description, address, price } = detailFormData;
-
       const submitData: PostActivitiesData = {
         title,
         category,
