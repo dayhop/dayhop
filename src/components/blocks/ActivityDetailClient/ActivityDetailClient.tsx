@@ -286,7 +286,14 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
             )}
           </div>
 
-          {!isMyActivity && (
+          {isMyActivity ? (
+            <div className="border-border-default shadow-card w-full rounded-3xl border bg-white p-6 text-center lg:max-w-[380px]">
+              <p className="text-text-primary text-base font-bold">내가 등록한 체험입니다</p>
+              <p className="text-text-tertiary mt-2 text-sm">
+                본인이 등록한 체험은 예약할 수 없습니다.
+              </p>
+            </div>
+          ) : (
             <ReservationPaycard
               activityId={activity.id}
               price={activity.price}

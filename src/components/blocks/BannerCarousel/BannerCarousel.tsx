@@ -8,7 +8,7 @@ import CarouselLeft from '@/assets/icon/arrow-left.svg';
 import CarouselRight from '@/assets/icon/arrow-right.svg';
 import { getActivities } from '@/lib/api/activities';
 
-import type { ActivityItem } from '@/types/api';
+import type { ActivityItem } from '@/lib/api/activities/type';
 
 interface BannerCarouselProps {
   activities?: ActivityItem[];
@@ -21,6 +21,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   const [isPaused, setIsPaused] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (initialActivities) return;
@@ -46,18 +47,16 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   }, [initialActivities]);
 
   useEffect(() => {
-    if (activities.length <= 1 || isPaused) return;
+    if (activities.length <= 1 || isPaused || isHovered) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === activities.length - 1 ? 0 : prev + 1));
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [activities.length, isPaused]);
+  }, [activities.length, isPaused, isHovered]);
 
-  if (isLoading) {
-    return null;
-  }
+  if (isLoading) return null;
 
   if (!activities.length) {
     return (
@@ -113,9 +112,9 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
 
   return (
     <section
-      className="relative mx-auto w-full max-w-[1200px]"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={resetTouchState}

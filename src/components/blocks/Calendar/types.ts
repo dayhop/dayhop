@@ -16,6 +16,10 @@ export type CalendarProps = {
   defaultMonth?: Date;
   onSelectDate?: (date: Date) => void;
   onMonthChange?: (date: Date) => void;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  headerTitle?: React.ReactNode;
+  selectableMonths?: string[]; // "YYYY-MM" 형식, 제공 시 헤더에 년/월 select 표시
   holidays?: string[];
   renderDateCell?: (dateInfo: CalendarDateInfo) => React.ReactNode;
   renderDateExtra?: (dateInfo: CalendarDateInfo) => React.ReactNode;
@@ -38,13 +42,18 @@ export type CalendarProps = {
   defaultClassName?: string;
   pointClassName?: string;
   isDatePoint?: (date: Date) => boolean;
+  clickableDateClassName?: string;
+  clickableDateCellClassName?: string;
 };
 
 export type CalendarHeaderProps = {
   currentMonth: Date;
+  title?: React.ReactNode;
   variant?: CalendarHeaderVariant;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  onMonthSelect?: (date: Date) => void;
+  selectableMonths?: string[]; // "YYYY-MM" 형식
   className?: string;
   contentClassName?: string;
   titleClassName?: string;
