@@ -114,15 +114,14 @@ function ActivitiesPageContent() {
                 return [activity.id, undefined] as const;
               }
 
-              const reviews = reviewRes.data.reviews;
-              const randomReview = reviews[Math.floor(Math.random() * reviews.length)];
+              const latestReview = reviewRes.data.reviews[0];
 
               return [
                 activity.id,
                 {
-                  nickname: randomReview.user.nickname,
-                  rating: randomReview.rating,
-                  content: randomReview.content,
+                  nickname: latestReview.user.nickname,
+                  rating: latestReview.rating,
+                  content: latestReview.content,
                 },
               ] as const;
             } catch {
