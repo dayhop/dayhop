@@ -45,6 +45,7 @@ export const MyActivityCard = ({ activity, onEdit, onDelete }: MyActivityCardPro
           alt={activity.title}
           fill
           sizes="96px"
+          quality={80}
           className="object-cover"
         />
       </div>

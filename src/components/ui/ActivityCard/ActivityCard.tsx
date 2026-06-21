@@ -16,7 +16,14 @@ export const ActivityCard = ({ activity, onClick }: ActivityCardProps) => {
       onClick={onClick}
     >
       <div className="relative h-[230px] w-full overflow-hidden">
-        <Image src={activity.bannerImageUrl} alt={activity.title} fill className="object-cover" />
+        <Image
+          src={activity.bannerImageUrl}
+          alt={activity.title}
+          fill
+          sizes="262px"
+          quality={80}
+          className="object-cover"
+        />
       </div>
 
       <div className="relative -mt-[42px] rounded-t-[32px] bg-white px-[24px] pt-[18px] pb-[18px]">
