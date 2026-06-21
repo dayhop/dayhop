@@ -195,12 +195,12 @@ export function useReservationModal({
         observerRef.current.disconnect();
         observerRef.current = null;
       }
-      if (node && scrollContainerRef.current) {
+      if (node) {
         const observer = new IntersectionObserver(
           (entries) => {
             if (entries[0].isIntersecting) loadMore();
           },
-          { root: scrollContainerRef.current, threshold: 0 }
+          { threshold: 0 }
         );
         observer.observe(node);
         observerRef.current = observer;
