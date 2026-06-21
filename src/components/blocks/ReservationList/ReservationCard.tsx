@@ -15,7 +15,8 @@ interface ReservationCardProps {
   data: Reservation;
 }
 export function ReservationCard({ data }: ReservationCardProps) {
-  const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
+  const { activity, startTime, endTime, date, totalPrice, status, headCount, id, reviewSubmitted } =
+    data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
@@ -90,15 +91,24 @@ export function ReservationCard({ data }: ReservationCardProps) {
                 </Button>
               </div>
             )}
-            {status === 'completed' && (
-              <Button
-                size="sm"
-                className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
-                onClick={() => setIsReviewModalOpen(true)}
-              >
-                후기 작성
-              </Button>
-            )}
+            {status === 'completed' &&
+              (reviewSubmitted ? (
+                <Button
+                  size="sm"
+                  disabled
+                  className="hidden w-fit cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:flex"
+                >
+                  작성 완료
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
+                  onClick={() => setIsReviewModalOpen(true)}
+                >
+                  후기 작성
+                </Button>
+              ))}
           </div>
         </div>
         <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
@@ -127,15 +137,24 @@ export function ReservationCard({ data }: ReservationCardProps) {
           </Button>
         </div>
       )}
-      {status === 'completed' && (
-        <Button
-          size="sm"
-          className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden"
-          onClick={() => setIsReviewModalOpen(true)}
-        >
-          후기 작성
-        </Button>
-      )}
+      {status === 'completed' &&
+        (reviewSubmitted ? (
+          <Button
+            size="sm"
+            disabled
+            className="w-full cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:hidden"
+          >
+            작성 완료
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className="bg-primary w-full px-2.5 py-1.5 whitespace-nowrap lg:hidden"
+            onClick={() => setIsReviewModalOpen(true)}
+          >
+            후기 작성
+          </Button>
+        ))}
     </div>
   );
 }
