@@ -66,6 +66,11 @@ const mockActivities = [
 const meta = {
   title: 'Blocks/BestActivities',
   component: BestActivities,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 } satisfies Meta<typeof BestActivities>;
 
 export default meta;
@@ -75,5 +80,11 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     items: mockActivities,
+  },
+};
+
+export const Empty: Story = {
+  args: {
+    items: [],
   },
 };
