@@ -59,6 +59,7 @@ export const CalendarMyActivitiesModal = ({
     isSchedulePast,
     reservations,
     cursorId,
+    isLoading,
     sentinelRef,
     scrollContainerRef,
     refreshAfterAction,
@@ -174,7 +175,11 @@ export const CalendarMyActivitiesModal = ({
                 예약 내역
               </h3>
               <div className="flex min-h-25 flex-col">
-                {reservations.length === 0 ? (
+                {isLoading ? (
+                  <p className="text-text-placeholder py-10 text-center text-sm md:p-0 md:pt-5">
+                    예약 내역을 불러오는 중입니다...
+                  </p>
+                ) : reservations.length === 0 ? (
                   <p className="text-text-tertiary py-10 text-center text-sm md:p-0 md:pt-5">
                     {isSchedulePast && activeTab === 'confirmed'
                       ? '완료된 예약은 조회할 수 없습니다.'

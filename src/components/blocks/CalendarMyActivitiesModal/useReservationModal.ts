@@ -31,6 +31,7 @@ export function useReservationModal({
   const [reservations, setReservations] = useState<MyActivityReservation[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [cursorId, setCursorId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const isFetchingMoreRef = useRef(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -118,8 +119,10 @@ export function useReservationModal({
       if (selectedScheduleId === undefined) {
         setReservations([]);
         setCursorId(null);
+        setIsLoading(false);
         return;
       }
+      setIsLoading(true);
       try {
         const res = await getMyActivityReservations(activityId, {
           scheduleId: selectedScheduleId,
@@ -140,6 +143,8 @@ export function useReservationModal({
           setCursorId(null);
           showToast.error('예약 목록을 불러오는 데 실패했습니다.');
         }
+      } finally {
+        if (!ignore) setIsLoading(false);
       }
     }
     loadReservations();
@@ -224,6 +229,7 @@ export function useReservationModal({
     isSchedulePast,
     reservations,
     cursorId,
+    isLoading,
     sentinelRef,
     scrollContainerRef,
     refreshAfterAction,
