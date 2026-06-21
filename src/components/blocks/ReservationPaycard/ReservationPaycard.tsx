@@ -6,6 +6,7 @@ import { Calendar } from '@/components/blocks/Calendar';
 import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
 import { Button } from '@/components/ui/Button';
 import { getActivityAvailableSchedule, postActivityReservations } from '@/lib/api/activities';
+import { patchMyReservation } from '@/lib/api/my-reservations';
 import type { ScheduleDate } from '@/lib/api/activities/type';
 import { toLocalDateString } from '../Calendar/utils';
 import { cn } from '@/utils/cn';
@@ -58,6 +59,12 @@ export function ReservationPaycard({
       const params = new URLSearchParams(window.location.search);
       const status = params.get('paymentStatus') as 'success' | 'fail' | null;
       if (status === 'success' || status === 'fail') {
+        if (status === 'fail') {
+          const reservationId = Number(params.get('reservationId'));
+          if (reservationId) {
+            patchMyReservation({ reservationId }, { status: 'canceled' });
+          }
+        }
         const timer = setTimeout(() => {
           setPaymentStatus(status);
         }, 0);
@@ -225,10 +232,11 @@ export function ReservationPaycard({
           orderName: activityTitle,
           customerName: user?.nickname || '구매자',
           successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.data.id}`,
-          failUrl: `${cleanUrl}?paymentStatus=fail`,
+          failUrl: `${cleanUrl}?paymentStatus=fail&reservationId=${res.data.id}`,
         });
       } catch (paymentError) {
         console.error('Payment request failed:', paymentError);
+        await patchMyReservation({ reservationId: res.data.id }, { status: 'canceled' });
       }
     } else {
       showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
