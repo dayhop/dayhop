@@ -13,6 +13,7 @@ import type { MyActivityReservation } from '@/lib/api/my-activities/type';
 import { useReservationModal, formatTimeOption, type TabStatus } from './useReservationModal';
 
 interface CalendarMyActivitiesModalProps {
+  isOpen: boolean;
   activityId: number;
   date: string; // YYYY-MM-DD
   onClose: () => void;
@@ -38,6 +39,7 @@ function formatDate(date: string) {
 }
 
 export const CalendarMyActivitiesModal = ({
+  isOpen,
   activityId,
   date,
   onClose,
@@ -98,8 +100,16 @@ export const CalendarMyActivitiesModal = ({
       <Modal
         onClose={onClose}
         ariaLabel="예약 현황 모달"
-        className={className}
-        overlayClassName={overlayClassName}
+        className={cn(
+          className,
+          'transition-transform duration-300 ease-out lg:transition-none',
+          isOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'
+        )}
+        overlayClassName={cn(
+          overlayClassName,
+          'transition-opacity duration-300 lg:transition-none',
+          !isOpen && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-none'
+        )}
       >
         {/* 헤더 */}
         <div className="mb-3 flex items-center justify-between px-6">
