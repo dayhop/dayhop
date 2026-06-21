@@ -70,7 +70,9 @@ export function ReservationPaycard({
         if (status === 'fail') {
           const reservationId = Number(params.get('reservationId'));
           if (reservationId) {
-            patchMyReservation({ reservationId }, { status: 'canceled' });
+            patchMyReservation({ reservationId }, { status: 'canceled' }).catch((error) =>
+              console.error('Failed to cancel reservation:', error)
+            );
           }
         }
         const timer = setTimeout(() => {
@@ -113,6 +115,12 @@ export function ReservationPaycard({
       let searchMonth = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
 
       for (let i = 0; i < MONTH_SEARCH_CAP; i++) {
+        if (direction === -1) {
+          const searchMonthEnd = new Date(searchMonth.getFullYear(), searchMonth.getMonth() + 1, 0);
+          searchMonthEnd.setHours(0, 0, 0, 0);
+          if (searchMonthEnd < todayStart) break;
+        }
+
         const year = String(searchMonth.getFullYear());
         const month = String(searchMonth.getMonth() + 1).padStart(2, '0');
         const monthSchedules = await fetchMonthSchedules(year, month);
