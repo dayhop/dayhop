@@ -26,14 +26,14 @@ export const ActivityCard = ({ activity, hoverReview, onClick }: ActivityCardPro
     <Link
       href={`/activities/${activity.id}`}
       onClick={onClick}
-      className="group block w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
+      className="group block w-full max-w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
     >
-      <div className="relative h-[230px] w-full overflow-hidden">
+      <div className="relative aspect-[262/230] w-full overflow-hidden">
         <Image
           src={activity.bannerImageUrl}
           alt={activity.title}
           fill
-          sizes="262px"
+          sizes="(max-width: 1280px) 50vw, 262px"
           className="object-cover transition-transform duration-300 group-hover:scale-110"
         />
 
@@ -57,14 +57,14 @@ export const ActivityCard = ({ activity, hoverReview, onClick }: ActivityCardPro
         </div>
       </div>
 
-      <div className="relative -mt-[42px] rounded-t-[32px] bg-white px-[24px] pt-[18px] pb-[18px]">
-        <h3 className="mb-2 line-clamp-1 text-[16px] font-bold text-gray-900">{activity.title}</h3>
+      <div className="relative -mt-[16%] rounded-t-[32px] bg-white px-[9%] py-[7%]">
+        <h3 className="mb-2 line-clamp-1 text-base font-bold text-gray-900">{activity.title}</h3>
 
         <StarRating rating={activity.rating} reviewCount={activity.reviewCount} />
 
-        <p className="mt-4 text-[16px] font-bold text-gray-900">
+        <p className="mt-[6%] text-base font-bold text-gray-900">
           ₩ {activity.price.toLocaleString()}
-          <span className="ml-1 text-[14px] font-normal text-gray-400">/ 인</span>
+          <span className="ml-1 text-sm font-normal text-gray-400">/ 인</span>
         </p>
       </div>
     </Link>
