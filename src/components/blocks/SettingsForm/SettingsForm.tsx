@@ -95,7 +95,11 @@ export const SettingsForm = ({ isOAuth = false }: SettingsFormProps) => {
   };
 
   const handleNewPasswordBlur = () => {
-    setErrors((prev) => ({ ...prev, newPassword: getPasswordError() }));
+    setErrors((prev) => ({
+      ...prev,
+      newPassword: getPasswordError(),
+      confirmPassword: formData.confirmPassword ? getConfirmPasswordError() : prev.confirmPassword,
+    }));
   };
 
   const handleConfirmPasswordBlur = () => {
