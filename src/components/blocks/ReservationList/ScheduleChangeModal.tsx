@@ -67,7 +67,7 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       onClose={onClose}
     >
       <div
-        className="custom-textarea-scrollbar w-full max-w-sm min-w-64 rounded-lg bg-white p-0"
+        className="custom-textarea-scrollbar w-full max-w-sm min-w-64 rounded-lg bg-white"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-bold">예약 변경</h2>
