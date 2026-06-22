@@ -9,24 +9,24 @@ import { useClickRecent } from '@/hooks/useClickRecent';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
 
-interface ActivityCardProps {
-  activity: ActivityItem;
+interface HoverReview {
+  nickname: string;
+  rating: number;
+  content: string;
 }
 
-export const ActivityCard = ({ activity }: ActivityCardProps) => {
-  const { handleUpdateLog } = useClickLogger();
-  const { handleUpdateRecentClick } = useClickRecent();
+interface ActivityCardProps {
+  activity: ActivityItem;
+  hoverReview?: HoverReview;
+  onClick?: () => void;
+}
 
-  const handleClick = () => {
-    handleUpdateLog(activity.id, activity.category);
-    handleUpdateRecentClick(activity.id);
-  };
-
+export const ActivityCard = ({ activity, hoverReview, onClick }: ActivityCardProps) => {
   return (
     <Link
       href={`/activities/${activity.id}`}
-      onClick={handleClick}
-      className="block w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+      onClick={onClick}
+      className="group block w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
     >
       <div className="relative h-[230px] w-full overflow-hidden">
         <Image
@@ -34,9 +34,27 @@ export const ActivityCard = ({ activity }: ActivityCardProps) => {
           alt={activity.title}
           fill
           sizes="262px"
-          quality={80}
-          className="object-cover"
+          className="object-cover transition-transform duration-300 group-hover:scale-110"
         />
+
+        <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/60" />
+
+        <div className="absolute inset-0 z-10 flex items-start justify-center px-5 pt-6 text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
+          {hoverReview ? (
+            <div className="w-full">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-bold">{hoverReview.nickname}</p>
+                <p className="text-sm font-semibold">⭐ {hoverReview.rating.toFixed(1)}</p>
+              </div>
+
+              <p className="mt-4 line-clamp-3 text-left text-sm leading-6 font-medium">
+                {hoverReview.content}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm font-medium">아직 등록된 리뷰가 없습니다.</p>
+          )}
+        </div>
       </div>
 
       <div className="relative -mt-[42px] rounded-t-[32px] bg-white px-[24px] pt-[18px] pb-[18px]">

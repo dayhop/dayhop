@@ -14,7 +14,8 @@ import { ActivityCard } from '@/components/ui/ActivityCard';
 import { ActivityCardSkeleton } from '@/components/ui/ActivityCard/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Pagination } from '@/components/ui/pagination';
-import { getActivities } from '@/lib/api/activities';
+import { useClickLogger } from '@/hooks/useClickLogger';
+import { getActivities, getActivityReviews } from '@/lib/api/activities';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
 
@@ -22,6 +23,12 @@ type CategoryItem = {
   label: ActivityCategory | '전체';
   value: ActivityCategory | '전체';
   Icon: ComponentType<SVGProps<SVGSVGElement>> | null;
+};
+
+type HoverReview = {
+  nickname: string;
+  rating: number;
+  content: string;
 };
 
 const CATEGORIES: CategoryItem[] = [
@@ -51,9 +58,12 @@ const getSearchResultText = (keyword: string) => {
 function ActivitiesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { handleUpdateLog } = useClickLogger();
+
   const initialKeyword = searchParams.get('keyword') ?? '';
 
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [activityReviews, setActivityReviews] = useState<Record<number, HoverReview>>({});
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory | '전체'>('전체');
   const [keyword, setKeyword] = useState(initialKeyword);
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,16 +86,55 @@ function ActivitiesPageContent() {
           category: selectedCategory === '전체' ? undefined : selectedCategory,
         });
 
-        if (res.success) {
-          setActivities(res.data.activities);
-          setTotalCount(res.data.totalCount);
+        if (!res.success) {
+          setActivities([]);
+          setActivityReviews({});
+          setTotalCount(0);
           return;
         }
 
-        setActivities([]);
-        setTotalCount(0);
+        const nextActivities = res.data.activities;
+
+        setActivities(nextActivities);
+        setTotalCount(res.data.totalCount);
+
+        const reviewEntries = await Promise.all(
+          nextActivities.map(async (activity) => {
+            try {
+              const reviewRes = await getActivityReviews(activity.id, {
+                page: 1,
+                size: 1,
+              });
+
+              if (!reviewRes.success || reviewRes.data.reviews.length === 0) {
+                return [activity.id, undefined] as const;
+              }
+
+              const latestReview = reviewRes.data.reviews[0];
+
+              return [
+                activity.id,
+                {
+                  nickname: latestReview.user.nickname,
+                  rating: latestReview.rating,
+                  content: latestReview.content,
+                },
+              ] as const;
+            } catch {
+              return [activity.id, undefined] as const;
+            }
+          })
+        );
+
+        setActivityReviews(
+          Object.fromEntries(reviewEntries.filter((entry) => entry[1] !== undefined)) as Record<
+            number,
+            HoverReview
+          >
+        );
       } catch {
         setActivities([]);
+        setActivityReviews({});
         setTotalCount(0);
       } finally {
         setIsLoading(false);
@@ -102,6 +151,7 @@ function ActivitiesPageContent() {
 
   const handleSearch = (value: string) => {
     const trimmed = value.trim();
+
     setKeyword(trimmed);
     setCurrentPage(1);
 
@@ -164,6 +214,7 @@ function ActivitiesPageContent() {
                     }
                   />
                 )}
+
                 <span>{category.label}</span>
               </button>
             );
@@ -191,9 +242,16 @@ function ActivitiesPageContent() {
           </div>
         ) : activities.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
               {activities.map((activity) => (
-                <ActivityCard key={activity.id} activity={activity} />
+                <ActivityCard
+                  key={activity.id}
+                  activity={activity}
+                  hoverReview={activityReviews[activity.id]}
+                  onClick={() => {
+                    handleUpdateLog(activity.id, activity.category);
+                  }}
+                />
               ))}
             </div>
 

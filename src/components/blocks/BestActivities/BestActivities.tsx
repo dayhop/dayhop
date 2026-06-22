@@ -40,11 +40,15 @@ export function BestActivities({ items }: BestActivitiesProps) {
 
   if (isLoading) {
     return (
-      <section className="flex w-full max-w-300 flex-col gap-4">
-        <h2 className="text-lg font-bold md:text-4xl">🛼 인기 체험</h2>
+      <section className="mx-auto flex w-full max-w-[1000px] flex-col gap-6">
+        <div className="text-xl font-bold md:text-2xl">🛼 인기 체험</div>
+
         <div className="flex gap-4 overflow-hidden">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <ActivityCardSkeleton key={index} />
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-40 w-42 shrink-0 animate-pulse rounded-2xl bg-gray-200 md:h-80 md:w-80"
+            />
           ))}
         </div>
       </section>
@@ -53,9 +57,10 @@ export function BestActivities({ items }: BestActivitiesProps) {
 
   if (!activities.length) {
     return (
-      <section className="flex w-full max-w-300 flex-col gap-4">
-        <h2 className="text-lg font-bold md:text-4xl">🛼 인기 체험</h2>
-        <EmptyState message="등록된 체험이 없습니다." />
+      <section className="mx-auto flex w-full max-w-[1000px] flex-col gap-6">
+        <div className="text-xl font-bold md:text-2xl">🛼 인기 체험</div>
+
+        <div className="py-8 text-center text-sm text-gray-500">등록된 체험이 없습니다.</div>
       </section>
     );
   }
