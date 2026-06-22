@@ -49,15 +49,15 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
 
   if (isLoading) {
     return (
-      <section className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible">
-        <div className="h-[234px] w-full animate-pulse rounded-3xl bg-gray-200 md:h-[290px] xl:h-[390px]" />
+      <section className="relative mx-auto w-full max-w-[1120px] overflow-hidden xl:overflow-visible">
+        <div className="h-[210px] w-full animate-pulse rounded-3xl bg-gray-200 md:h-[260px] xl:h-[340px]" />
       </section>
     );
   }
 
   if (!activities.length) {
     return (
-      <section className="relative mx-auto flex h-[234px] w-full max-w-[1200px] items-center justify-center rounded-3xl bg-gray-50 text-sm text-gray-500 md:h-[290px] xl:h-[390px]">
+      <section className="relative mx-auto flex h-[210px] w-full max-w-[1120px] items-center justify-center rounded-3xl bg-gray-50 text-sm text-gray-500 md:h-[260px] xl:h-[340px]">
         등록된 체험이 없습니다.
       </section>
     );
@@ -74,10 +74,10 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   };
 
   return (
-    <section className="relative mx-auto w-full max-w-[1200px] overflow-hidden xl:overflow-visible">
+    <section className="relative mx-auto w-full max-w-[1120px] overflow-hidden xl:overflow-visible">
       <div className="relative xl:hidden">
         <div
-          className="flex gap-4 transition-transform duration-500 ease-in-out [--slide-gap:16px] [--slide-width:343px] md:gap-6 md:[--slide-gap:24px] md:[--slide-width:696px]"
+          className="flex gap-4 transition-transform duration-500 ease-in-out [--slide-gap:16px] [--slide-width:320px] md:gap-6 md:[--slide-gap:24px] md:[--slide-width:640px]"
           style={{
             transform: `translateX(calc(50% - (${currentIndex} * (var(--slide-width) + var(--slide-gap))) - (var(--slide-width) / 2)))`,
           }}
@@ -86,13 +86,13 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
             <Link
               key={activity.id}
               href={`/activities/${activity.id}`}
-              className="relative h-[234px] w-[343px] shrink-0 overflow-hidden rounded-3xl md:h-[290px] md:w-[696px]"
+              className="relative h-[210px] w-[320px] shrink-0 overflow-hidden rounded-3xl md:h-[260px] md:w-[640px]"
             >
               <Image
                 src={activity.bannerImageUrl}
                 alt={activity.title}
                 fill
-                sizes="(min-width: 768px) 696px, 343px"
+                sizes="(min-width: 768px) 640px, 320px"
                 quality={80}
                 priority={index === 0}
                 className="object-cover"
@@ -100,14 +100,14 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
 
               <div className="absolute inset-0 bg-black/20" />
 
-              <div className="absolute top-1/2 left-6 -translate-y-1/2 text-white md:left-10">
-                <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
+              <div className="absolute top-1/2 left-5 -translate-y-1/2 text-white md:left-8">
+                <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-black">
                   {activity.category}
                 </span>
 
-                <h2 className="mt-4 text-2xl font-bold md:text-3xl">{activity.title}</h2>
+                <h2 className="mt-3 text-xl font-bold md:text-2xl">{activity.title}</h2>
 
-                <p className="mt-2 text-sm md:text-base">{activity.address}</p>
+                <p className="mt-2 text-xs md:text-sm">{activity.address}</p>
               </div>
             </Link>
           ))}
@@ -116,12 +116,12 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
 
       <div className="relative hidden xl:block">
         <Link href={`/activities/${currentActivity.id}`}>
-          <div className="relative h-[390px] w-full cursor-pointer overflow-hidden rounded-3xl">
+          <div className="relative h-[340px] w-full cursor-pointer overflow-hidden rounded-3xl">
             <Image
               src={currentActivity.bannerImageUrl}
               alt={currentActivity.title}
               fill
-              sizes="(min-width: 1280px) 1920px, 100vw"
+              sizes="1120px"
               quality={80}
               priority
               className="object-cover"
@@ -129,14 +129,14 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
 
             <div className="absolute inset-0 bg-black/20" />
 
-            <div className="absolute top-1/2 left-12 -translate-y-1/2 text-white">
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
+            <div className="absolute top-1/2 left-10 -translate-y-1/2 text-white">
+              <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-black">
                 {currentActivity.category}
               </span>
 
-              <h2 className="mt-4 text-4xl font-bold">{currentActivity.title}</h2>
+              <h2 className="mt-3 text-3xl font-bold">{currentActivity.title}</h2>
 
-              <p className="mt-2 text-lg">{currentActivity.address}</p>
+              <p className="mt-2 text-base">{currentActivity.address}</p>
             </div>
           </div>
         </Link>
@@ -149,7 +149,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
               aria-label="이전 체험"
               className="absolute top-1/2 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
             >
-              <CarouselLeft className="h-12 w-12" />
+              <CarouselLeft className="h-10 w-10" />
             </button>
 
             <button
@@ -158,7 +158,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
               aria-label="다음 체험"
               className="absolute top-1/2 right-0 z-10 translate-x-1/2 -translate-y-1/2"
             >
-              <CarouselRight className="h-12 w-12" />
+              <CarouselRight className="h-10 w-10" />
             </button>
           </>
         )}
@@ -174,7 +174,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
               aria-label={`${index + 1}번째 배너 보기`}
               className={
                 currentIndex === index
-                  ? 'h-2 w-6 rounded-full bg-white'
+                  ? 'h-2 w-5 rounded-full bg-white'
                   : 'h-2 w-2 rounded-full bg-white/50'
               }
             />

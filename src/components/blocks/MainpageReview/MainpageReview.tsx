@@ -72,20 +72,20 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
   if (isLoading) {
     return (
-      <section className="mx-auto w-[333px] py-16 min-[744px]:w-[695px] min-[1280px]:w-[1200px]">
-        <h2 className="mb-10 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
+      <section className="mx-auto w-[320px] py-10 min-[744px]:w-[620px] min-[1280px]:w-[960px]">
+        <h2 className="mb-8 text-xl font-bold md:text-2xl">✨ Hopper들의 생생한 후기</h2>
 
-        <div className="grid gap-y-12 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-20">
+        <div className="grid gap-y-8 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-10">
           {Array.from({ length: 4 }).map((_, index) => (
-            <article key={index} className="flex justify-between gap-5">
-              <div className="w-[190px] min-[744px]:w-[360px] min-[1280px]:w-[330px]">
-                <div className="mb-2 h-4 w-20 animate-pulse rounded bg-gray-200" />
-                <div className="mb-3 h-6 w-40 animate-pulse rounded bg-gray-200" />
-                <div className="h-20 w-full animate-pulse rounded bg-gray-200" />
-                <div className="mt-4 h-6 w-32 animate-pulse rounded bg-gray-200" />
+            <article key={index} className="flex justify-between gap-3">
+              <div className="w-[170px] min-[744px]:w-[300px] min-[1280px]:w-[260px]">
+                <div className="mb-2 h-3 w-16 animate-pulse rounded bg-gray-200" />
+                <div className="mb-3 h-4 w-32 animate-pulse rounded bg-gray-200" />
+                <div className="h-16 w-full animate-pulse rounded bg-gray-200" />
+                <div className="mt-3 h-4 w-24 animate-pulse rounded bg-gray-200" />
               </div>
 
-              <div className="h-[160px] w-[110px] shrink-0 animate-pulse rounded-xl bg-gray-200" />
+              <div className="h-[120px] w-[84px] shrink-0 animate-pulse rounded-xl bg-gray-200" />
             </article>
           ))}
         </div>
@@ -95,60 +95,60 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
   if (reviews.length === 0) {
     return (
-      <section className="mx-auto w-[333px] py-16 min-[744px]:w-[695px] min-[1280px]:w-[1200px]">
-        <h2 className="mb-10 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
+      <section className="mx-auto w-[320px] py-10 min-[744px]:w-[620px] min-[1280px]:w-[960px]">
+        <h2 className="mb-8 text-xl font-bold md:text-2xl">✨ Hopper들의 생생한 후기</h2>
 
-        <div className="py-10 text-center text-gray-500">등록된 후기가 없습니다.</div>
+        <div className="py-8 text-center text-sm text-gray-500">등록된 후기가 없습니다.</div>
       </section>
     );
   }
 
   return (
-    <section className="mx-auto w-[333px] py-16 min-[744px]:w-[695px] min-[1280px]:w-[1200px]">
-      <h2 className="mb-10 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
+    <section className="mx-auto w-[320px] py-10 min-[744px]:w-[620px] min-[1280px]:w-[960px]">
+      <h2 className="mb-8 text-xl font-bold md:text-2xl">✨ Hopper들의 생생한 후기</h2>
 
-      <div className="grid gap-y-12 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-20">
+      <div className="grid gap-y-8 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-10">
         {reviews.map((item) => (
-          <article key={item.review.id} className="flex justify-between gap-5">
+          <article key={item.review.id} className="flex justify-between gap-3">
             <div
-              className="w-[190px] cursor-pointer min-[744px]:w-[360px] min-[1280px]:w-[330px]"
+              className="w-[170px] cursor-pointer min-[744px]:w-[300px] min-[1280px]:w-[260px]"
               onClick={() => moveToActivity(item.activity.id)}
             >
-              <p className="mb-1 text-sm text-gray-400">{item.activity.category}</p>
+              <p className="mb-1 text-xs text-gray-400">{item.activity.category}</p>
 
-              <h3 className="mb-2 text-lg font-bold">{item.activity.title}</h3>
+              <h3 className="mb-2 text-sm font-bold">{item.activity.title}</h3>
 
-              <p className="line-clamp-4 text-sm leading-6 text-gray-600">{item.review.content}</p>
+              <p className="line-clamp-4 text-xs leading-5 text-gray-600">{item.review.content}</p>
 
-              <div className="mt-4 flex items-center gap-2">
-                <div className="relative h-6 w-6 overflow-hidden rounded-full bg-gray-200">
+              <div className="mt-3 flex items-center gap-2">
+                <div className="relative h-5 w-5 overflow-hidden rounded-full bg-gray-200">
                   {item.review.user.profileImageUrl && (
                     <Image
                       src={item.review.user.profileImageUrl}
                       alt={item.review.user.nickname}
                       fill
-                      sizes="24px"
+                      sizes="20px"
                       quality={80}
                       className="object-cover"
                     />
                   )}
                 </div>
 
-                <span className="text-sm">{item.review.user.nickname}</span>
+                <span className="text-xs">{item.review.user.nickname}</span>
 
                 <StarRating mode="display" rating={item.review.rating} />
               </div>
             </div>
 
             <div
-              className="relative h-[160px] w-[110px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
+              className="relative h-[120px] w-[84px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
               onClick={() => moveToActivity(item.activity.id)}
             >
               <Image
                 src={item.activity.bannerImageUrl}
                 alt={item.activity.title}
                 fill
-                sizes="220px"
+                sizes="168px"
                 quality={80}
                 className="object-cover"
               />

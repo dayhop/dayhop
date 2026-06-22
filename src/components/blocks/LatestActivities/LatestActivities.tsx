@@ -35,9 +35,9 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
   }, [initialActivities]);
 
   return (
-    <section className="w-full max-w-300">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-2xl font-bold md:text-3xl">🔥 최신 체험</h2>
+    <section className="w-full max-w-[1000px]">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-bold md:text-2xl">🔥 최신 체험</h2>
 
         <Link href="/activities" className="text-sm font-medium text-gray-500 hover:text-gray-700">
           전체보기
@@ -49,18 +49,20 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="h-45 w-full animate-pulse rounded-2xl bg-gray-200 md:h-96"
+              className="h-40 w-42 animate-pulse rounded-2xl bg-gray-200 md:h-80 md:w-80"
             />
           ))}
         </div>
       ) : activities.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {activities.map((activity) => (
-            <ActivityCard key={activity.id} data={activity} />
+            <div key={activity.id} className="w-42 md:w-80">
+              <ActivityCard data={activity} />
+            </div>
           ))}
         </div>
       ) : (
-        <div className="py-10 text-center text-gray-500">등록된 최신 체험이 없습니다.</div>
+        <div className="py-8 text-center text-sm text-gray-500">등록된 최신 체험이 없습니다.</div>
       )}
     </section>
   );
