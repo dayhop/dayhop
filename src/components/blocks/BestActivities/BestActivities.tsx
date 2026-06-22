@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { ActivityCardContainer } from '@/components/blocks/Main/ActivityCardContainer';
+import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
@@ -38,7 +39,16 @@ export function BestActivities({ items }: BestActivitiesProps) {
   }, [items]);
 
   if (isLoading) {
-    return null;
+    return (
+      <section className="flex w-full max-w-300 flex-col gap-4">
+        <h2 className="text-lg font-bold md:text-4xl">🛼 인기 체험</h2>
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <ActivityCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    );
   }
 
   if (!activities.length) {

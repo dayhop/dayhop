@@ -16,6 +16,7 @@ function KakaoSignUpForm() {
   const router = useRouter();
   const [nickname, setNickname] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const params = useSearchParams();
   const token = params.get('code');
@@ -34,6 +35,8 @@ function KakaoSignUpForm() {
       setErrorMessage('닉네임을 입력해주세요');
       return;
     }
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const res = await postOauthSignUp('kakao', {
       nickname: nickname,
       redirectUri: KAKAO_SIGNUP_REDIRECT_URI,
@@ -62,11 +65,14 @@ function KakaoSignUpForm() {
         <Button
           variant="secondary"
           type="button"
+          disabled={isSubmitting}
           onClick={() => setNickname(generateRandomNickname())}
         >
           랜덤 닉네임
         </Button>
-        <Button type="submit">회원가입하기</Button>
+        <Button type="submit" isLoading={isSubmitting}>
+          회원가입하기
+        </Button>
       </div>
     </form>
   );

@@ -9,9 +9,9 @@ import CategoryFood from '@/assets/icon/category-food.svg';
 import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
 import CategorySports from '@/assets/icon/category-sports.svg';
 import CategoryTour from '@/assets/icon/category-tour.svg';
-import { BannerCarousel } from '@/components/blocks/BannerCarousel';
 import { SearchInput } from '@/components/blocks/SearchInput';
 import { ActivityCard } from '@/components/ui/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/ui/ActivityCard/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Pagination } from '@/components/ui/pagination';
 import { getActivities } from '@/lib/api/activities';
@@ -53,7 +53,6 @@ function ActivitiesPageContent() {
   const searchParams = useSearchParams();
   const initialKeyword = searchParams.get('keyword') ?? '';
 
-  const [bannerActivities, setBannerActivities] = useState<ActivityItem[]>([]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory | '전체'>('전체');
   const [keyword, setKeyword] = useState(initialKeyword);
@@ -62,25 +61,6 @@ function ActivitiesPageContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const paginationCount = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-
-  useEffect(() => {
-    const fetchBannerActivities = async () => {
-      try {
-        const res = await getActivities({
-          method: 'offset',
-          sort: 'latest',
-          page: 1,
-          size: 4,
-        });
-
-        setBannerActivities(res.success ? res.data.activities : []);
-      } catch {
-        setBannerActivities([]);
-      }
-    };
-
-    fetchBannerActivities();
-  }, []);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -150,10 +130,6 @@ function ActivitiesPageContent() {
 
   return (
     <main className="flex w-full flex-col items-center pb-24">
-      <section className="mt-8 w-full px-4 md:px-6">
-        <BannerCarousel activities={bannerActivities} />
-      </section>
-
       <section className="mt-16 w-full px-4 md:px-6">
         <SearchInput onSearch={handleSearch} onReset={handleReset} initialValue={keyword} />
       </section>
@@ -207,7 +183,13 @@ function ActivitiesPageContent() {
           </div>
         )}
 
-        {isLoading ? null : activities.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+              <ActivityCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : activities.length > 0 ? (
           <>
             <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activities.map((activity) => (
