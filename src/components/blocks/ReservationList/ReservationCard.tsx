@@ -133,12 +133,17 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
       </div>
       {status === 'pending' && (
         <div className="flex w-full gap-3 lg:hidden">
-          <Button size="sm" variant="secondary" onClick={() => setIsChangeModalOpen(true)}>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="border-gray-50 text-gray-600"
+            onClick={() => setIsChangeModalOpen(true)}
+          >
             예약 변경
           </Button>
           <Button
             size="sm"
-            className="bg-gray-50 text-gray-600"
+            className="bg-gray-50 text-gray-600 hover:text-white"
             onClick={() => setIsDeleteModalOpen(true)}
           >
             예약 취소
