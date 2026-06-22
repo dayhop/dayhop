@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -22,8 +23,14 @@ interface MainpageReviewProps {
 }
 
 export const MainpageReview = ({ items }: MainpageReviewProps) => {
+  const router = useRouter();
+
   const [reviews, setReviews] = useState<MainReviewItem[]>(items ?? []);
   const [isLoading, setIsLoading] = useState(!items);
+
+  const moveToActivity = (activityId: number) => {
+    router.push(`/activities/${activityId}`);
+  };
 
   useEffect(() => {
     if (items) return;
@@ -136,7 +143,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
                 <StarRating mode="display" rating={item.review.rating} />
               </div>
-            </Link>
+            </div>
 
             <div
               className="relative h-[120px] w-[84px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
@@ -150,7 +157,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                 quality={80}
                 className="object-cover"
               />
-            </Link>
+            </div>
           </article>
         ))}
       </div>
