@@ -79,7 +79,7 @@ export function SelectField({
                   }}
                   key={`${item}-${index}`}
                   variant="text"
-                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 ${selectedIndex === index ? 'bg-[#f2f9ff]' : ''}`}
+                  className={`text-text-primary h-12 shrink-0 rounded-xl px-5 text-left ${selectedIndex === index ? 'bg-[#f2f9ff]' : ''}`}
                 >
                   {item}
                 </Button>
