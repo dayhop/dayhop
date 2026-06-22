@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { StarRating } from '@/components/ui/StarRating';
 
-import type { ActivityItem } from '@/types/api';
-import type { Reviews } from '@/lib/api/activities/type';
+import type { ActivityItem, Reviews } from '@/lib/api/activities/type';
 
 interface MainReviewItem {
   activity: ActivityItem;
@@ -39,9 +35,9 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
       try {
         const activityRes = await getActivities({
           method: 'offset',
-          sort: 'latest',
+          sort: 'most_reviewed',
           page: 1,
-          size: 4,
+          size: 100,
         });
 
         if (!activityRes.success) {
@@ -49,24 +45,31 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
           return;
         }
 
-        const reviewResults = await Promise.all(
-          activityRes.data.activities.map(async (activity) => {
-            const reviewRes = await getActivityReviews(activity.id, {
-              page: 1,
-              size: 1,
-            });
+        const collectedReviews: MainReviewItem[] = [];
 
-            if (!reviewRes.success) return null;
+        for (const activity of activityRes.data.activities) {
+          if (collectedReviews.length >= 4) break;
 
-            const review = reviewRes.data.reviews[0];
+          if (activity.reviewCount === 0) continue;
 
-            if (!review) return null;
+          const reviewRes = await getActivityReviews(activity.id, {
+            page: 1,
+            size: 1,
+          });
 
-            return { activity, review };
-          })
-        );
+          if (!reviewRes.success) continue;
 
-        setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
+          const review = reviewRes.data.reviews[0];
+
+          if (!review) continue;
+
+          collectedReviews.push({
+            activity,
+            review,
+          });
+        }
+
+        setReviews(collectedReviews);
       } finally {
         setIsLoading(false);
       }
@@ -115,8 +118,9 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
       <div className="grid grid-cols-1 gap-y-8 min-[744px]:grid-cols-2 min-[744px]:gap-x-8 min-[1280px]:gap-x-10">
         {reviews.map((item) => (
           <article key={item.review.id} className="flex justify-between gap-3">
-            <div
-              className="min-w-0 flex-1 cursor-pointer"
+            <button
+              type="button"
+              className="min-w-0 flex-1 cursor-pointer text-left"
               onClick={() => moveToActivity(item.activity.id)}
             >
               <p className="mb-1 text-xs text-gray-400">{item.activity.category}</p>
@@ -143,21 +147,23 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
                 <StarRating mode="display" rating={item.review.rating} />
               </div>
-            </div>
+            </button>
 
-            <div
+            <button
+              type="button"
               className="relative h-[120px] w-[84px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
               onClick={() => moveToActivity(item.activity.id)}
+              aria-label={`${item.activity.title} 상세 페이지로 이동`}
             >
               <Image
                 src={item.activity.bannerImageUrl}
                 alt={item.activity.title}
                 fill
-                sizes="168px"
+                sizes="84px"
                 quality={80}
                 className="object-cover"
               />
-            </div>
+            </button>
           </article>
         ))}
       </div>
