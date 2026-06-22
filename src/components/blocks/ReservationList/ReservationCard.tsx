@@ -66,18 +66,20 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
       )}
 
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
-      <div className="flex h-34 w-full items-stretch lg:h-43">
-        <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
+      <div className="relative flex h-34 w-full lg:h-45">
+        <div className="relative z-10 flex w-[calc(100%-98px)] flex-col justify-center gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)] md:w-[calc(100%-116px)] lg:w-[calc(100%-155px)]">
           <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
-            <div className="truncate font-bold">{activity.title}</div>
-            <div className="text-text-tertiary hidden text-[13px] lg:flex">{`${date} · ${startTime} ~ ${endTime}`}</div>
+            <div className="truncate text-[14px] font-bold lg:text-[18px]">{activity.title}</div>
+            <div className="text-text-tertiary hidden text-[13px] lg:flex lg:text-[16px]">{`${date} · ${startTime} ~ ${endTime}`}</div>
             <div className="text-text-tertiary text-[13px] lg:hidden">{`${startTime} ~ ${endTime}`}</div>
           </div>
           <div className="flex justify-between">
-            <div className="flex gap-1">
-              <div className="text-[16px] font-bold">{totalPriceToString(totalPrice)}</div>
-              <div className="text-text-placeholder">{headCount}명</div>
+            <div className="flex items-center gap-1">
+              <div className="text-[16px] font-bold lg:text-[18px]">
+                {totalPriceToString(totalPrice)}
+              </div>
+              <div className="text-text-placeholder lg:text-[16px]">{headCount}명</div>
             </div>
             {status === 'pending' && (
               <div className="hidden gap-2 lg:flex">
@@ -117,7 +119,7 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
               ))}
           </div>
         </div>
-        <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
+        <div className="absolute top-0 right-0 h-34 w-34 overflow-hidden rounded-r-3xl lg:h-45 lg:w-45">
           <Image
             src={cardImg}
             alt="배너 이미지"
