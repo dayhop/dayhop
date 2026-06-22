@@ -8,7 +8,7 @@ import CarouselLeft from '@/assets/icon/arrow-left.svg';
 import CarouselRight from '@/assets/icon/arrow-right.svg';
 import { getActivities } from '@/lib/api/activities';
 
-import type { ActivityItem } from '@/types/api';
+import type { ActivityItem } from '@/lib/api/activities/type';
 
 interface BannerCarouselProps {
   activities?: ActivityItem[];
@@ -18,34 +18,43 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   const [activities, setActivities] = useState<ActivityItem[]>(initialActivities ?? []);
   const [isLoading, setIsLoading] = useState(!initialActivities);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (initialActivities) return;
 
     const fetchBannerActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: 1,
-        size: 4,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: 1,
+          size: 4,
+        });
 
-      setActivities(res.success ? res.data.activities : []);
-      setIsLoading(false);
+        setActivities(res.success ? res.data.activities : []);
+      } catch {
+        setActivities([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchBannerActivities();
   }, [initialActivities]);
 
   useEffect(() => {
-    if (activities.length <= 1) return;
+    if (activities.length <= 1 || isPaused || isHovered) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === activities.length - 1 ? 0 : prev + 1));
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [activities.length]);
+  }, [activities.length, isPaused, isHovered]);
 
   if (isLoading) {
     return (

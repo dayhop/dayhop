@@ -19,6 +19,14 @@ const mockActivity: ActivityItem = {
   updatedAt: '2025-06-01T00:00:00.000Z',
 };
 
+const mockActivities: ActivityItem[] = Array.from({ length: 8 }, (_, index) => ({
+  ...mockActivity,
+  id: index + 1,
+  title: `테스트 체험 ${index + 1}`,
+  price: 30000 + index * 1000,
+  bannerImageUrl: `https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80&ix=${index}`,
+}));
+
 const meta = {
   title: 'UI/ActivityCard',
   component: ActivityCard,

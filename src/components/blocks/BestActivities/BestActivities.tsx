@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 
 import { ActivityCardContainer } from '@/components/blocks/Main/ActivityCardContainer';
+import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
@@ -19,15 +21,18 @@ export function BestActivities({ items }: BestActivitiesProps) {
     if (items) return;
 
     const fetchBestActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'most_reviewed',
-        page: 1,
-        size: 10,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'most_reviewed',
+          page: 1,
+          size: 10,
+        });
 
-      setActivities(res.success ? res.data.activities : []);
-      setIsLoading(false);
+        setActivities(res.success ? res.data.activities : []);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchBestActivities();

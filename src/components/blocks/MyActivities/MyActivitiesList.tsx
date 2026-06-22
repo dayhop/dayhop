@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { MyActivityCard } from './MyActivityCard';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { EmptyState } from '@/components/ui/EmptyState/EmptyState';
+import { Spinner } from '@/components/ui/Spinner';
 import { deleteMyActivity, getMyActivities } from '@/lib/api/my-activities';
 import { showToast } from '@/utils/toast';
 import type { ActivityItem } from '@/types/api';
@@ -22,6 +23,7 @@ export const MyActivitiesList = ({
   const [activities, setActivities] = useState(initialActivities);
   const [cursorId, setCursorId] = useState(initialCursorId);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const isLoadingRef = useRef(false);
   const observerRef = useRef<HTMLDivElement>(null);
 
@@ -32,8 +34,10 @@ export const MyActivitiesList = ({
       async ([entry]) => {
         if (!entry.isIntersecting || isLoadingRef.current) return;
         isLoadingRef.current = true;
+        setIsFetchingMore(true);
         const res = await getMyActivities({ cursorId });
         isLoadingRef.current = false;
+        setIsFetchingMore(false);
         if (res.success) {
           setActivities((prev) => [...prev, ...res.data.activities]);
           setCursorId(res.data.cursorId);
@@ -77,7 +81,11 @@ export const MyActivitiesList = ({
         ))}
       </ul>
 
-      {cursorId && <div ref={observerRef} className="h-4" />}
+      {cursorId && (
+        <div ref={observerRef} className="flex h-10 items-center justify-center">
+          {isFetchingMore && <Spinner className="text-primary" />}
+        </div>
+      )}
 
       <ConfirmModal
         isOpen={!!deleteTargetId}

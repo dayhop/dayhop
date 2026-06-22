@@ -7,7 +7,8 @@ import { BestActivities } from '@/components/blocks/BestActivities';
 import { LatestActivities } from '@/components/blocks/LatestActivities';
 import { MainpageReview } from '@/components/blocks/MainpageReview';
 import { SearchInput } from '@/components/blocks/SearchInput';
-import { Userfit } from '@/app/(main)/components/Userfit';
+import { Userfit } from '@/components/blocks/Main/Userfit';
+import { FloatingRecentViews } from '@/components/blocks/Main/FloatingView';
 
 export default function Home() {
   const router = useRouter();

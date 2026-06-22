@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { StarRating } from '@/components/ui/StarRating';
 
 import type { ActivityItem } from '@/types/api';
@@ -20,51 +22,47 @@ interface MainpageReviewProps {
 }
 
 export const MainpageReview = ({ items }: MainpageReviewProps) => {
-  const router = useRouter();
-
   const [reviews, setReviews] = useState<MainReviewItem[]>(items ?? []);
   const [isLoading, setIsLoading] = useState(!items);
-
-  const moveToActivity = (activityId: number) => {
-    router.push(`/activities/${activityId}`);
-  };
 
   useEffect(() => {
     if (items) return;
 
     const fetchReviews = async () => {
-      const activityRes = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: 1,
-        size: 4,
-      });
+      try {
+        const activityRes = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: 1,
+          size: 4,
+        });
 
-      if (!activityRes.success) {
-        setReviews([]);
+        if (!activityRes.success) {
+          setReviews([]);
+          return;
+        }
+
+        const reviewResults = await Promise.all(
+          activityRes.data.activities.map(async (activity) => {
+            const reviewRes = await getActivityReviews(activity.id, {
+              page: 1,
+              size: 1,
+            });
+
+            if (!reviewRes.success) return null;
+
+            const review = reviewRes.data.reviews[0];
+
+            if (!review) return null;
+
+            return { activity, review };
+          })
+        );
+
+        setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
+      } finally {
         setIsLoading(false);
-        return;
       }
-
-      const reviewResults = await Promise.all(
-        activityRes.data.activities.map(async (activity) => {
-          const reviewRes = await getActivityReviews(activity.id, {
-            page: 1,
-            size: 1,
-          });
-
-          if (!reviewRes.success) return null;
-
-          const review = reviewRes.data.reviews[0];
-
-          if (!review) return null;
-
-          return { activity, review };
-        })
-      );
-
-      setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
-      setIsLoading(false);
     };
 
     fetchReviews();
@@ -138,7 +136,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
                 <StarRating mode="display" rating={item.review.rating} />
               </div>
-            </div>
+            </Link>
 
             <div
               className="relative h-[120px] w-[84px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
@@ -152,7 +150,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                 quality={80}
                 className="object-cover"
               />
-            </div>
+            </Link>
           </article>
         ))}
       </div>

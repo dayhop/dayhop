@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { ActivityCard } from '@/components/blocks/Main/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
@@ -20,19 +22,37 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
     if (initialActivities) return;
 
     const fetchLatestActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: 1,
-        size: 3,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: 1,
+          size: 3,
+        });
 
-      setActivities(res.success ? res.data.activities : []);
-      setIsLoading(false);
+        setActivities(res.success ? res.data.activities : []);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchLatestActivities();
   }, [initialActivities]);
+
+  if (isLoading) {
+    return (
+      <section className="flex max-w-300 flex-col gap-4">
+        <div className="flex justify-between">
+          <div className="text-lg font-bold md:text-4xl">🔥 최신 체험</div>
+        </div>
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ActivityCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="w-full max-w-[1000px]">

@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { postOauthSignIn } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
-import { REDIRECT_LOGIN_URI } from '../../../components/Oauth';
+import { getBaseUrl } from '@/utils/getBaseUrl';
 
 function KakaoLogin() {
   const ref = useRef(false);
@@ -13,6 +13,10 @@ function KakaoLogin() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
 
+  const BASE_URL = getBaseUrl();
+
+  const KAKAO_LOGIN_REDIRECT_URI = `${BASE_URL}/oauth/kakao/login/`;
+
   const handleAuth = async () => {
     if (!code) {
       showToast.error('유효하지 않은 토큰입니다.');
@@ -20,7 +24,7 @@ function KakaoLogin() {
       return;
     }
     const body = {
-      redirectUri: REDIRECT_LOGIN_URI,
+      redirectUri: KAKAO_LOGIN_REDIRECT_URI,
       token: code,
     };
     const res = await postOauthSignIn('kakao', body);
