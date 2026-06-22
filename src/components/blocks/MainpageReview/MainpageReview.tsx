@@ -37,7 +37,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
           method: 'offset',
           sort: 'most_reviewed',
           page: 1,
-          size: 100,
+          size: 50,
         });
 
         if (!activityRes.success) {
@@ -45,31 +45,33 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
           return;
         }
 
-        const collectedReviews: MainReviewItem[] = [];
+        const activitiesWithReviews = activityRes.data.activities
+          .filter((activity) => activity.reviewCount > 0)
+          .slice(0, 8);
 
-        for (const activity of activityRes.data.activities) {
-          if (collectedReviews.length >= 4) break;
+        const reviewResults = await Promise.all(
+          activitiesWithReviews.map(async (activity) => {
+            const reviewRes = await getActivityReviews(activity.id, {
+              page: 1,
+              size: 1,
+            });
 
-          if (activity.reviewCount === 0) continue;
+            if (!reviewRes.success) return null;
 
-          const reviewRes = await getActivityReviews(activity.id, {
-            page: 1,
-            size: 1,
-          });
+            const review = reviewRes.data.reviews[0];
 
-          if (!reviewRes.success) continue;
+            if (!review) return null;
 
-          const review = reviewRes.data.reviews[0];
+            return {
+              activity,
+              review,
+            };
+          })
+        );
 
-          if (!review) continue;
-
-          collectedReviews.push({
-            activity,
-            review,
-          });
-        }
-
-        setReviews(collectedReviews);
+        setReviews(
+          reviewResults.filter((item): item is MainReviewItem => item !== null).slice(0, 4)
+        );
       } finally {
         setIsLoading(false);
       }
