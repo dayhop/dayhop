@@ -43,7 +43,7 @@ export default function Home() {
         <LatestActivities />
       </section>
 
-      <section className="mt-16 w-full">
+      <section className="mt-16 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
         <MainpageReview />
       </section>
     </main>

@@ -11,6 +11,7 @@ interface AuthFormProps {
   label: string;
   className?: string;
   value?: string;
+  suffix?: React.ReactNode;
 }
 export function AuthField({
   title,
@@ -23,6 +24,7 @@ export function AuthField({
   label,
   className,
   value,
+  suffix,
 }: AuthFormProps) {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
@@ -38,6 +40,7 @@ export function AuthField({
         onBlur={handleFocusout}
         onChange={handleChange}
         value={value}
+        suffix={suffix}
       />
     </div>
   );
