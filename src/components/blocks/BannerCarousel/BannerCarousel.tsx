@@ -22,6 +22,13 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
   const [startX, setStartX] = useState<number | null>(null);
   const [startY, setStartY] = useState<number | null>(null);
   const isDraggingRef = useRef(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (initialActivities) return;
@@ -80,8 +87,7 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
     setCurrentIndex((prev) => (prev === activities.length - 1 ? 0 : prev + 1));
   };
 
-  const handleStart = (clientX: number, clientY: number, preventDefault?: () => void) => {
-    if (preventDefault) preventDefault();
+  const handleStart = (clientX: number, clientY: number) => {
     setIsPaused(true);
     setStartX(clientX);
     setStartY(clientY);
@@ -113,7 +119,8 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
 
     setStartX(null);
     setStartY(null);
-    setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
       isDraggingRef.current = false;
     }, 50);
   };
@@ -127,12 +134,13 @@ export const BannerCarousel = ({ activities: initialActivities }: BannerCarousel
           setStartX(null);
           setStartY(null);
           setIsPaused(false);
-          setTimeout(() => {
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          timeoutRef.current = setTimeout(() => {
             isDraggingRef.current = false;
           }, 50);
         }
       }}
-      onMouseDown={(e) => handleStart(e.clientX, e.clientY, () => e.preventDefault())}
+      onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
       onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
       onMouseUp={(e) => handleEnd(e.clientX, e.clientY)}
       onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)}
