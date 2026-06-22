@@ -39,7 +39,7 @@ export function NavigationButton({ activeStatus, onClickButton }: NavigationButt
   useEffect(() => {
     buttonRefs.current
       .get(activeStatus)
-      ?.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'center' });
+      ?.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
   }, [activeStatus]);
 
   return (
