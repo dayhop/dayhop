@@ -14,6 +14,7 @@ import { AuthField } from '../AuthField/AuthField';
 import { showToast } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import { generateRandomNickname } from '@/utils/randomNickname';
+import DiceIcon from '@/assets/icon/DiceIcon.svg';
 import { Modal } from '@/components/ui/Modal';
 import { postLogin } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -115,7 +116,7 @@ export function SignupForm() {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {isOpen && (
         <Modal className="flex w-80 flex-col gap-8 p-10">
           <div className="mx-auto text-lg font-semibold">{formData.name}님 환영합니다! </div>
@@ -134,30 +135,30 @@ export function SignupForm() {
           placeholder="이메일을 입력해 주세요"
           label="email"
         />
-        <div className="flex items-end gap-2">
-          <AuthField
-            title="닉네임"
-            errorMessage={errorMessage.name}
-            isError={!!errorMessage.name}
-            handleChange={handleChange}
-            handleFocusout={handleFocusout}
-            placeholder="닉네임을 입력해 주세요"
-            label="name"
-            value={formData.name}
-            className="min-w-0 flex-1"
-          />
-          <Button
-            className="mt-7 w-40 p-0 text-sm"
-            onClick={() => {
-              const nickname = generateRandomNickname();
-              setFormData((prev) => ({ ...prev, name: nickname }));
-              setErrorMessage((prev) => ({ ...prev, name: '' }));
-            }}
-            type="button"
-          >
-            랜덤 닉네임
-          </Button>
-        </div>
+        <AuthField
+          title="닉네임"
+          errorMessage={errorMessage.name}
+          isError={!!errorMessage.name}
+          handleChange={handleChange}
+          handleFocusout={handleFocusout}
+          placeholder="닉네임을 입력해 주세요"
+          label="name"
+          value={formData.name}
+          suffix={
+            <button
+              type="button"
+              className="text-text-placeholder hover:text-primary shrink-0 cursor-pointer transition-colors"
+              onClick={() => {
+                const nickname = generateRandomNickname();
+                setFormData((prev) => ({ ...prev, name: nickname }));
+                setErrorMessage((prev) => ({ ...prev, name: '' }));
+              }}
+              aria-label="랜덤 닉네임 생성"
+            >
+              <DiceIcon className="h-6 w-6" />
+            </button>
+          }
+        />
 
         <AuthField
           title="비밀번호"
