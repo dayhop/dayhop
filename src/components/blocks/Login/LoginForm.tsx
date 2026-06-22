@@ -25,6 +25,8 @@ export function LoginForm() {
     password: '',
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const validateField = (id: string, value: string) => {
     if (!id) return;
     let errorMessage = '';
@@ -54,9 +56,12 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const res = await postLogin(formData);
     if (!res.success) {
       showToast.error(res.message);
+      setIsSubmitting(false);
       return;
     }
     showToast.success(`${res.data.user?.nickname}님 반갑습니다.`);
@@ -89,6 +94,7 @@ export function LoginForm() {
         disabled={
           !!errorMessage.email || !!errorMessage.password || !formData.email || !formData.password
         }
+        isLoading={isSubmitting}
         type="submit"
       >
         로그인하기

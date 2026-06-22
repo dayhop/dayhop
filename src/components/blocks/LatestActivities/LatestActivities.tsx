@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { ActivityCard } from '@/components/blocks/Main/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
@@ -39,7 +40,18 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
   }, [initialActivities]);
 
   if (isLoading) {
-    return null;
+    return (
+      <section className="flex max-w-300 flex-col gap-4">
+        <div className="flex justify-between">
+          <div className="text-lg font-bold md:text-4xl">🔥 최신 체험</div>
+        </div>
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ActivityCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    );
   }
 
   return (

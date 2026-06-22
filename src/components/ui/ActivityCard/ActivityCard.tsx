@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { StarRating } from '@/components/ui/StarRating';
 import { useClickLogger } from '@/hooks/useClickLogger';
-import { useClickMost } from '@/hooks/useClickMost';
+import { useClickRecent } from '@/hooks/useClickRecent';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
 
@@ -15,11 +15,11 @@ interface ActivityCardProps {
 
 export const ActivityCard = ({ activity }: ActivityCardProps) => {
   const { handleUpdateLog } = useClickLogger();
-  const { handleUpdateMostClick } = useClickMost();
+  const { handleUpdateRecentClick } = useClickRecent();
 
   const handleClick = () => {
     handleUpdateLog(activity.id, activity.category);
-    handleUpdateMostClick(activity.id);
+    handleUpdateRecentClick(activity.id);
   };
 
   return (

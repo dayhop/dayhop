@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { StarRating } from '@/components/ui/StarRating';
 
 import type { ActivityItem } from '@/types/api';
@@ -68,7 +69,32 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
   }, [items]);
 
   if (isLoading) {
-    return null;
+    return (
+      <section className="mx-auto w-full max-w-300 py-16 text-left">
+        <h2 className="mb-4 text-lg font-bold md:text-4xl">✨ Hopper들의 생생한 후기</h2>
+
+        <div className="grid gap-y-12 min-[1280px]:grid-cols-2 min-[1280px]:gap-x-20">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <article key={index} className="flex justify-between gap-5">
+              <div className="w-[190px] min-[744px]:w-[360px] min-[1280px]:w-[330px]">
+                <Skeleton className="mb-1 h-[14px] w-1/4" />
+                <Skeleton className="mb-2 h-[20px] w-2/3" />
+                <Skeleton className="mb-1 h-[14px] w-full" />
+                <Skeleton className="mb-1 h-[14px] w-full" />
+                <Skeleton className="h-[14px] w-3/4" />
+
+                <div className="mt-4 flex items-center gap-2">
+                  <Skeleton className="h-6 w-6 rounded-full" />
+                  <Skeleton className="h-[14px] w-16" />
+                </div>
+              </div>
+
+              <Skeleton className="h-[160px] w-[110px] shrink-0 rounded-xl" />
+            </article>
+          ))}
+        </div>
+      </section>
+    );
   }
 
   if (reviews.length === 0) {

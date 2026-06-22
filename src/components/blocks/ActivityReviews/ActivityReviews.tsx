@@ -5,12 +5,27 @@ import { getActivityReviews } from '@/lib/api/activities';
 import type { Reviews } from '@/lib/api/activities/type';
 import { Pagination } from '@/components/ui/pagination';
 import { Avatar } from '@/components/ui/Avatar';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 interface ActivityReviewsProps {
   activityId: number;
 }
 
 const PAGE_SIZE = 3;
+
+const ReviewItemSkeleton = () => (
+  <div className="border-b border-gray-50 pb-6 last:border-none">
+    <div className="flex items-center gap-3">
+      <Skeleton className="h-10 w-10 rounded-full" />
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-[14px] w-24" />
+        <Skeleton className="h-[12px] w-16" />
+      </div>
+    </div>
+    <Skeleton className="mt-4 h-[14px] w-full" />
+    <Skeleton className="mt-2 h-[14px] w-2/3" />
+  </div>
+);
 
 export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
   const [reviews, setReviews] = useState<Reviews[]>([]);
@@ -69,7 +84,13 @@ export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
         <span className="text-text-secondary ml-2 text-base font-normal">{totalCount}개</span>
       </h2>
 
-      {totalCount > 0 ? (
+      {isLoading && totalCount === 0 ? (
+        <div className="mt-8 flex flex-col gap-6">
+          {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+            <ReviewItemSkeleton key={index} />
+          ))}
+        </div>
+      ) : totalCount > 0 ? (
         <>
           {/* 평점 요약 영역 */}
           <div className="bg-gray-25 mt-6 flex flex-col items-center gap-6 rounded-2xl p-6 sm:flex-row sm:justify-around md:p-8">
@@ -101,50 +122,48 @@ export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
 
           {/* 후기 리스트 */}
           <div className="mt-8 flex flex-col gap-6">
-            {isLoading ? (
-              <div className="text-text-tertiary flex h-40 items-center justify-center">
-                후기를 불러오는 중입니다...
-              </div>
-            ) : (
-              reviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-50 pb-6 last:border-none">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar src={review.user.profileImageUrl || undefined} size="sm" />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-text-primary text-sm font-semibold">
-                            {review.user.nickname}
-                          </span>
-                          <span className="text-text-tertiary text-xs">
-                            {review.createdAt.split('T')[0]}
-                          </span>
-                        </div>
-                        <div className="mt-1 flex items-center gap-0.5">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <svg
-                              key={i}
-                              className={`h-3.5 w-3.5 ${
-                                i < review.rating
-                                  ? 'text-yellow fill-current'
-                                  : 'fill-current text-gray-200'
-                              }`}
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                            </svg>
-                          ))}
+            {isLoading
+              ? Array.from({ length: PAGE_SIZE }).map((_, index) => (
+                  <ReviewItemSkeleton key={index} />
+                ))
+              : reviews.map((review) => (
+                  <div key={review.id} className="border-b border-gray-50 pb-6 last:border-none">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar src={review.user.profileImageUrl || undefined} size="sm" />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-text-primary text-sm font-semibold">
+                              {review.user.nickname}
+                            </span>
+                            <span className="text-text-tertiary text-xs">
+                              {review.createdAt.split('T')[0]}
+                            </span>
+                          </div>
+                          <div className="mt-1 flex items-center gap-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <svg
+                                key={i}
+                                className={`h-3.5 w-3.5 ${
+                                  i < review.rating
+                                    ? 'text-yellow fill-current'
+                                    : 'fill-current text-gray-200'
+                                }`}
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                              </svg>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <p className="text-text-secondary mt-4 text-sm leading-relaxed whitespace-pre-wrap">
-                    {review.content}
-                  </p>
-                </div>
-              ))
-            )}
+                    <p className="text-text-secondary mt-4 text-sm leading-relaxed whitespace-pre-wrap">
+                      {review.content}
+                    </p>
+                  </div>
+                ))}
           </div>
 
           {/* 페이지네이션 */}
