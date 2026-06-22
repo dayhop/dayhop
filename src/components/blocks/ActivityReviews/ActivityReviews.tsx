@@ -13,6 +13,20 @@ interface ActivityReviewsProps {
 
 const PAGE_SIZE = 3;
 
+const ReviewItemSkeleton = () => (
+  <div className="border-b border-gray-50 pb-6 last:border-none">
+    <div className="flex items-center gap-3">
+      <Skeleton className="h-10 w-10 rounded-full" />
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-[14px] w-24" />
+        <Skeleton className="h-[12px] w-16" />
+      </div>
+    </div>
+    <Skeleton className="mt-4 h-[14px] w-full" />
+    <Skeleton className="mt-2 h-[14px] w-2/3" />
+  </div>
+);
+
 export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
   const [reviews, setReviews] = useState<Reviews[]>([]);
   const [averageRating, setAverageRating] = useState<number>(0);
@@ -73,17 +87,7 @@ export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
       {isLoading && totalCount === 0 ? (
         <div className="mt-8 flex flex-col gap-6">
           {Array.from({ length: PAGE_SIZE }).map((_, index) => (
-            <div key={index} className="border-b border-gray-50 pb-6 last:border-none">
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-[14px] w-24" />
-                  <Skeleton className="h-[12px] w-16" />
-                </div>
-              </div>
-              <Skeleton className="mt-4 h-[14px] w-full" />
-              <Skeleton className="mt-2 h-[14px] w-2/3" />
-            </div>
+            <ReviewItemSkeleton key={index} />
           ))}
         </div>
       ) : totalCount > 0 ? (
@@ -120,17 +124,7 @@ export const ActivityReviews = ({ activityId }: ActivityReviewsProps) => {
           <div className="mt-8 flex flex-col gap-6">
             {isLoading
               ? Array.from({ length: PAGE_SIZE }).map((_, index) => (
-                  <div key={index} className="border-b border-gray-50 pb-6 last:border-none">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-10 w-10 rounded-full" />
-                      <div className="flex flex-col gap-2">
-                        <Skeleton className="h-[14px] w-24" />
-                        <Skeleton className="h-[12px] w-16" />
-                      </div>
-                    </div>
-                    <Skeleton className="mt-4 h-[14px] w-full" />
-                    <Skeleton className="mt-2 h-[14px] w-2/3" />
-                  </div>
+                  <ReviewItemSkeleton key={index} />
                 ))
               : reviews.map((review) => (
                   <div key={review.id} className="border-b border-gray-50 pb-6 last:border-none">

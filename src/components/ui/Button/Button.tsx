@@ -68,7 +68,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const hasIcon = Boolean(Icon);
+    const hasIcon = Boolean(Icon) || isLoading;
 
     return (
       <button
