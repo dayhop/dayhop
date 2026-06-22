@@ -15,7 +15,6 @@ import { ActivityCardSkeleton } from '@/components/ui/ActivityCard/ActivityCardS
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Pagination } from '@/components/ui/pagination';
 import { useClickLogger } from '@/hooks/useClickLogger';
-import { useClickMost } from '@/hooks/useClickMost';
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
@@ -60,7 +59,6 @@ function ActivitiesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { handleUpdateLog } = useClickLogger();
-  const { handleUpdateMostClick } = useClickMost();
 
   const initialKeyword = searchParams.get('keyword') ?? '';
 
@@ -252,7 +250,6 @@ function ActivitiesPageContent() {
                   hoverReview={activityReviews[activity.id]}
                   onClick={() => {
                     handleUpdateLog(activity.id, activity.category);
-                    handleUpdateMostClick(activity.id);
                   }}
                 />
               ))}
