@@ -191,7 +191,7 @@ function ActivitiesPageContent() {
           </h1>
         )}
 
-        <div className="mb-8 flex flex-wrap gap-4">
+        <div className="mb-8 flex [scrollbar-width:none] gap-4 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {CATEGORIES.map((category) => {
             const Icon = category.Icon;
             const isSelected = selectedCategory === category.value;
@@ -203,16 +203,16 @@ function ActivitiesPageContent() {
                 onClick={() => handleCategoryClick(category.value)}
                 className={
                   isSelected
-                    ? 'flex h-12 items-center gap-2 rounded-full bg-gray-900 px-6 text-base font-bold text-white'
-                    : 'flex h-12 items-center gap-2 rounded-full border border-gray-300 bg-white px-6 text-base font-bold text-gray-700 transition-colors hover:border-gray-400'
+                    ? 'flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-gray-900 px-4 text-sm font-bold whitespace-nowrap text-white md:h-12 md:gap-2 md:px-6 md:text-base'
+                    : 'flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 text-sm font-bold whitespace-nowrap text-gray-700 transition-colors hover:border-gray-400 md:h-12 md:gap-2 md:px-6 md:text-base'
                 }
               >
                 {Icon && (
                   <Icon
                     className={
                       isSelected
-                        ? 'h-5 w-5 shrink-0 text-white [&_*]:fill-white [&_*]:stroke-white'
-                        : 'h-5 w-5 shrink-0 text-gray-900'
+                        ? 'h-4 w-4 shrink-0 text-white md:h-5 md:w-5 [&_*]:fill-white [&_*]:stroke-white'
+                        : 'h-4 w-4 shrink-0 text-gray-900 md:h-5 md:w-5'
                     }
                   />
                 )}
@@ -239,14 +239,14 @@ function ActivitiesPageContent() {
         )}
 
         {isLoading ? (
-          <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 justify-items-center gap-x-3 gap-y-6 md:gap-x-5 md:gap-y-8 xl:grid-cols-4 xl:gap-x-6">
             {Array.from({ length: PAGE_SIZE }).map((_, index) => (
               <ActivityCardSkeleton key={index} />
             ))}
           </div>
         ) : activities.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-2 justify-items-center gap-x-3 gap-y-6 md:gap-x-5 md:gap-y-8 xl:grid-cols-4 xl:gap-x-6">
               {activities.map((activity) => (
                 <ActivityCard
                   key={activity.id}

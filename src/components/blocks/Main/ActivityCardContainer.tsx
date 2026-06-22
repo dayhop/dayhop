@@ -6,13 +6,15 @@ import ArrowRight from '@/assets/icon/arrow-right.svg';
 
 import { useRef } from 'react';
 import { ActivityCard } from './ActivityCard';
+import Link from 'next/link';
 
 interface ActivityCardProps {
   activitiesList: ActivityItem[];
   title: string;
+  showMore?: boolean;
 }
 
-export function ActivityCardContainer({ activitiesList, title }: ActivityCardProps) {
+export function ActivityCardContainer({ activitiesList, title, showMore }: ActivityCardProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handlePrev = () => {
@@ -40,12 +42,18 @@ export function ActivityCardContainer({ activitiesList, title }: ActivityCardPro
 
   return (
     <div className="flex max-w-300 flex-col gap-4">
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between">
         <div className="text-lg font-bold md:text-4xl">{title}</div>
-        <div className="hidden items-center gap-2 lg:flex">
-          <ArrowLeft className="w-11 cursor-pointer" onClick={handlePrev} />
-          <ArrowRight className="w-11 cursor-pointer" onClick={handleNext} />
-        </div>
+        {showMore ? (
+          <Link href={'/activities'} className="flex items-center text-sm text-gray-500 lg:pr-5">
+            전체보기
+          </Link>
+        ) : (
+          <div className="hidden items-center gap-2 lg:flex">
+            <ArrowLeft className="w-11 cursor-pointer" onClick={handlePrev} />
+            <ArrowRight className="w-11 cursor-pointer" onClick={handleNext} />
+          </div>
+        )}
       </div>
       <div
         ref={scrollRef}
