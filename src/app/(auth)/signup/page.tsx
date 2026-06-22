@@ -1,6 +1,6 @@
-import { SignupForm } from '@/components/blocks/Signup/SignupForm';
+import { SignupForm } from '@/components/blocks/Auth/Signup/SignupForm';
 import Link from 'next/link';
-import { OAuth } from '../components/Oauth';
+import { OAuth } from '../../../components/blocks/Auth/Oauth/Oauth';
 import Logo from '@/assets/icon/logoIcon.svg';
 import { Suspense } from 'react';
 
