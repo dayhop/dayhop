@@ -15,9 +15,9 @@ interface ReservationCardProps {
   onDelete: (id: number) => void;
 }
 export function ReservationCard({ data, onDelete }: ReservationCardProps) {
-  const { activity, startTime, endTime, date, totalPrice, status, headCount, id, reviewSubmitted } =
-    data;
+  const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(data.reviewSubmitted);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
   const [imgError, setImgError] = useState(false);
@@ -47,7 +47,11 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
     <div className="mt-5 flex w-full max-w-160 min-w-0 flex-col gap-3">
       {/*모달*/}
       {isReviewModalOpen && (
-        <ReviewFormModal reservation={data} onClose={() => setIsReviewModalOpen(false)} />
+        <ReviewFormModal
+          reservation={data}
+          onClose={() => setIsReviewModalOpen(false)}
+          onSuccess={() => setReviewSubmitted(true)}
+        />
       )}
       {isDeleteModalOpen && (
         <ConfirmModal

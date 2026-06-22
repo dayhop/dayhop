@@ -17,9 +17,10 @@ export interface ReviewFormModalProps {
     'id' | 'activity' | 'date' | 'startTime' | 'endTime' | 'headCount'
   >;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) => {
+export const ReviewFormModal = ({ reservation, onClose, onSuccess }: ReviewFormModalProps) => {
   const { activity, date, startTime, endTime, headCount } = reservation;
 
   const [rating, setRating] = useState(0);
@@ -47,6 +48,7 @@ export const ReviewFormModal = ({ reservation, onClose }: ReviewFormModalProps) 
       return;
     }
     showToast.success('후기가 등록되었습니다.');
+    onSuccess?.();
     onClose();
   };
 
