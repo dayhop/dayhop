@@ -19,7 +19,7 @@ const buttonList: ReservationFilterButton[] = [
   'completed',
 ];
 
-const BUTTON_MATCH = {
+const BUTTON_MATCH: Record<ReservationFilterButton, string> = {
   all: '전체',
   pending: '예약 완료',
   canceled: '예약 취소',
