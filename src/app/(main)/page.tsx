@@ -23,6 +23,7 @@ export default function Home() {
 
   return (
     <main className="flex w-full flex-col items-center pb-20">
+      <FloatingRecentViews />
       <section className="w-full px-4 pt-4 md:px-6 xl:px-0">
         <BannerCarousel />
       </section>
