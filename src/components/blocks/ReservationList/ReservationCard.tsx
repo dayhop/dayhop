@@ -85,14 +85,14 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
               <div className="hidden gap-2 lg:flex">
                 <Button
                   size="sm"
-                  className="border-bg-surface border bg-white px-2.5 whitespace-nowrap text-gray-600"
+                  className="border-bg-surface border bg-white px-2.5 whitespace-nowrap text-gray-600 hover:text-white lg:h-7.5"
                   onClick={() => setIsChangeModalOpen(true)}
                 >
                   예약변경
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-gray-50 px-2.5 py-1.5 whitespace-nowrap text-gray-600"
+                  className="bg-gray-50 px-2.5 py-1.5 whitespace-nowrap text-gray-600 hover:text-white lg:h-7.5"
                   onClick={() => setIsDeleteModalOpen(true)}
                 >
                   예약취소
@@ -104,14 +104,14 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
                 <Button
                   size="sm"
                   disabled
-                  className="hidden w-fit cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:flex"
+                  className="hidden w-fit cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:flex lg:h-7.5"
                 >
                   작성 완료
                 </Button>
               ) : (
                 <Button
                   size="sm"
-                  className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
+                  className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex lg:h-7.5"
                   onClick={() => setIsReviewModalOpen(true)}
                 >
                   후기 작성

@@ -67,7 +67,7 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       onClose={onClose}
     >
       <div
-        className="custom-textarea-scrollbar w-full max-w-sm rounded-lg bg-white p-6"
+        className="custom-textarea-scrollbar w-full max-w-sm min-w-64 rounded-lg bg-white p-0"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-bold">예약 변경</h2>
@@ -124,10 +124,14 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
           )}
         </div>
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} className="px-0">
             취소
           </Button>
-          <Button onClick={handleConfirm} disabled={!selectedScheduleId || isSelectionUnchanged}>
+          <Button
+            onClick={handleConfirm}
+            disabled={!selectedScheduleId || isSelectionUnchanged}
+            className="px-0"
+          >
             변경하기
           </Button>
         </div>
