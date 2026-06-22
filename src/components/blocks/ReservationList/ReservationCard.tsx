@@ -66,7 +66,7 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
       )}
 
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
-      <div className="flex h-37 w-full items-stretch lg:h-43">
+      <div className="flex h-34 w-full items-stretch lg:h-43">
         <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
           <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
@@ -122,7 +122,7 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
             src={cardImg}
             alt="배너 이미지"
             fill
-            sizes="(min-width: 1024px) 280px, 160px"
+            sizes="(min-width: 1024px) 280px, 136px"
             quality={80}
             className="object-cover"
             onError={() => setImgError(true)}
