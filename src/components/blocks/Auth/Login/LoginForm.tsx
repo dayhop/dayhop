@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
-import { AuthField } from '../AuthField/AuthField';
+import { AuthField } from '../../AuthField/AuthField';
 
 import { useAuthStore } from '@/store/useAuthStore';
 import { postLogin } from '@/lib/api/auth';

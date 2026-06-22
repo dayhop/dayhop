@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-import { Button } from '../../ui/Button';
+import { Button } from '../../../ui/Button';
 import { postSignUp } from '@/lib/api/users';
 
 import {
@@ -10,7 +10,7 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from '@/utils/validate';
-import { AuthField } from '../AuthField/AuthField';
+import { AuthField } from '../../AuthField/AuthField';
 import { showToast } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import { generateRandomNickname } from '@/utils/randomNickname';

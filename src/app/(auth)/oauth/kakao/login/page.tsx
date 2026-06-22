@@ -5,6 +5,8 @@ import { postOauthSignIn } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getBaseUrl } from '@/utils/getBaseUrl';
+import { Spinner } from '@/components/ui/Spinner';
+import { OauthLoading } from '@/components/blocks/Auth/Oauth/OauthLoading';
 
 function KakaoLogin() {
   const ref = useRef(false);
@@ -46,7 +48,7 @@ function KakaoLogin() {
     handleAuth();
   }, [code, router]);
 
-  return <div>카카오 로그인 중... 잠시만 기다려주세요.</div>;
+  return <OauthLoading />;
 }
 
 export default function OauthPage() {
