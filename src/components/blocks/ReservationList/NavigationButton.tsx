@@ -50,6 +50,7 @@ export function NavigationButton({ activeStatus, onClickButton }: NavigationButt
           key={button}
           ref={(el) => {
             if (el) buttonRefs.current.set(button, el);
+            else buttonRefs.current.delete(button);
           }}
           className={`${activeStatus === button ? 'bg-text-primary text-bg' : 'text-text-primary bg-bg'} border-bg-surface h-10 w-23 shrink-0 cursor-pointer rounded-4xl border`}
           onClick={() => onClickButton(button)}
