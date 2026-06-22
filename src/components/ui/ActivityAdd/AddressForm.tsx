@@ -24,8 +24,13 @@ export default function AddressForm({ defaultValue }: AddressFormProps) {
         name="address"
         readOnly
         placeholder="버튼을 클릭해 주소를 찾아주세요."
+        className="min-w-0 flex-1"
       />
-      <Button type="button" onClick={() => setIsOpen(true)} className="w-40 shrink-0 text-sm">
+      <Button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="w-28 shrink-0 px-0 text-sm sm:w-40"
+      >
         우편번호 찾기
       </Button>
       {isOpen && (

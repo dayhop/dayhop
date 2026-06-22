@@ -144,7 +144,7 @@ export function SignupForm() {
             placeholder="닉네임을 입력해 주세요"
             label="name"
             value={formData.name}
-            className="w-180"
+            className="min-w-0 flex-1"
           />
           <Button
             className="mt-7 w-40 p-0 text-sm"

@@ -127,7 +127,11 @@ export const Header = () => {
         <div className="flex w-full max-w-[1200px] items-center justify-between px-6 md:px-12">
           {/* 로고 */}
           <Link href="/" className="flex items-center transition-opacity hover:opacity-90">
-            <LogoIcon className="h-[60px] w-[62px]" role="img" aria-label="DayHOP 로고" />
+            <LogoIcon
+              className="h-[44px] w-[46px] md:h-[60px] md:w-[62px]"
+              role="img"
+              aria-label="DayHOP 로고"
+            />
           </Link>
 
           {/* 우측 영역 */}

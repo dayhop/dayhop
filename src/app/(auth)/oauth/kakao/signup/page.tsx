@@ -52,7 +52,10 @@ function KakaoSignUpForm() {
     router.push('/');
   };
   return (
-    <form className="mx-auto mt-50 flex max-w-100 flex-col gap-3" onSubmit={handleClickSignup}>
+    <form
+      className="mx-auto mt-24 flex w-full max-w-100 flex-col gap-3 px-4 sm:mt-50 sm:px-0"
+      onSubmit={handleClickSignup}
+    >
       <label htmlFor="name">닉네임</label>
       <Input
         warningText={errorMessage}
