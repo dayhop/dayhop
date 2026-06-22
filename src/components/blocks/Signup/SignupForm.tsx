@@ -107,12 +107,11 @@ export function SignupForm() {
 
     if (!res.success) {
       showToast.error(res.message);
+      router.push('/login');
       return;
     }
-    if (res.data.accessToken || res.data.refreshToken) {
-      login(res.data.user);
-      router.push('/');
-    }
+    login(res.data.user);
+    router.push('/');
   };
 
   return (
