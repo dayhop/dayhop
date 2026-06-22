@@ -17,8 +17,6 @@ import { Pagination } from '@/components/ui/pagination';
 import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
-import { useClickRecent } from '@/hooks/useClickRecnet';
-import { useClickLogger } from '@/hooks/useClickLogger';
 
 type CategoryItem = {
   label: ActivityCategory | '전체';

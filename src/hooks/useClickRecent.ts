@@ -2,7 +2,16 @@ export const useClickRecent = () => {
   const MAX_ITEMS = 3;
   const handleUpdateRecentClick = (activityId: number) => {
     const storedData = localStorage.getItem('recentActivities');
-    let recentList: number[] = storedData ? JSON.parse(storedData) : [];
+    let recentList: number[] = [];
+
+    if (storedData) {
+      try {
+        const parsed = JSON.parse(storedData);
+        recentList = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        recentList = [];
+      }
+    }
 
     recentList = recentList.filter((id) => id !== activityId);
     recentList.unshift(activityId);

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { StarRating } from '@/components/ui/StarRating';
 import { useClickLogger } from '@/hooks/useClickLogger';
-import { useClickRecent } from '@/hooks/useClickRecnet';
+import { useClickRecent } from '@/hooks/useClickRecent';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
 

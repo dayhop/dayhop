@@ -20,20 +20,27 @@ export function FloatingRecentViews() {
     const getUserClickRecent = async () => {
       const idList = localStorage.getItem('recentActivities');
       if (!idList) return;
-      const userClickActicities = JSON.parse(idList);
-      console.log(userClickActicities);
-      const results = await Promise.all(
-        userClickActicities.map((activityId: number) => getActivity(Number(activityId)))
-      );
-      const data = results
-        .filter((r): r is { success: true; data: ActivityResponse } => r.success)
-        .map((r) => r.data);
-      setActivities(data);
+      try {
+        const userClickActivities = JSON.parse(idList);
+        const results = await Promise.all(
+          userClickActivities.map((activityId: number) => getActivity(Number(activityId)))
+        );
+        const data = results
+          .filter((r): r is { success: true; data: ActivityResponse } => r.success)
+          .map((r) => r.data);
+        setActivities(data);
+      } catch (error) {
+        console.error('Failed to parse or fetch recent activities:', error);
+      }
     };
     getUserClickRecent();
     const getNickname = async () => {
-      const res = await getMyUser();
-      if (res.success) setNickname(res.data.nickname);
+      try {
+        const res = await getMyUser();
+        if (res.success) setNickname(res.data.nickname);
+      } catch (error) {
+        console.error('Failed to fetch user nickname:', error);
+      }
     };
     getNickname();
   }, []);

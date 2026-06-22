@@ -2,7 +2,7 @@
 
 import { StarRating } from '@/components/ui/StarRating';
 import { useClickLogger } from '@/hooks/useClickLogger';
-import { useClickRecent } from '@/hooks/useClickRecnet';
+import { useClickRecent } from '@/hooks/useClickRecent';
 import { ActivityCategory } from '@/types/api';
 import { totalPriceToString } from '@/utils/priceFormat';
 import { useRouter } from 'next/navigation';

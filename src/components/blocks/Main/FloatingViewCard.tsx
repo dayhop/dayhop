@@ -5,7 +5,7 @@ import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
 import IconStar from '@/assets/icon/icon-star.svg';
 import { useRouter } from 'next/navigation';
-import { useClickRecent } from '@/hooks/useClickRecnet';
+import { useClickRecent } from '@/hooks/useClickRecent';
 import { useClickLogger } from '@/hooks/useClickLogger';
 
 export function FloatingViewCard({ activity }: { activity: ActivityItem }) {
@@ -23,7 +23,13 @@ export function FloatingViewCard({ activity }: { activity: ActivityItem }) {
         handleUpdateRecentClick(id);
       }}
     >
-      <Image src={bannerImageUrl} alt="체험 배너 이미지" width={80} height={80} />
+      <Image
+        src={bannerImageUrl}
+        alt="체험 배너 이미지"
+        width={80}
+        height={80}
+        className="rounded-xl object-cover"
+      />
       <div className="flex flex-col gap-1 overflow-hidden">
         <span className="text-primary w-max rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold">
           {category}
