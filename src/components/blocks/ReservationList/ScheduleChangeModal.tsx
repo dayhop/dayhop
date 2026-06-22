@@ -61,7 +61,11 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
   if (!isOpen) return null;
 
   return (
-    <Modal className="w-fit min-w-97.5" ariaLabel="예약 변경 모달" onClose={onClose}>
+    <Modal
+      className="w-fit max-w-[calc(100vw-32px)] min-w-0 md:min-w-97.5"
+      ariaLabel="예약 변경 모달"
+      onClose={onClose}
+    >
       <div
         className="custom-textarea-scrollbar w-full max-w-sm rounded-lg bg-white p-6"
         onClick={(e) => e.stopPropagation()}

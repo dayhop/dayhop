@@ -27,8 +27,9 @@ export function ToolTip({
       const rel = targetElement?.getBoundingClientRect();
       if (targetElement && rel) {
         const anchorX = rel.x + rel.width / 3;
+        const clampedX = Math.min(Math.max(anchorX, 16), window.innerWidth - 16);
         const anchorY = placement === 'top' ? rel.y : rel.y + rel.height;
-        setPosition({ x: anchorX, y: anchorY });
+        setPosition({ x: clampedX, y: anchorY });
       }
     };
 
@@ -56,7 +57,7 @@ export function ToolTip({
   return createPortal(
     <div className="pointer-events-none fixed z-30" style={{ left: position.x, top: position.y }}>
       <div
-        className={`pointer-events-auto absolute flex w-max ${
+        className={`pointer-events-auto absolute flex w-max max-w-[calc(100vw-32px)] ${
           placement === 'top' ? 'bottom-0 mb-1 flex-col-reverse' : 'top-0 mt-1 flex-col'
         }`}
         style={{
@@ -67,7 +68,7 @@ export function ToolTip({
           className={`${align === 'right' ? 'ml-2' : 'mr-2 ml-auto'} ${placement === 'top' ? '-mt-0.5 rotate-180' : '-mb-0.5'}`}
         />
         <div className="bg-primary flex items-center justify-center rounded px-3 py-2 shadow-lg">
-          <div className="text-xs text-white">{message}</div>
+          <div className="text-xs break-keep text-white">{message}</div>
           <button className="ml-2 cursor-pointer" onClick={onClickClose}>
             <Delete />
           </button>
