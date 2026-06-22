@@ -49,7 +49,11 @@ export const SettingsForm = ({ isOAuth = false }: SettingsFormProps) => {
       setFormData((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
-  const getNicknameError = () => (!formData.nickname.trim() ? '닉네임을 입력해주세요.' : '');
+  const getNicknameError = () => {
+    if (!formData.nickname.trim()) return '닉네임을 입력해주세요.';
+    if (formData.nickname.length > 10) return '10자 이하로 작성해주세요.';
+    return '';
+  };
 
   const getPasswordError = () => {
     if (!formData.newPassword) return '';
@@ -91,7 +95,11 @@ export const SettingsForm = ({ isOAuth = false }: SettingsFormProps) => {
   };
 
   const handleNewPasswordBlur = () => {
-    setErrors((prev) => ({ ...prev, newPassword: getPasswordError() }));
+    setErrors((prev) => ({
+      ...prev,
+      newPassword: getPasswordError(),
+      confirmPassword: formData.confirmPassword ? getConfirmPasswordError() : prev.confirmPassword,
+    }));
   };
 
   const handleConfirmPasswordBlur = () => {

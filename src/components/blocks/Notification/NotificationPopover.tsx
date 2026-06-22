@@ -96,7 +96,7 @@ export const NotificationPopover = ({ onClose, onLoaded }: NotificationPopoverPr
   };
 
   return (
-    <div className="border-border-default absolute top-full right-0 z-50 mt-2 flex w-[368px] max-w-[calc(100vw-32px)] flex-col rounded-2xl border bg-white p-5 shadow-lg">
+    <div className="border-border-default fixed top-16 right-4 left-4 z-50 flex flex-col rounded-2xl border bg-white p-5 shadow-lg md:absolute md:top-full md:right-0 md:left-auto md:mt-2 md:w-[368px]">
       {/* 헤더 */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-text-primary text-lg font-bold">알림 {totalCount}개</h2>

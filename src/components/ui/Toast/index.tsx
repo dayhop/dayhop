@@ -3,5 +3,11 @@
 import { Toaster } from 'react-hot-toast';
 
 export default function Toast() {
-  return <Toaster position="top-center" reverseOrder={false} />;
+  return (
+    <Toaster
+      position="top-center"
+      reverseOrder={false}
+      toastOptions={{ style: { maxWidth: 'min(350px, calc(100vw - 32px))' } }}
+    />
+  );
 }
