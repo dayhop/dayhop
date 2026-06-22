@@ -41,14 +41,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const ResponsiveGrid: Story = {
-  render: () => (
-    <div className="mx-auto w-full max-w-[1200px] px-4 md:px-6 xl:px-0">
-      <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {mockActivities.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} />
-        ))}
-      </div>
-    </div>
-  ),
+export const WithReview: Story = {
+  args: {
+    activity: mockActivity,
+    hoverReview: {
+      nickname: '데이호퍼',
+      rating: 5,
+      content: '정말 재밌는 체험이었어요! 직원분들도 친절하시고 다음에 또 방문하고 싶습니다.',
+    },
+  },
 };
