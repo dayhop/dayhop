@@ -106,7 +106,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
 
       {/* 검색창 입력 영역 */}
       <div className="relative w-full max-w-[960px] px-4 md:px-0">
-        <div className="focus-within:ring-primary/20 flex h-[64px] items-center gap-3 rounded-[16px] bg-white py-2 pr-2.5 pl-5 shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-all duration-300 focus-within:ring-2 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+        <div className="focus-within:ring-primary/20 flex h-[64px] items-center gap-2 rounded-[16px] bg-white py-2 pr-2.5 pl-3 shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-all duration-300 focus-within:ring-2 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] sm:gap-3 sm:pl-5">
           {/* 돋보기 아이콘 */}
           <IconSearch className="h-6 w-6 shrink-0 text-gray-950" />
 
@@ -117,7 +117,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder="내가 원하는 체험은"
-            className="flex-1 bg-transparent pr-2 text-base font-medium text-gray-950 placeholder-gray-400 outline-none sm:text-lg"
+            className="min-w-0 flex-1 bg-transparent pr-2 text-base font-medium text-gray-950 placeholder-gray-400 outline-none sm:text-lg"
           />
 
           {/* 위치 탐색 버튼 영역 */}
@@ -144,12 +144,12 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
           </div>
 
           {/* 검색 / 초기화 버튼 영역 */}
-          <div className="w-[110px] shrink-0">
+          <div className="w-[88px] shrink-0 sm:w-[110px]">
             <Button
               type="button"
               size="md"
               onClick={handleSearchClick}
-              className={`h-[48px] justify-center rounded-[12px] px-4 text-base font-semibold transition-all ${
+              className={`h-[48px] justify-center rounded-[12px] px-2 text-sm font-semibold transition-all sm:px-4 sm:text-base ${
                 isSearched
                   ? 'bg-gray-900 text-white hover:bg-gray-800 active:bg-black'
                   : 'bg-primary shadow-primary/10 text-white shadow-md hover:bg-[#00b0e6] active:bg-[#009dc4]'
