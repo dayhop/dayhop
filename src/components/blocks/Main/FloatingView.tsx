@@ -43,6 +43,10 @@ export function FloatingRecentViews() {
       }
     };
     getNickname();
+    window.addEventListener('recentActivitiesUpdated', getUserClickRecent);
+    return () => {
+      window.removeEventListener('recentActivitiesUpdated', getUserClickRecent);
+    };
   }, []);
 
   return (
