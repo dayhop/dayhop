@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 
 import { ActivityCardContainer } from '@/components/blocks/Main/ActivityCardContainer';
+import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
@@ -19,15 +21,18 @@ export function BestActivities({ items }: BestActivitiesProps) {
     if (items) return;
 
     const fetchBestActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'most_reviewed',
-        page: 1,
-        size: 10,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'most_reviewed',
+          page: 1,
+          size: 10,
+        });
 
-      setActivities(res.success ? res.data.activities : []);
-      setIsLoading(false);
+        setActivities(res.success ? res.data.activities : []);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchBestActivities();
@@ -35,15 +40,11 @@ export function BestActivities({ items }: BestActivitiesProps) {
 
   if (isLoading) {
     return (
-      <section className="flex w-full max-w-300 flex-col gap-8">
-        <div className="text-2xl font-bold md:text-3xl">🛼 인기 체험</div>
-
+      <section className="flex w-full max-w-300 flex-col gap-4">
+        <h2 className="text-lg font-bold md:text-4xl">🛼 인기 체험</h2>
         <div className="flex gap-4 overflow-hidden">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-45 w-46.5 shrink-0 animate-pulse rounded-2xl bg-gray-200 md:h-96 md:w-96"
-            />
+          {Array.from({ length: 5 }).map((_, index) => (
+            <ActivityCardSkeleton key={index} />
           ))}
         </div>
       </section>
@@ -52,10 +53,9 @@ export function BestActivities({ items }: BestActivitiesProps) {
 
   if (!activities.length) {
     return (
-      <section className="flex w-full max-w-300 flex-col gap-8">
-        <div className="text-2xl font-bold md:text-3xl">🛼 인기 체험</div>
-
-        <div className="py-10 text-center text-gray-500">등록된 체험이 없습니다.</div>
+      <section className="flex w-full max-w-300 flex-col gap-4">
+        <h2 className="text-lg font-bold md:text-4xl">🛼 인기 체험</h2>
+        <EmptyState message="등록된 체험이 없습니다." />
       </section>
     );
   }

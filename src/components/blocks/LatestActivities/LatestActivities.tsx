@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { ActivityCard } from '@/components/blocks/Main/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
@@ -20,47 +22,56 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
     if (initialActivities) return;
 
     const fetchLatestActivities = async () => {
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: 1,
-        size: 3,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: 1,
+          size: 3,
+        });
 
-      setActivities(res.success ? res.data.activities : []);
-      setIsLoading(false);
+        setActivities(res.success ? res.data.activities : []);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchLatestActivities();
   }, [initialActivities]);
 
+  if (isLoading) {
+    return (
+      <section className="flex max-w-300 flex-col gap-4">
+        <div className="flex justify-between">
+          <div className="text-lg font-bold md:text-4xl">🔥 최신 체험</div>
+        </div>
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ActivityCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="w-full max-w-300">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-2xl font-bold md:text-3xl">🔥 최신 체험</h2>
+    <section className="flex max-w-300 flex-col gap-4">
+      <div className="flex justify-between">
+        <div className="text-lg font-bold md:text-4xl">🔥 최신 체험</div>
 
         <Link href="/activities" className="text-sm font-medium text-gray-500 hover:text-gray-700">
           전체보기
         </Link>
       </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-45 w-full animate-pulse rounded-2xl bg-gray-200 md:h-96"
-            />
-          ))}
-        </div>
-      ) : activities.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {!activities.length ? (
+        <EmptyState message="등록된 최신 체험이 없습니다." />
+      ) : (
+        <div className="flex scrollbar-none gap-4 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {activities.map((activity) => (
             <ActivityCard key={activity.id} data={activity} />
           ))}
         </div>
-      ) : (
-        <div className="py-10 text-center text-gray-500">등록된 최신 체험이 없습니다.</div>
       )}
     </section>
   );

@@ -8,17 +8,21 @@ import { useState, Suspense } from 'react';
 import { postOauthSignUp } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
-import { REDIRECT_SIGNUP_URI } from '@/app/(auth)/components/Oauth';
 import { generateRandomNickname } from '@/utils/randomNickname';
+import { getBaseUrl } from '@/utils/getBaseUrl';
 
 function KakaoSignUpForm() {
   const { login } = useAuthStore();
   const router = useRouter();
   const [nickname, setNickname] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const params = useSearchParams();
   const token = params.get('code');
+
+  const BASE_URL = getBaseUrl();
+  const KAKAO_SIGNUP_REDIRECT_URI = `${BASE_URL}/oauth/kakao/signup/`;
 
   const handleClickSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,9 +35,11 @@ function KakaoSignUpForm() {
       setErrorMessage('닉네임을 입력해주세요');
       return;
     }
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const res = await postOauthSignUp('kakao', {
       nickname: nickname,
-      redirectUri: REDIRECT_SIGNUP_URI,
+      redirectUri: KAKAO_SIGNUP_REDIRECT_URI,
       token: token,
     });
     if (!res.success) {
@@ -59,11 +65,14 @@ function KakaoSignUpForm() {
         <Button
           variant="secondary"
           type="button"
+          disabled={isSubmitting}
           onClick={() => setNickname(generateRandomNickname())}
         >
           랜덤 닉네임
         </Button>
-        <Button type="submit">회원가입하기</Button>
+        <Button type="submit" isLoading={isSubmitting}>
+          회원가입하기
+        </Button>
       </div>
     </form>
   );

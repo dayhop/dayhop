@@ -1,26 +1,27 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
+import type { ComponentType, SVGProps } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
-import { SearchInput } from '@/components/blocks/SearchInput';
-import { ActivityCard } from '@/components/ui/ActivityCard';
-import { Pagination } from '@/components/ui/pagination';
-import { getActivities } from '@/lib/api/activities';
 
 import CategoryCulture from '@/assets/icon/category-culture.svg';
 import CategoryFood from '@/assets/icon/category-food.svg';
+import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
 import CategorySports from '@/assets/icon/category-sports.svg';
 import CategoryTour from '@/assets/icon/category-tour.svg';
-import CategorySightseeing from '@/assets/icon/category-sightseeing.svg';
+import { SearchInput } from '@/components/blocks/SearchInput';
+import { ActivityCard } from '@/components/ui/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/ui/ActivityCard/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Pagination } from '@/components/ui/pagination';
+import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityCategory, ActivityItem } from '@/lib/api/activities/type';
 
 type CategoryItem = {
   label: ActivityCategory | '전체';
   value: ActivityCategory | '전체';
-  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | null;
+  Icon: ComponentType<SVGProps<SVGSVGElement>> | null;
 };
 
 const CATEGORIES: CategoryItem[] = [
@@ -65,23 +66,30 @@ function ActivitiesPageContent() {
     const fetchActivities = async () => {
       setIsLoading(true);
 
-      const res = await getActivities({
-        method: 'offset',
-        sort: 'latest',
-        page: currentPage,
-        size: PAGE_SIZE,
-        keyword: keyword || undefined,
-        category: selectedCategory === '전체' ? undefined : selectedCategory,
-      });
+      try {
+        const res = await getActivities({
+          method: 'offset',
+          sort: 'latest',
+          page: currentPage,
+          size: PAGE_SIZE,
+          keyword: keyword || undefined,
+          category: selectedCategory === '전체' ? undefined : selectedCategory,
+        });
 
-      if (res.success) {
-        setActivities(res.data.activities);
-        setTotalCount(res.data.totalCount);
-      } else {
+        if (res.success) {
+          setActivities(res.data.activities);
+          setTotalCount(res.data.totalCount);
+          return;
+        }
+
         setActivities([]);
         setTotalCount(0);
+      } catch {
+        setActivities([]);
+        setTotalCount(0);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchActivities();
@@ -98,11 +106,13 @@ function ActivitiesPageContent() {
     setCurrentPage(1);
 
     const params = new URLSearchParams(searchParams.toString());
+
     if (trimmed) {
       params.set('keyword', trimmed);
     } else {
       params.delete('keyword');
     }
+
     const query = params.toString();
     router.replace(query ? `/activities?${query}` : '/activities');
   };
@@ -113,6 +123,7 @@ function ActivitiesPageContent() {
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete('keyword');
+
     const query = params.toString();
     router.replace(query ? `/activities?${query}` : '/activities');
   };
@@ -131,6 +142,7 @@ function ActivitiesPageContent() {
         <div className="mb-8 flex flex-wrap gap-4">
           {CATEGORIES.map((category) => {
             const Icon = category.Icon;
+            const isSelected = selectedCategory === category.value;
 
             return (
               <button
@@ -138,12 +150,20 @@ function ActivitiesPageContent() {
                 type="button"
                 onClick={() => handleCategoryClick(category.value)}
                 className={
-                  selectedCategory === category.value
+                  isSelected
                     ? 'flex h-12 items-center gap-2 rounded-full bg-gray-900 px-6 text-base font-bold text-white'
                     : 'flex h-12 items-center gap-2 rounded-full border border-gray-300 bg-white px-6 text-base font-bold text-gray-700 transition-colors hover:border-gray-400'
                 }
               >
-                {Icon && <Icon className="h-5 w-5 shrink-0" />}
+                {Icon && (
+                  <Icon
+                    className={
+                      isSelected
+                        ? 'h-5 w-5 shrink-0 text-white [&_*]:fill-white [&_*]:stroke-white'
+                        : 'h-5 w-5 shrink-0 text-gray-900'
+                    }
+                  />
+                )}
                 <span>{category.label}</span>
               </button>
             );
@@ -164,39 +184,34 @@ function ActivitiesPageContent() {
         )}
 
         {isLoading ? (
-          <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-[340px] w-[262px] animate-pulse rounded-[32px] bg-gray-200"
-              />
+          <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+              <ActivityCardSkeleton key={index} />
             ))}
           </div>
         ) : activities.length > 0 ? (
-          <div className="grid grid-cols-1 justify-items-center gap-x-6 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
-            {activities.map((activity) => (
-              <ActivityCard
-                key={activity.id}
-                activity={activity}
-                onClick={() => router.push(`/activities/${activity.id}`)}
+          <>
+            <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {activities.map((activity) => (
+                <ActivityCard key={activity.id} activity={activity} />
+              ))}
+            </div>
+
+            <div className="mt-12 flex justify-center">
+              <Pagination
+                paginationCount={paginationCount}
+                currentPage={currentPage}
+                clickPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                clickNext={() => setCurrentPage((prev) => Math.min(paginationCount, prev + 1))}
+                clickPage={setCurrentPage}
               />
-            ))}
-          </div>
+            </div>
+          </>
         ) : (
-          <div className="min-h-[720px]">
+          <div className="min-h-[520px]">
             <EmptyState message="등록된 체험이 없습니다." />
           </div>
         )}
-
-        <div className="mt-12 flex justify-center">
-          <Pagination
-            paginationCount={paginationCount}
-            currentPage={currentPage}
-            clickPrev={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            clickNext={() => setCurrentPage((prev) => Math.min(paginationCount, prev + 1))}
-            clickPage={setCurrentPage}
-          />
-        </div>
       </section>
     </main>
   );

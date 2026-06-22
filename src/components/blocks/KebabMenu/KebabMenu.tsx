@@ -41,7 +41,7 @@ export const KebabMenu = ({ activityId }: KebabMenuProps) => {
 
   const handleEdit = () => {
     setIsOpen(false);
-    router.push(`/activities/${activityId}/edit`);
+    router.push(`/activity-edit/${activityId}`);
   };
 
   const handleDeleteClick = () => {

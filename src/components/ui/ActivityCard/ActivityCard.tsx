@@ -1,19 +1,32 @@
+'use client';
+
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { StarRating } from '@/components/ui/StarRating';
+import { useClickLogger } from '@/hooks/useClickLogger';
+import { useClickRecent } from '@/hooks/useClickRecent';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
 
 interface ActivityCardProps {
   activity: ActivityItem;
-  onClick?: () => void;
 }
 
-export const ActivityCard = ({ activity, onClick }: ActivityCardProps) => {
+export const ActivityCard = ({ activity }: ActivityCardProps) => {
+  const { handleUpdateLog } = useClickLogger();
+  const { handleUpdateRecentClick } = useClickRecent();
+
+  const handleClick = () => {
+    handleUpdateLog(activity.id, activity.category);
+    handleUpdateRecentClick(activity.id);
+  };
+
   return (
-    <article
-      className="w-[262px] cursor-pointer overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
-      onClick={onClick}
+    <Link
+      href={`/activities/${activity.id}`}
+      onClick={handleClick}
+      className="block w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
     >
       <div className="relative h-[230px] w-full overflow-hidden">
         <Image
@@ -36,6 +49,6 @@ export const ActivityCard = ({ activity, onClick }: ActivityCardProps) => {
           <span className="ml-1 text-[14px] font-normal text-gray-400">/ 인</span>
         </p>
       </div>
-    </article>
+    </Link>
   );
 };

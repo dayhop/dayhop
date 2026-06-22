@@ -3,17 +3,21 @@
 import { Button } from '@/components/ui/Button';
 import Kakao from '@/assets/icon/Kakao.svg';
 import Link from 'next/link';
+import { getBaseUrl } from '@/utils/getBaseUrl';
 
 interface OAuthProp {
   type: 'signup' | 'login';
 }
 
 const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
-export const REDIRECT_LOGIN_URI = process.env.NEXT_PUBLIC_KAKAO_LOGIN_REDIRECT_URI;
-export const REDIRECT_SIGNUP_URI = process.env.NEXT_PUBLIC_KAKAO_SIGNUP_REDIRECT_URI;
 
 export function OAuth({ type }: OAuthProp) {
-  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${type === 'login' ? REDIRECT_LOGIN_URI : REDIRECT_SIGNUP_URI}&response_type=code`;
+  const BASE_URL = getBaseUrl();
+
+  const KAKAO_LOGIN_REDIRECT_URI = `${BASE_URL}/oauth/kakao/login/`;
+  const KAKAO_SIGNUP_REDIRECT_URI = `${BASE_URL}/oauth/kakao/signup/`;
+
+  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${type === 'login' ? KAKAO_LOGIN_REDIRECT_URI : KAKAO_SIGNUP_REDIRECT_URI}&response_type=code`;
   const handleClickKakaoLogin = () => {
     window.location.href = kakaoURL;
   };
