@@ -89,7 +89,7 @@ export function ActivityAdd() {
         </Modal>
       )}
       <form
-        className="mx-auto mb-10 flex max-w-175 grow flex-col justify-center gap-6 lg:mt-5 lg:mb-20"
+        className="mx-auto mb-10 flex w-full max-w-175 grow flex-col justify-center gap-6 px-4 lg:mt-5 lg:mb-20"
         onSubmit={handleSubmit}
       >
         <div className="py-2.5 text-lg font-bold">내 체험 등록</div>

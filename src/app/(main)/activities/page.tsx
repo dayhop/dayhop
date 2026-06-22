@@ -186,7 +186,9 @@ function ActivitiesPageContent() {
 
       <section className="mt-16 w-full max-w-[1200px] px-4 md:px-6 xl:px-0">
         {!keyword && selectedCategory !== '전체' && (
-          <h1 className="mb-6 text-[32px] font-bold text-gray-900">{selectedCategory}</h1>
+          <h1 className="mb-6 text-[clamp(1.5rem,0.75rem+3.33vw,2rem)] font-bold text-gray-900">
+            {selectedCategory}
+          </h1>
         )}
 
         <div className="mb-8 flex flex-wrap gap-4">
@@ -223,14 +225,16 @@ function ActivitiesPageContent() {
 
         {keyword && (
           <div className="mb-6">
-            <h1 className="text-[32px] leading-normal">
+            <h1 className="text-[clamp(1.5rem,0.75rem+3.33vw,2rem)] leading-normal">
               <span className="font-bold text-gray-900">{keyword}</span>
               <span className="font-semibold text-gray-700">
                 {getSearchResultText(keyword).replace(keyword, '')}
               </span>
             </h1>
 
-            <p className="mt-3 text-[20px] font-semibold text-gray-500">총 {totalCount}개의 결과</p>
+            <p className="mt-3 text-[clamp(1.125rem,0.9375rem+0.833vw,1.25rem)] font-semibold text-gray-500">
+              총 {totalCount}개의 결과
+            </p>
           </div>
         )}
 

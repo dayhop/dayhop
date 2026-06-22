@@ -83,7 +83,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
     <div className="flex w-full flex-col items-center select-none">
       {/* 타이틀 롤링 애니메이션 */}
       <div className="mb-8 flex w-full flex-col items-center text-center">
-        <h2 className="flex flex-wrap items-center justify-center gap-y-1 text-[32px] leading-normal font-bold tracking-tight text-gray-900">
+        <h2 className="flex flex-wrap items-center justify-center gap-y-1 text-[clamp(1.5rem,0.75rem+3.33vw,2rem)] leading-normal font-bold tracking-tight text-gray-900">
           <span>오늘은 새로운</span>
           <div
             className="relative mx-1 inline-block h-[1.3em] overflow-hidden align-bottom transition-all duration-300 ease-in-out md:mx-2"
@@ -106,9 +106,9 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
 
       {/* 검색창 입력 영역 */}
       <div className="relative w-full max-w-[960px] px-4 md:px-0">
-        <div className="focus-within:ring-primary/20 flex h-[64px] items-center gap-2 rounded-[16px] bg-white py-2 pr-2.5 pl-3 shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-all duration-300 focus-within:ring-2 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] sm:gap-3 sm:pl-5">
+        <div className="focus-within:ring-primary/20 flex h-[56px] items-center gap-2 rounded-[16px] bg-white py-2 pr-2.5 pl-3 shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-all duration-300 focus-within:ring-2 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] sm:h-[64px] sm:gap-3 sm:pl-5">
           {/* 돋보기 아이콘 */}
-          <IconSearch className="h-6 w-6 shrink-0 text-gray-950" />
+          <IconSearch className="h-5 w-5 shrink-0 text-gray-950 sm:h-6 sm:w-6" />
 
           {/* 텍스트 입력창 */}
           <input
@@ -129,7 +129,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
               className="group cursor-pointer rounded-full p-1.5 text-gray-900 transition-all hover:bg-gray-50 active:bg-gray-100"
               aria-label="내 주변 체험 조회"
             >
-              <IconLocation className="h-7 w-7 text-gray-900 transition-transform duration-300 group-hover:scale-110" />
+              <IconLocation className="h-6 w-6 text-gray-900 transition-transform duration-300 group-hover:scale-110 sm:h-7 sm:w-7" />
             </button>
 
             {/* 위치 버튼 안내 툴팁 */}
@@ -149,7 +149,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
               type="button"
               size="md"
               onClick={handleSearchClick}
-              className={`h-[48px] justify-center rounded-[12px] px-2 text-sm font-semibold transition-all sm:px-4 sm:text-base ${
+              className={`h-[40px] justify-center rounded-[12px] px-2 text-sm font-semibold transition-all sm:h-[48px] sm:px-4 sm:text-base ${
                 isSearched
                   ? 'bg-gray-900 text-white hover:bg-gray-800 active:bg-black'
                   : 'bg-primary shadow-primary/10 text-white shadow-md hover:bg-[#00b0e6] active:bg-[#009dc4]'
