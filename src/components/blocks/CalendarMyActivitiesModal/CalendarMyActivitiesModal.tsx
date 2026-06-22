@@ -103,7 +103,7 @@ export const CalendarMyActivitiesModal = ({
         ariaLabel="예약 현황 모달"
         className={cn(
           className,
-          'transition-transform duration-300 ease-out lg:transition-none',
+          'rounded-b-none transition-transform duration-300 ease-out lg:rounded-b-[30px] lg:transition-none',
           isOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'
         )}
         overlayClassName={cn(
