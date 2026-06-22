@@ -15,9 +15,12 @@ import { showToast } from '@/utils/toast';
 import { useRouter } from 'next/navigation';
 import { generateRandomNickname } from '@/utils/randomNickname';
 import { Modal } from '@/components/ui/Modal';
+import { postLogin } from '@/lib/api/auth';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function SignupForm() {
   const router = useRouter();
+  const { login } = useAuthStore();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
@@ -91,17 +94,30 @@ export function SignupForm() {
     setIsOpen(true);
   };
 
-  const handleClickSuccessSignUp = () => {
-    router.push('/login');
+  const handleClickSuccessSignUp = async () => {
+    const body = {
+      email: formData.email,
+      password: formData.password,
+    };
+    const res = await postLogin(body);
+
+    if (!res.success) {
+      showToast.error(res.message);
+      return;
+    }
+    if (res.data.accessToken || res.data.refreshToken) {
+      login(res.data.user);
+      router.push('/');
+    }
   };
 
   return (
     <div>
       {isOpen && (
-        <Modal className="flex flex-col gap-10 p-10">
-          <div className="text-lg font-semibold">회원가입에 성공했습니다. 로그인해주세요.</div>
+        <Modal className="flex w-80 flex-col gap-8 p-10">
+          <div className="mx-auto text-lg font-semibold">{formData.name}님 환영합니다! </div>
           <Button size="md" onClick={handleClickSuccessSignUp}>
-            로그인하러 가기
+            HOP하러 가기
           </Button>
         </Modal>
       )}
