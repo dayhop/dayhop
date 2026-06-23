@@ -1,6 +1,7 @@
-import ImgAddIcon from '@/assets/icon/ImgAddIcon.svg';
 import { ChangeEvent } from 'react';
 
+import Image from 'next/image';
+import imgadd from '@/assets/images/imgadd.jpg';
 interface UploadImgProp {
   onFileSelect: (file: File) => void;
 }
@@ -23,7 +24,7 @@ export function UploadImg({ onFileSelect }: UploadImgProp) {
           e.currentTarget.value = '';
         }}
       />
-      <ImgAddIcon />
+      <Image src={imgadd} alt="이미지추가" width={33} height={33} />
       <div className="text-text-tertiary hidden text-sm md:flex">file Upload</div>
     </label>
   );

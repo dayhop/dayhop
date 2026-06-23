@@ -129,7 +129,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
               <h3 className="mb-2 line-clamp-2 text-base font-bold">{item.activity.title}</h3>
 
-              <p className="line-clamp-3 text-sm leading-6 text-gray-600">{item.review.content}</p>
+              <p className="line-clamp-3 text-sm leading-6 wrap-break-word text-gray-600">{item.review.content}</p>
 
               <div className="mt-3 flex items-center gap-2">
                 <div className="relative h-5 w-5 overflow-hidden rounded-full bg-gray-200">

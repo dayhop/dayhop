@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { ActivityCardContainer } from '@/components/blocks/Main/ActivityCardContainer';
+import { MainActivityCardContainer } from '@/components/blocks/Main/MainActivityCardContainer';
 
 import { getActivities } from '@/lib/api/activities';
 import { ActivityCategory, ActivityItem } from '@/types/api';
@@ -82,7 +82,7 @@ export function Userfit() {
 
   return (
     <div>
-      <ActivityCardContainer title={title} activitiesList={activitiesList} />
+      <MainActivityCardContainer title={title} activitiesList={activitiesList} />
     </div>
   );
 }

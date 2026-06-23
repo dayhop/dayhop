@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { ActivityCardContainer } from '@/components/blocks/Main/ActivityCardContainer';
+import { MainActivityCardContainer } from '@/components/blocks/Main/MainActivityCardContainer';
 import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
@@ -65,5 +65,5 @@ export function BestActivities({ items }: BestActivitiesProps) {
     );
   }
 
-  return <ActivityCardContainer activitiesList={activities} title="🛼 인기 체험" />;
+  return <MainActivityCardContainer activitiesList={activities} title="🛼 인기 체험" />;
 }
