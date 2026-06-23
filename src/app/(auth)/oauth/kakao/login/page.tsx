@@ -21,7 +21,7 @@ function KakaoLogin() {
   const handleAuth = async () => {
     if (!code) {
       showToast.error('유효하지 않은 토큰입니다.');
-      router.push('/singup');
+      router.push('/signup');
       return;
     }
     const body = {
