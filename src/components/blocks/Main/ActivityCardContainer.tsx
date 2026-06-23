@@ -4,7 +4,7 @@ import { ActivityItem } from '@/lib/api/activities/type';
 import ArrowLeft from '@/assets/icon/arrow-left.svg';
 import ArrowRight from '@/assets/icon/arrow-right.svg';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ActivityCard } from './ActivityCard';
 import Link from 'next/link';
 
@@ -16,6 +16,20 @@ interface ActivityCardProps {
 
 export function ActivityCardContainer({ activitiesList, title, showMore }: ActivityCardProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      el.scrollBy({ left: e.deltaY, behavior: 'auto' });
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const handlePrev = () => {
     if (scrollRef.current) {
