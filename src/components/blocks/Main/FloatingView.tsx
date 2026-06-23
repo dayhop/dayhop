@@ -50,8 +50,8 @@ export function FloatingRecentViews() {
 
   return (
     <aside
-      className={`fixed top-1/4 right-0 z-40 flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        isOpen ? 'translate-x-0' : 'translate-x-full'
+      className={`fixed top-1/4 right-0 z-40 hidden transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] xl:flex ${
+        isOpen ? 'translate-x-0' : 'translate-x-90'
       }`}
     >
       {/* --- 플로팅 버튼 --- */}
