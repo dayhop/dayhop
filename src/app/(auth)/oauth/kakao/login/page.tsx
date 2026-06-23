@@ -5,7 +5,6 @@ import { postOauthSignIn } from '@/lib/api/oauth';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getBaseUrl } from '@/utils/getBaseUrl';
-import { Spinner } from '@/components/ui/Spinner';
 import { OauthLoading } from '@/components/blocks/Auth/Oauth/OauthLoading';
 
 function KakaoLogin() {
@@ -22,7 +21,7 @@ function KakaoLogin() {
   const handleAuth = async () => {
     if (!code) {
       showToast.error('유효하지 않은 토큰입니다.');
-      router.push('/login');
+      router.push('/signup');
       return;
     }
     const body = {
@@ -32,7 +31,7 @@ function KakaoLogin() {
     const res = await postOauthSignIn('kakao', body);
     if (!res.success) {
       showToast.error(res.message);
-      router.push('/login');
+      router.push('/signup');
       return;
     }
     if (res.data.accessToken || res.data.refreshToken) {
