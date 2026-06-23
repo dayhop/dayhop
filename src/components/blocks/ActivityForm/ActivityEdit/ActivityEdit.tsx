@@ -34,6 +34,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
   const [initData, setInitData] = useState<ActivityResponse>();
   const [resetKey, setResetKey] = useState(0);
   const [resetButtonBottom, setResetButtonBottom] = useState<number>(10);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const dateRef = useRef<DateFormRef>(null);
   const bannerRef = useRef<ImgUploadRef>(null);
@@ -62,6 +63,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
     if (!formRef.current) {
       return;
     }
+    if (isSubmitting) return;
 
     const formData = new FormData(formRef.current);
 
@@ -78,89 +80,100 @@ export function ActivityEdit({ activityId }: EditPageProps) {
     //유효하지 않는다면 종료
     if (!isValid) return;
 
-    //================================
+    setIsSubmitting(true);
+    try {
+      //================================
 
-    // 배너: 새 파일이 있으면 업로드, 없으면 기존 URL 유지
-    let bannerImageUrl: string;
-    if (bannerFile.length > 0) {
-      const bannerUpload = await postActivitiesImage(bannerFile[0]);
-      if (!bannerUpload.success) {
-        showToast.error(bannerUpload.message);
+      // 배너: 새 파일이 있으면 업로드, 없으면 기존 URL 유지
+      let bannerImageUrl: string;
+      if (bannerFile.length > 0) {
+        const bannerUpload = await postActivitiesImage(bannerFile[0]);
+        if (!bannerUpload.success) {
+          showToast.error(bannerUpload.message);
+          return;
+        }
+        bannerImageUrl = bannerUpload.data.activityImageUrl;
+      } else {
+        bannerImageUrl = initData.bannerImageUrl;
+      }
+
+      // 디테일: 새로 추가된 파일만 업로드
+      const detailUploadRes = await Promise.all(
+        detailFiles.map((file) => postActivitiesImage(file))
+      );
+      const detailFailed = detailUploadRes.find((r) => !r.success);
+      if (detailFailed && !detailFailed.success) {
+        showToast.error(detailFailed.message);
         return;
       }
-      bannerImageUrl = bannerUpload.data.activityImageUrl;
-    } else {
-      bannerImageUrl = initData.bannerImageUrl;
-    }
+      const subImageUrls = detailUploadRes.flatMap((r) =>
+        r.success ? [r.data.activityImageUrl] : []
+      );
 
-    // 디테일: 새로 추가된 파일만 업로드
-    const detailUploadRes = await Promise.all(detailFiles.map((file) => postActivitiesImage(file)));
-    const detailFailed = detailUploadRes.find((r) => !r.success);
-    if (detailFailed && !detailFailed.success) {
-      showToast.error(detailFailed.message);
-      return;
-    }
-    const subImageUrls = detailUploadRes.flatMap((r) =>
-      r.success ? [r.data.activityImageUrl] : []
-    );
-
-    //add와 diff
-    const subImageIdsToRemove = findRemove(detailRef, initData);
-    const schedulesToAdd =
-      schedules.filter(
-        (s) =>
-          initData.schedules.findIndex(
-            (init) =>
-              init.date === s.date && init.startTime === s.startTime && init.endTime === s.endTime
-          ) === -1
-      ) || [];
-
-    const scheduleIdsToRemove =
-      initData.schedules
-        .filter(
-          (init) =>
-            schedules.findIndex(
-              (s) =>
-                s.date === init.date && s.startTime === init.startTime && s.endTime === init.endTime
+      //add와 diff
+      const subImageIdsToRemove = findRemove(detailRef, initData);
+      const schedulesToAdd =
+        schedules.filter(
+          (s) =>
+            initData.schedules.findIndex(
+              (init) =>
+                init.date === s.date && init.startTime === s.startTime && init.endTime === s.endTime
             ) === -1
-        )
-        .map((init) => init.id) || [];
+        ) || [];
 
-    //데이터 세팅
-    const submitData: PatchMyActivityRequest = {
-      ...detailFormData,
-      bannerImageUrl,
-      subImageIdsToRemove,
-      subImageUrlsToAdd: subImageUrls,
-      scheduleIdsToRemove,
-      schedulesToAdd,
-    };
+      const scheduleIdsToRemove =
+        initData.schedules
+          .filter(
+            (init) =>
+              schedules.findIndex(
+                (s) =>
+                  s.date === init.date &&
+                  s.startTime === init.startTime &&
+                  s.endTime === init.endTime
+              ) === -1
+          )
+          .map((init) => init.id) || [];
 
-    //수정 사항이 있는지 확인
-    const isEdited = handleIsEdited(
-      detailFormData,
-      initData,
-      subImageIdsToRemove,
-      subImageUrls,
-      scheduleIdsToRemove,
-      schedulesToAdd,
-      bannerImageUrl
-    );
-    if (!isEdited) {
+      //데이터 세팅
+      const submitData: PatchMyActivityRequest = {
+        ...detailFormData,
+        bannerImageUrl,
+        subImageIdsToRemove,
+        subImageUrlsToAdd: subImageUrls,
+        scheduleIdsToRemove,
+        schedulesToAdd,
+      };
+
+      //수정 사항이 있는지 확인
+      const isEdited = handleIsEdited(
+        detailFormData,
+        initData,
+        subImageIdsToRemove,
+        subImageUrls,
+        scheduleIdsToRemove,
+        schedulesToAdd,
+        bannerImageUrl
+      );
+      if (!isEdited) {
+        setIsOpen(false);
+        showToast.error('수정 사항이 없습니다.');
+        return;
+      }
+
+      const patchRes = await patchMyActivity(activityId, submitData);
+      if (!patchRes.success) {
+        showToast.error(patchRes.message);
+        return;
+      }
       setIsOpen(false);
-      showToast.error('수정 사항이 없습니다.');
-      return;
+      showToast.success('체험 수정이 완료되었습니다.');
+      router.refresh();
+      router.back();
+    } catch {
+      showToast.error('체험 수정에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const patchRes = await patchMyActivity(activityId, submitData);
-    if (!patchRes.success) {
-      showToast.error(patchRes.message);
-      return;
-    }
-    setIsOpen(false);
-    showToast.success('체험 수정이 완료되었습니다.');
-    router.refresh();
-    router.back();
   };
 
   useEffect(() => {
@@ -192,6 +205,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
           onClose={() => setIsOpen(false)}
           message="이대로 수정하시겠습니까?"
           isOpen={isOpen}
+          isLoading={isSubmitting}
         />
       )}
       <ResetButton onReset={handleReset} resetButtonBottom={resetButtonBottom} />
