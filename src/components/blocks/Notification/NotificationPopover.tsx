@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 import CloseIcon from '@/assets/icon/icon-close.svg';
-import EmptyLogo from '@/assets/icon/empty-logo.svg';
+import Image from 'next/image';
+import emptyImage from '@/assets/images/empty.png';
 import { NotificationItem } from './NotificationItem';
 import { getMyNotifications, deleteMyNotification } from '@/lib/api/my-notifications';
 import { showToast } from '@/utils/toast';
@@ -129,7 +130,9 @@ export const NotificationPopover = ({ onClose, onLoaded }: NotificationPopoverPr
         <p className="text-status-danger py-10 text-center text-sm">알림을 불러오지 못했어요.</p>
       ) : (
         <div className="flex flex-col items-center justify-center gap-3 py-10">
-          <EmptyLogo width={96} height={93} className="opacity-40" />
+          <div className="relative h-[96px] w-[96px]">
+            <Image src={emptyImage} alt="" fill sizes="96px" className="object-contain" />
+          </div>
           <p className="text-text-placeholder text-sm">새로운 알림이 없어요.</p>
         </div>
       )}
