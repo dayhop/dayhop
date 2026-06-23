@@ -4,18 +4,36 @@ import { ActivityItem } from '@/lib/api/activities/type';
 import ArrowLeft from '@/assets/icon/arrow-left.svg';
 import ArrowRight from '@/assets/icon/arrow-right.svg';
 
-import { useRef } from 'react';
-import { ActivityCard } from './ActivityCard';
+import { useEffect, useRef } from 'react';
+import { MainActivityCard } from './MainActivityCard';
 import Link from 'next/link';
 
-interface ActivityCardProps {
+interface MainActivityCardContainerProps {
   activitiesList: ActivityItem[];
   title: string;
   showMore?: boolean;
 }
 
-export function ActivityCardContainer({ activitiesList, title, showMore }: ActivityCardProps) {
+export function MainActivityCardContainer({
+  activitiesList,
+  title,
+  showMore,
+}: MainActivityCardContainerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      el.scrollBy({ left: e.deltaY, behavior: 'auto' });
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const handlePrev = () => {
     if (scrollRef.current) {
@@ -43,24 +61,27 @@ export function ActivityCardContainer({ activitiesList, title, showMore }: Activ
   return (
     <div className="flex max-w-300 flex-col gap-4">
       <div className="flex items-center justify-between">
-        <div className="text-lg font-bold md:text-4xl">{title}</div>
+        <div className="pl-3 text-lg font-bold md:text-3xl">{title}</div>
         {showMore ? (
-          <Link href={'/activities'} className="flex items-center text-sm text-gray-500 lg:pr-5">
+          <Link
+            href={'/activities'}
+            className="flex h-10 items-center text-sm text-gray-500 lg:pr-5"
+          >
             전체보기
           </Link>
         ) : (
           <div className="hidden items-center gap-2 lg:flex">
-            <ArrowLeft className="w-11 cursor-pointer" onClick={handlePrev} />
-            <ArrowRight className="w-11 cursor-pointer" onClick={handleNext} />
+            <ArrowLeft className="h-10 w-10 cursor-pointer" onClick={handlePrev} />
+            <ArrowRight className="h-10 w-10 cursor-pointer" onClick={handleNext} />
           </div>
         )}
       </div>
       <div
         ref={scrollRef}
-        className="flex scrollbar-none gap-4 overflow-x-auto [-ms-overflow-style:none] lg:overflow-x-hidden [&::-webkit-scrollbar]:hidden"
+        className="flex scrollbar-none gap-4 overflow-x-auto p-3 [-ms-overflow-style:none] lg:overflow-x-hidden [&::-webkit-scrollbar]:hidden"
       >
         {activitiesList.map((activity) => {
-          return <ActivityCard key={activity.id} data={activity} />;
+          return <MainActivityCard key={activity.id} data={activity} />;
         })}
       </div>
     </div>

@@ -26,7 +26,7 @@ export const ActivityCard = ({ activity, hoverReview, onClick }: ActivityCardPro
     <Link
       href={`/activities/${activity.id}`}
       onClick={onClick}
-      className="group block w-full max-w-[262px] overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
+      className="group block w-full overflow-hidden rounded-[32px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
     >
       <div className="relative aspect-[262/230] w-full overflow-hidden">
         <Image

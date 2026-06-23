@@ -5,7 +5,7 @@ import FacebookIcon from '@/assets/icon/icon_facebook.svg';
 import InstagramIcon from '@/assets/icon/icon_instagram.svg';
 import XIcon from '@/assets/icon/icon_X.svg';
 import GithubIcon from '@/assets/icon/icon_github.svg';
-import KakaoIcon from '@/assets/icon/icon_kakao.svg';
+import ShareIcon from '@/assets/icon/ShareIcon.svg';
 import { showToast } from '@/utils/toast';
 
 export const Footer = () => {
@@ -27,15 +27,30 @@ export const Footer = () => {
         '_blank',
         'noopener,noreferrer'
       );
-    } else if (platform === 'kakao') {
-      navigator.clipboard
-        .writeText(currentUrl)
-        .then(() => {
-          showToast.success('링크가 클립보드에 복사되었습니다.');
-        })
-        .catch(() => {
-          showToast.error('링크 복사에 실패했습니다.');
+    }
+  };
+
+  const handleClickShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'DayHOP - 나만의 로컬 경험',
+          text: '장소를 공유합니다.',
+          url: window.location.href,
         });
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+        showToast.error('공유에 실패했습니다.');
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast.success('링크가 클립보드에 복사되었습니다. ');
+      } catch {
+        showToast.error('클립보드 복사 실패');
+      }
     }
   };
 
@@ -97,11 +112,11 @@ export const Footer = () => {
           </button>
           <button
             type="button"
-            onClick={() => handleShare('kakao')}
+            onClick={handleClickShare}
             className="hover:text-text-secondary cursor-pointer transition-colors"
-            aria-label="카카오톡으로 공유"
+            aria-label="공유"
           >
-            <KakaoIcon className="h-5 w-5" />
+            <ShareIcon className="h-4 w-4 text-gray-700" />
           </button>
         </div>
       </div>

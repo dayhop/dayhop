@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { cn } from '@/utils/cn';
-import DefaultAvatar from '@/assets/images/avatar-default.svg';
+import defaultAvatar from '@/assets/images/avatar-default.png';
 
 type AvatarProps = {
   src?: string;
@@ -38,19 +38,15 @@ export const Avatar = ({ src, alt = '프로필 이미지', size = 'md', classNam
     <div
       className={cn('relative overflow-hidden rounded-full', avatarSizeClassName[size], className)}
     >
-      {showDefault ? (
-        <DefaultAvatar className="h-full w-full" role="img" aria-label={alt} />
-      ) : (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes={avatarSizes[size]}
-          quality={80}
-          className="object-cover"
-          onError={handleImageError}
-        />
-      )}
+      <Image
+        src={showDefault ? defaultAvatar : src}
+        alt={alt}
+        fill
+        sizes={avatarSizes[size]}
+        quality={80}
+        className="object-cover"
+        onError={handleImageError}
+      />
     </div>
   );
 };

@@ -13,8 +13,7 @@ export function validatePassword(password: string) {
 
 export function validateName(name: string) {
   if (!name) return '';
-  if (name.length < 2) return '닉네임은 2자 이상이어야 합니다.';
-  if (name.length > 8) return '8자 이하로 작성해주세요';
+  if (name.length > 10) return '열 자 이하로 작성해주세요';
   return '';
 }
 

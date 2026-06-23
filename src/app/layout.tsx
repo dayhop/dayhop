@@ -8,8 +8,19 @@ import { serverInstance } from '@/lib/api/instance';
 import { LayoutWrapper } from '@/components/layout';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://dayhop-amber.vercel.app'),
   title: 'DayHOP',
   description: '오늘의 취향을 발견하고 가볍게 HOP하는 체험 플랫폼',
+  openGraph: {
+    title: 'DayHOP',
+    description: '오늘의 취향을 발견하고 가볍게 HOP하는 체험 플랫폼',
+    images: {
+      url: '/images/meta_data_image.png',
+      width: 1200,
+      height: 630,
+      alt: 'DayHOP 서비스 소개 이미지',
+    },
+  },
 };
 
 async function getMe() {
