@@ -65,12 +65,12 @@ export function MainActivityCardContainer({
         {showMore ? (
           <Link
             href={'/activities'}
-            className="flex h-10 items-center text-sm text-gray-500 lg:pr-5"
+            className="flex h-10 items-center pr-5 text-sm text-gray-500 md:pr-7.5 xl:pr-3"
           >
             전체보기
           </Link>
         ) : (
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex lg:px-7.5 xl:px-3">
             <ArrowLeft className="h-10 w-10 cursor-pointer" onClick={handlePrev} />
             <ArrowRight className="h-10 w-10 cursor-pointer" onClick={handleNext} />
           </div>
