@@ -11,9 +11,15 @@ interface ScheduleChangeModalProps {
   isOpen: boolean;
   onClose: () => void;
   reservation: Reservation;
+  onUpdate: (updated: Reservation) => void;
 }
 
-export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleChangeModalProps) {
+export function ScheduleChangeModal({
+  isOpen,
+  onClose,
+  reservation,
+  onUpdate,
+}: ScheduleChangeModalProps) {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
   const [headCount, setHeadCount] = useState(reservation.headCount);
@@ -52,7 +58,20 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
       return;
     }
     showToast.success('예약 일정이 변경되었습니다.');
-    window.location.reload();
+    const selectedSchedule = schedules.find((s) => s.id === selectedScheduleId);
+    onUpdate({
+      ...reservation,
+      ...res.data,
+      activity: reservation.activity,
+      scheduleId: selectedScheduleId,
+      headCount,
+      ...(selectedSchedule && {
+        date: selectedSchedule.date,
+        startTime: selectedSchedule.startTime,
+        endTime: selectedSchedule.endTime,
+      }),
+    });
+    onClose();
   };
 
   const isSelectionUnchanged =
@@ -123,6 +142,9 @@ export function ScheduleChangeModal({ isOpen, onClose, reservation }: ScheduleCh
             <p className="py-8 text-center text-gray-500">변경 가능한 다른 일정이 없습니다.</p>
           )}
         </div>
+        <p className="mb-3 text-xs text-gray-500">
+          예약 인원 변경에 따른 차액은 현장에서 체험 등록자분께 문의해주세요.
+        </p>
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose} className="px-0">
             취소

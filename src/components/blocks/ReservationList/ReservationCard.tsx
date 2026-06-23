@@ -3,6 +3,7 @@ import { ReservationStateBadge } from '@/components/ui/ReservationList';
 import { Reservation } from '@/lib/api/my-reservations/type';
 import { totalPriceToString } from '@/utils/priceFormat';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ReviewFormModal } from '../ReviewForm';
 import { ScheduleChangeModal } from './ScheduleChangeModal';
 import { useState } from 'react';
@@ -13,8 +14,10 @@ import defaultThumbnail from '@/assets/images/card-thumnail.png';
 interface ReservationCardProps {
   data: Reservation;
   onDelete: (id: number) => void;
+  onUpdate: (updated: Reservation) => void;
 }
-export function ReservationCard({ data, onDelete }: ReservationCardProps) {
+export function ReservationCard({ data, onDelete, onUpdate }: ReservationCardProps) {
+  const router = useRouter();
   const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(data.reviewSubmitted);
@@ -66,11 +69,15 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
           isOpen={isChangeModalOpen}
           onClose={() => setIsChangeModalOpen(false)}
           reservation={data}
+          onUpdate={onUpdate}
         />
       )}
 
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
-      <div className="relative flex h-34 w-full lg:h-45">
+      <div
+        className="relative flex h-34 w-full cursor-pointer lg:h-45"
+        onClick={() => router.push(`/activities/${activity.id}`)}
+      >
         <div className="relative z-10 flex w-[calc(100%-98px)] flex-col justify-center gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)] md:w-[calc(100%-116px)] lg:w-[calc(100%-155px)]">
           <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
@@ -90,14 +97,20 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
                 <Button
                   size="sm"
                   className="border-bg-surface border bg-white px-2.5 whitespace-nowrap text-gray-600 hover:text-white lg:h-7.5"
-                  onClick={() => setIsChangeModalOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsChangeModalOpen(true);
+                  }}
                 >
                   예약변경
                 </Button>
                 <Button
                   size="sm"
                   className="bg-gray-50 px-2.5 py-1.5 whitespace-nowrap text-gray-600 hover:text-white lg:h-7.5"
-                  onClick={() => setIsDeleteModalOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDeleteModalOpen(true);
+                  }}
                 >
                   예약취소
                 </Button>
@@ -116,7 +129,10 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
                 <Button
                   size="sm"
                   className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex lg:h-7.5"
-                  onClick={() => setIsReviewModalOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsReviewModalOpen(true);
+                  }}
                 >
                   후기 작성
                 </Button>

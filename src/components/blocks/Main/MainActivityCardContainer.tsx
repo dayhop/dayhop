@@ -61,7 +61,7 @@ export function MainActivityCardContainer({
   return (
     <div className="flex max-w-300 flex-col gap-4">
       <div className="flex items-center justify-between">
-        <div className="pl-3 text-lg font-bold md:text-3xl">{title}</div>
+        <div className="pl-5 text-lg font-bold md:pl-7.5 md:text-3xl xl:px-3">{title}</div>
         {showMore ? (
           <Link
             href={'/activities'}
@@ -78,7 +78,7 @@ export function MainActivityCardContainer({
       </div>
       <div
         ref={scrollRef}
-        className="flex scrollbar-none gap-4 overflow-x-auto p-3 [-ms-overflow-style:none] lg:overflow-x-hidden [&::-webkit-scrollbar]:hidden"
+        className="flex scrollbar-none gap-4 overflow-x-auto px-5 py-3 [-ms-overflow-style:none] md:px-7.5 lg:overflow-x-hidden xl:px-3 [&::-webkit-scrollbar]:hidden"
       >
         {activitiesList.map((activity) => {
           return <MainActivityCard key={activity.id} data={activity} />;

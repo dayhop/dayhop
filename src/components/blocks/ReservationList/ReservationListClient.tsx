@@ -78,7 +78,17 @@ export const ReservationListClient = ({
   );
 
   const handleDelete = (id: number) => {
-    setReservationList((prev) => prev.filter((r) => r.id !== id));
+    if (activeStatus === 'all' || activeStatus === 'canceled') {
+      setReservationList((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status: 'canceled' } : r))
+      );
+    } else {
+      setReservationList((prev) => prev.filter((r) => r.id !== id));
+    }
+  };
+
+  const handleUpdate = (updated: Reservation) => {
+    setReservationList((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
   };
 
   return (
@@ -87,7 +97,12 @@ export const ReservationListClient = ({
       <div className="flex flex-col gap-7.5 px-6 md:px-0">
         {reservationList.length !== 0 ? (
           reservationList.map((reservation) => (
-            <ReservationCard key={reservation.id} data={reservation} onDelete={handleDelete} />
+            <ReservationCard
+              key={reservation.id}
+              data={reservation}
+              onDelete={handleDelete}
+              onUpdate={handleUpdate}
+            />
           ))
         ) : (
           <EmptyState message="예약 내역이 없습니다." />
