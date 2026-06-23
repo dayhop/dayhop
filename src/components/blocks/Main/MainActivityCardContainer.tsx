@@ -70,7 +70,7 @@ export function MainActivityCardContainer({
             전체보기
           </Link>
         ) : (
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex lg:px-7.5 xl:px-3">
             <ArrowLeft className="h-10 w-10 cursor-pointer" onClick={handlePrev} />
             <ArrowRight className="h-10 w-10 cursor-pointer" onClick={handleNext} />
           </div>
