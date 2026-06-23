@@ -106,7 +106,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
 
       {/* 검색창 입력 영역 */}
       <div className="relative w-full max-w-[960px] px-4 md:px-0">
-        <div className="focus-within:ring-primary/20 flex h-[56px] items-center gap-2 rounded-[16px] bg-white py-2 pr-2.5 pl-3 shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-all duration-300 focus-within:ring-2 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] sm:h-[64px] sm:gap-3 sm:pl-5">
+        <div className="focus-within:ring-primary/20 flex h-[56px] items-center gap-2 rounded-[16px] bg-white py-2 pr-2.5 pl-3 shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-all duration-300 focus-within:ring-2 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] sm:h-[64px] sm:gap-3 sm:pl-5 [@media(max-width:499px)]:gap-[2px]">
           {/* 돋보기 아이콘 */}
           <IconSearch className="h-5 w-5 shrink-0 text-gray-950 sm:h-6 sm:w-6" />
 
@@ -144,7 +144,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
           </div>
 
           {/* 검색 / 초기화 버튼 영역 */}
-          <div className="w-[88px] shrink-0 sm:w-[110px]">
+          <div className="w-[88px] shrink-0 sm:w-[110px] [@media(max-width:499px)]:w-[64px]">
             <Button
               type="button"
               size="md"
