@@ -32,7 +32,12 @@ export function DateForm({ ref, data }: { ref?: Ref<DateFormRef>; data?: Activit
   }, [data]);
 
   useImperativeHandle(ref, () => ({
-    getValues: () => schedules.map(({ id, ...rest }) => rest),
+    getValues: () =>
+      schedules.map((s) => ({
+        date: s.date,
+        startTime: s.startTime,
+        endTime: s.endTime,
+      })),
   }));
 
   const handleAddSchedule = (newData: ActivityScheduleInput) => {
@@ -77,7 +82,7 @@ export function DateForm({ ref, data }: { ref?: Ref<DateFormRef>; data?: Activit
     <div className="flex flex-col gap-4.5">
       <label className="font-bold">예약 가능한 시간대</label>
       <CreateTimeSlotForm onAddSchedule={handleAddSchedule} />
-      {schedules.length > 1 && <hr className="text-border-default w-full md:w-[calc(100%+35px)]" />}
+      {schedules.length > 0 && <hr className="text-border-default w-full md:w-[calc(100%+35px)]" />}
       {schedules.map((schedule) => (
         <AddedTimeSlotForm
           key={schedule.id}

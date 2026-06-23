@@ -5,7 +5,7 @@ import { ExperienceDetail } from '@/components/blocks/ActivityForm/ExperienceDet
 import { ImgUpload, ImgUploadRef } from '@/components/blocks/ActivityForm/ImgUploader';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
-import { postActivities, postActivitiesImage } from '@/lib/api/activities';
+import { postActivities } from '@/lib/api/activities';
 import { ActivityScheduleInput, PostActivitiesData } from '@/lib/api/activities/type';
 import { showToast } from '@/utils/toast';
 import { useRef, useState } from 'react';
@@ -22,9 +22,11 @@ export function ActivityAdd() {
   //모달
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activityId, setActivityId] = useState<number>();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     const formData = new FormData(e.currentTarget);
 
@@ -38,17 +40,19 @@ export function ActivityAdd() {
     const isValid = validateFormField(detailFormData, schedules, bannerFile.length);
     if (!isValid) return;
 
-    const ImgUpload = await uploadActivityImages(bannerFile, detailFiles);
-
-    if (!ImgUpload.success) {
-      showToast.error(ImgUpload.message || '');
-      return;
-    }
-
-    const { bannerImageUrl, subImageUrls } = ImgUpload.data!;
-    const { title, category, description, address, price } = detailFormData;
-
+    setIsSubmitting(true);
     try {
+      const ImgUpload = await uploadActivityImages(bannerFile, detailFiles);
+
+      if (!ImgUpload.success) {
+        showToast.error(ImgUpload.message || '');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { bannerImageUrl, subImageUrls } = ImgUpload.data!;
+      const { title, category, description, address, price } = detailFormData;
+
       const submitData: PostActivitiesData = {
         title,
         category,
@@ -63,12 +67,15 @@ export function ActivityAdd() {
       const res = await postActivities(submitData);
       if (!res.success) {
         showToast.error(res.message);
+        setIsSubmitting(false);
         return;
       }
       setIsOpen(true);
       setActivityId(res.data.id);
     } catch {
       showToast.error('체험 등록에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
   return (
@@ -97,7 +104,7 @@ export function ActivityAdd() {
         <DateForm ref={dateRef} />
         <ImgUpload mode="banner" ref={bannerRef} />
         <ImgUpload mode="detail" ref={detailRef} />
-        <Button type="submit" size="md" className="mx-auto mt-5 w-40">
+        <Button type="submit" size="md" className="mx-auto mt-5 w-40" isLoading={isSubmitting}>
           등록하기
         </Button>
       </form>
