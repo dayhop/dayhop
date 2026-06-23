@@ -144,7 +144,7 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
           </div>
 
           {/* 검색 / 초기화 버튼 영역 */}
-          <div className="w-[88px] shrink-0 sm:w-[110px] [@media(max-width:499px)]:w-[64px]">
+          <div className="w-[88px] shrink-0 sm:w-[110px] [@media(max-width:499px)]:w-[54px]">
             <Button
               type="button"
               size="md"
@@ -155,7 +155,14 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
                   : 'bg-primary shadow-primary/10 text-white shadow-md hover:bg-[#00b0e6] active:bg-[#009dc4]'
               }`}
             >
-              {isSearched ? '초기화' : '검색하기'}
+              {isSearched ? (
+                '초기화'
+              ) : (
+                <>
+                  <span className="[@media(max-width:499px)]:hidden">검색하기</span>
+                  <span className="hidden [@media(max-width:499px)]:inline">검색</span>
+                </>
+              )}
             </Button>
           </div>
         </div>
