@@ -55,9 +55,10 @@ export function Userfit() {
 
       const userfitItems = fitcategorydata.activities.filter((item) => !viewedIdSet.has(item.id));
 
-      // 4개 미만이면 기록 리셋 후 전체에서 노출
+      // 4개 미만이면 봤던 기록 리셋 후 전체에서 노출
       if (userfitItems.length < 4) {
-        localStorage.removeItem('clicks');
+        const userfit = JSON.parse(response);
+        localStorage.setItem('clicks', JSON.stringify({ ...userfit, clicksActivityLog: [] }));
         setActivitiesList(fitcategorydata.activities.slice(0, 4));
       } else {
         setActivitiesList(userfitItems.slice(0, 4));
