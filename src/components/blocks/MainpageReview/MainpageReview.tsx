@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
+import { Avatar } from '@/components/ui/Avatar';
 import { StarRating } from '@/components/ui/StarRating';
 
 import type { ActivityItem, Reviews } from '@/lib/api/activities/type';
@@ -129,21 +130,12 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
               <h3 className="mb-2 line-clamp-2 text-base font-bold">{item.activity.title}</h3>
 
-              <p className="line-clamp-3 text-sm leading-6 wrap-break-word text-gray-600">{item.review.content}</p>
+              <p className="line-clamp-3 text-sm leading-6 wrap-break-word text-gray-600">
+                {item.review.content}
+              </p>
 
               <div className="mt-3 flex items-center gap-2">
-                <div className="relative h-5 w-5 overflow-hidden rounded-full bg-gray-200">
-                  {item.review.user.profileImageUrl && (
-                    <Image
-                      src={item.review.user.profileImageUrl}
-                      alt={item.review.user.nickname}
-                      fill
-                      sizes="20px"
-                      quality={80}
-                      className="object-cover"
-                    />
-                  )}
-                </div>
+                <Avatar src={item.review.user.profileImageUrl || undefined} size="sm" />
 
                 <span className="text-sm">{item.review.user.nickname}</span>
 

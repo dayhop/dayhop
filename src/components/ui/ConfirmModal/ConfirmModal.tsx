@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
+import Image from 'next/image';
 import { Modal } from '../Modal';
 import { Button } from '../Button';
-import WarningIcon from '@/assets/icon/WarningIcon.svg';
+import errorConfirm from '@/assets/images/error-confirm.png';
 
 export interface ConfirmModalProps {
   isOpen: boolean;
@@ -27,8 +28,9 @@ export const ConfirmModal = ({
   return (
     <Modal onClose={onClose} className="w-[320px] max-w-[calc(100vw-32px)] !p-8 md:w-[400px]">
       <div className="flex flex-col items-center text-center">
-        {/* svg아이콘 */}
-        <WarningIcon className="mb-4 h-[88px] w-[88px]" />
+        <div className="relative mb-4 h-[120px] w-[120px]">
+          <Image src={errorConfirm} alt="" fill sizes="120px" className="object-contain" />
+        </div>
 
         {/* 메세지 */}
         <div className="text-text-primary mb-8 text-base leading-normal font-bold whitespace-pre-wrap">
