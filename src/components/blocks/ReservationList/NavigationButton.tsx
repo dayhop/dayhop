@@ -35,6 +35,7 @@ interface NavigationButtonProps {
 
 export function NavigationButton({ activeStatus, onClickButton }: NavigationButtonProps) {
   const buttonRefs = useRef<Map<ReservationFilterButton, HTMLButtonElement>>(new Map());
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     buttonRefs.current
@@ -42,8 +43,53 @@ export function NavigationButton({ activeStatus, onClickButton }: NavigationButt
       ?.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
   }, [activeStatus]);
 
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+      el.style.cursor = 'grabbing';
+    };
+    const onMouseLeave = () => {
+      isDown = false;
+      el.style.cursor = '';
+    };
+    const onMouseUp = () => {
+      isDown = false;
+      el.style.cursor = '';
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      el.scrollLeft = scrollLeft - (x - startX);
+    };
+
+    el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('mouseleave', onMouseLeave);
+    el.addEventListener('mouseup', onMouseUp);
+    el.addEventListener('mousemove', onMouseMove);
+
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('mouseleave', onMouseLeave);
+      el.removeEventListener('mouseup', onMouseUp);
+      el.removeEventListener('mousemove', onMouseMove);
+    };
+  }, []);
+
   return (
-    <div className="flex scrollbar-none gap-2 overflow-scroll px-6 [-ms-overflow-style:none] md:px-0">
+    <div
+      ref={scrollRef}
+      className="flex scrollbar-none gap-2 overflow-scroll px-6 [-ms-overflow-style:none] md:px-0"
+    >
       {buttonList.map((button) => (
         <button
           type="button"
