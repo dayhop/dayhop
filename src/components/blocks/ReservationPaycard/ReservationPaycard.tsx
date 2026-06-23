@@ -6,7 +6,7 @@ import { Calendar } from '@/components/blocks/Calendar';
 import { useKoreanHolidays } from '@/hooks/useKoreanHolidays';
 import { Button } from '@/components/ui/Button';
 import { getActivityAvailableSchedule, postActivityReservations } from '@/lib/api/activities';
-import { patchMyReservation } from '@/lib/api/my-reservations';
+import { getMyReservations } from '@/lib/api/my-reservations';
 import type { ScheduleDate } from '@/lib/api/activities/type';
 import { toLocalDateString } from '../Calendar/utils';
 import { cn } from '@/utils/cn';
@@ -14,6 +14,7 @@ import { totalPriceToString } from '@/utils/priceFormat';
 import { showToast } from '@/utils/toast';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { Modal } from '@/components/ui/Modal';
+import { EmptyState } from '@/components/ui/EmptyState';
 import WarningIcon from '@/assets/icon/WarningIcon.svg';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -60,28 +61,63 @@ export function ReservationPaycard({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'fail' | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [reservedScheduleIds, setReservedScheduleIds] = useState<Set<number>>(new Set());
+  const [scheduleChecked, setScheduleChecked] = useState<boolean>(false);
+  const [hasAvailableSchedule, setHasAvailableSchedule] = useState<boolean>(true);
   const scheduleCacheRef = useRef<Map<string, ScheduleDate[]>>(new Map());
+  const paymentProcessedRef = useRef(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const status = params.get('paymentStatus') as 'success' | 'fail' | null;
-      if (status === 'success' || status === 'fail') {
-        if (status === 'fail') {
-          const reservationId = Number(params.get('reservationId'));
-          if (reservationId) {
-            patchMyReservation({ reservationId }, { status: 'canceled' }).catch((error) =>
-              console.error('Failed to cancel reservation:', error)
-            );
-          }
-        }
-        const timer = setTimeout(() => {
-          setPaymentStatus(status);
-        }, 0);
-        return () => clearTimeout(timer);
-      }
+    if (typeof window === 'undefined') return;
+    if (paymentProcessedRef.current) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('paymentStatus') as 'success' | 'fail' | null;
+    if (status !== 'success' && status !== 'fail') return;
+
+    paymentProcessedRef.current = true;
+
+    if (status === 'fail') {
+      setTimeout(() => setPaymentStatus('fail'), 0);
+      return;
     }
-  }, []);
+
+    const scheduleId = Number(params.get('scheduleId'));
+    const reserveHeadCount = Number(params.get('headCount'));
+    if (!scheduleId || !reserveHeadCount) return;
+
+    (async () => {
+      const res = await postActivityReservations(activityId, {
+        scheduleId,
+        headCount: reserveHeadCount,
+      });
+      window.history.replaceState(null, '', window.location.pathname);
+      if (res.success) {
+        setReservedScheduleIds((prev) => new Set(prev).add(scheduleId));
+        setPaymentStatus('success');
+      } else {
+        showToast.error(res.message);
+      }
+    })();
+  }, [activityId]);
+
+  useEffect(() => {
+    if (!isLogin) return;
+    let active = true;
+    (async () => {
+      const res = await getMyReservations({ size: 100 });
+      if (!active || !res.success) return;
+      const ids = res.data.reservations
+        .filter(
+          (r) => r.activity.id === activityId && r.status !== 'canceled' && r.status !== 'declined'
+        )
+        .map((r) => r.scheduleId);
+      setReservedScheduleIds((prev) => new Set([...prev, ...ids]));
+    })();
+    return () => {
+      active = false;
+    };
+  }, [activityId, isLogin]);
 
   // 공휴일 정보 가져오기
   const holidays = useKoreanHolidays(currentMonth.getFullYear(), currentMonth.getMonth());
@@ -169,7 +205,13 @@ export function ReservationPaycard({
     let cancelled = false;
     const initToFirstAvailable = async () => {
       const firstDate = await findAdjacentAvailableDate(new Date(), 1, true);
-      if (cancelled || !firstDate) return;
+      if (cancelled) return;
+      setScheduleChecked(true);
+      if (!firstDate) {
+        setHasAvailableSchedule(false);
+        return;
+      }
+      setHasAvailableSchedule(true);
       setCurrentMonth(new Date(firstDate.getFullYear(), firstDate.getMonth(), 1));
       setSelectedDate(firstDate);
       setSelectedScheduleId(undefined);
@@ -234,6 +276,8 @@ export function ReservationPaycard({
   // 총 합계 금액
   const totalPrice = price * headCount;
 
+  const showEmpty = scheduleChecked && !hasAvailableSchedule;
+
   // 토스페이먼츠 SDK 로드
   useEffect(() => {
     const script = document.createElement('script');
@@ -295,24 +339,7 @@ export function ReservationPaycard({
 
     setIsSubmitting(true);
 
-    // 1. 백엔드 예약 생성 (pending 상태)
-    const res = await postActivityReservations(activityId, {
-      scheduleId: selectedScheduleId,
-      headCount,
-    });
-
-    if (!res.success) {
-      if (res.status === 401) {
-        showToast.error('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
-        router.push(`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`);
-      } else {
-        showToast.error(res.message);
-      }
-      setIsSubmitting(false);
-      return;
-    }
-
-    // 2. 토스페이먼츠 SDK 호출
+    // 토스페이먼츠 SDK 호출
     if (typeof window !== 'undefined' && window.TossPayments) {
       const clientKey =
         process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
@@ -321,15 +348,14 @@ export function ReservationPaycard({
       try {
         await tossPayments.requestPayment('카드', {
           amount: totalPrice,
-          orderId: `res-${res.data.id}-${getTimestamp()}`,
+          orderId: `dayhop-${activityId}-${selectedScheduleId}-${getTimestamp()}`,
           orderName: activityTitle,
           customerName: user?.nickname || '구매자',
-          successUrl: `${cleanUrl}?paymentStatus=success&reservationId=${res.data.id}`,
-          failUrl: `${cleanUrl}?paymentStatus=fail&reservationId=${res.data.id}`,
+          successUrl: `${cleanUrl}?paymentStatus=success&scheduleId=${selectedScheduleId}&headCount=${headCount}`,
+          failUrl: `${cleanUrl}?paymentStatus=fail`,
         });
       } catch (paymentError) {
         console.error('Payment request failed:', paymentError);
-        await patchMyReservation({ reservationId: res.data.id }, { status: 'canceled' });
       }
     } else {
       showToast.error('결제 모듈을 로드하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
@@ -358,173 +384,197 @@ export function ReservationPaycard({
 
         <hr className="border-border-default mb-4" style={{ borderTopWidth: '1px' }} />
 
-        {/* 날짜 선택 달력 */}
-        <div className="mb-4 [&_.grid[class*='h-130']]:!h-[240px] [&_.grid[class*='h-155']]:md:!h-[240px] [&_button]:flex [&_button]:!h-[36px] [&_button]:items-center [&_button]:justify-center [&_button_span]:flex [&_button_span]:!h-full [&_button_span]:!w-full [&_button_span]:items-center [&_button_span]:justify-center [&_button_span_span]:!mt-0 [&_button_span_span]:flex [&_button_span_span]:!h-[28px] [&_button_span_span]:!w-[28px] [&_button_span_span]:items-center [&_button_span_span]:justify-center [&_button_span_span]:!text-[13px]">
-          <Calendar
-            value={selectedDate}
-            defaultMonth={currentMonth}
-            onSelectDate={(date) => {
-              setSelectedDate(date);
-              setSelectedScheduleId(undefined);
-            }}
-            onMonthChange={setCurrentMonth}
-            onNavigatePrev={() => handleNavigateToAdjacentDate(-1)}
-            onNavigateNext={() => handleNavigateToAdjacentDate(1)}
-            headerTitle={headerDateLabel}
-            holidays={holidays}
-            isDateDisabled={isDateDisabled}
-            headerVariant="secondary"
-            clickableDateCellClassName="hover:bg-(--color-bg-surface) hover:text-(--color-text-primary)"
-            className="w-full text-sm"
-            selectedClassName="bg-primary text-white"
-          />
-        </div>
+        {showEmpty ? (
+          <EmptyState message="현재 예약 가능한 일정이 없습니다." />
+        ) : (
+          <>
+            {/* 날짜 선택 달력 */}
+            <div className="mb-4 [&_.grid[class*='h-130']]:!h-[240px] [&_.grid[class*='h-155']]:md:!h-[240px] [&_button]:flex [&_button]:!h-[36px] [&_button]:items-center [&_button]:justify-center [&_button_span]:flex [&_button_span]:!h-full [&_button_span]:!w-full [&_button_span]:items-center [&_button_span]:justify-center [&_button_span_span]:!mt-0 [&_button_span_span]:flex [&_button_span_span]:!h-[28px] [&_button_span_span]:!w-[28px] [&_button_span_span]:items-center [&_button_span_span]:justify-center [&_button_span_span]:!text-[13px]">
+              <Calendar
+                value={selectedDate}
+                defaultMonth={currentMonth}
+                onSelectDate={(date) => {
+                  setSelectedDate(date);
+                  setSelectedScheduleId(undefined);
+                }}
+                onMonthChange={setCurrentMonth}
+                onNavigatePrev={() => handleNavigateToAdjacentDate(-1)}
+                onNavigateNext={() => handleNavigateToAdjacentDate(1)}
+                headerTitle={headerDateLabel}
+                holidays={holidays}
+                isDateDisabled={isDateDisabled}
+                headerVariant="secondary"
+                clickableDateCellClassName="hover:bg-(--color-bg-surface) hover:text-(--color-text-primary)"
+                className="w-full text-sm"
+                selectedClassName="bg-primary text-white"
+              />
+            </div>
 
-        {/* 참여 인원 수 */}
-        <div className="mb-6 flex items-center justify-between">
-          <span className="text-text-primary text-sm font-bold">참여 인원 수</span>
-          <div className="border-border-default flex items-center gap-3 rounded-lg border px-3 py-1.5">
-            <button
-              type="button"
-              onClick={handleDecreaseHeadCount}
-              disabled={headCount <= 1}
-              className="text-text-placeholder hover:text-text-secondary cursor-pointer text-lg font-bold disabled:opacity-30"
-            >
-              －
-            </button>
-            <span className="text-text-secondary min-w-8 text-center text-sm font-medium">
-              {headCount}
-            </span>
-            <button
-              type="button"
-              onClick={handleIncreaseHeadCount}
-              className="text-text-placeholder hover:text-text-secondary cursor-pointer text-lg font-bold"
-            >
-              ＋
-            </button>
-          </div>
-        </div>
-
-        {/* 예약 가능한 시간 */}
-        <div className="mb-6">
-          <span className="text-text-primary mb-3 block text-sm font-bold">예약 가능한 시간</span>
-          {selectedDate ? (
-            availableTimes.length > 0 ? (
-              <div className="flex flex-col gap-2">
-                {availableTimes.map((time) => {
-                  const isSelected = selectedScheduleId === time.id;
-                  return (
-                    <button
-                      key={time.id}
-                      type="button"
-                      onClick={() => setSelectedScheduleId(isSelected ? undefined : time.id)}
-                      className={cn(
-                        'flex w-full cursor-pointer items-center justify-between rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150',
-                        isSelected
-                          ? 'border-primary bg-primary-100 text-primary font-bold'
-                          : 'border-border-default text-text-secondary hover:bg-gray-25 bg-white'
-                      )}
-                    >
-                      <span>
-                        {time.startTime} ~ {time.endTime}
-                      </span>
-                      <div
-                        className={cn(
-                          'flex h-[18px] w-[18px] items-center justify-center rounded border transition-colors',
-                          isSelected
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-border-default bg-white'
-                        )}
-                      >
-                        {isSelected && (
-                          <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
-                            <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
-                          </svg>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
+            {/* 참여 인원 수 */}
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-text-primary text-sm font-bold">참여 인원 수</span>
+              <div className="border-border-default flex items-center gap-3 rounded-lg border px-3 py-1.5">
+                <button
+                  type="button"
+                  onClick={handleDecreaseHeadCount}
+                  disabled={headCount <= 1}
+                  className="text-text-placeholder hover:text-text-secondary cursor-pointer text-lg font-bold disabled:opacity-30"
+                >
+                  －
+                </button>
+                <span className="text-text-secondary min-w-8 text-center text-sm font-medium">
+                  {headCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleIncreaseHeadCount}
+                  className="text-text-placeholder hover:text-text-secondary cursor-pointer text-lg font-bold"
+                >
+                  ＋
+                </button>
               </div>
-            ) : (
-              <p className="text-text-placeholder py-4 text-center text-xs">
-                선택한 날짜에 가능한 시간대가 없습니다.
-              </p>
-            )
-          ) : (
-            <p className="text-text-placeholder py-4 text-center text-xs">
-              날짜를 먼저 선택해 주세요.
-            </p>
-          )}
-        </div>
+            </div>
 
-        <hr className="border-border-default mb-6" style={{ borderTopWidth: '1px' }} />
+            {/* 예약 가능한 시간 */}
+            <div className="mb-6">
+              <span className="text-text-primary mb-3 block text-sm font-bold">
+                예약 가능한 시간
+              </span>
+              {selectedDate ? (
+                availableTimes.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {availableTimes.map((time) => {
+                      const isSelected = selectedScheduleId === time.id;
+                      const isReserved = reservedScheduleIds.has(time.id);
+                      return (
+                        <button
+                          key={time.id}
+                          type="button"
+                          disabled={isReserved}
+                          onClick={() => setSelectedScheduleId(isSelected ? undefined : time.id)}
+                          className={cn(
+                            'flex w-full items-center justify-between rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150',
+                            isReserved
+                              ? 'border-border-default text-text-placeholder cursor-not-allowed bg-gray-50'
+                              : isSelected
+                                ? 'border-primary bg-primary-100 text-primary cursor-pointer font-bold'
+                                : 'border-border-default text-text-secondary hover:bg-gray-25 cursor-pointer bg-white'
+                          )}
+                        >
+                          <span>
+                            {time.startTime} ~ {time.endTime}
+                          </span>
+                          {isReserved ? (
+                            <span className="text-xs font-semibold">이미 예약함</span>
+                          ) : (
+                            <div
+                              className={cn(
+                                'flex h-[18px] w-[18px] items-center justify-center rounded border transition-colors',
+                                isSelected
+                                  ? 'border-primary bg-primary text-white'
+                                  : 'border-border-default bg-white'
+                              )}
+                            >
+                              {isSelected && (
+                                <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
+                                  <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                                </svg>
+                              )}
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-text-placeholder py-4 text-center text-xs">
+                    선택한 날짜에 가능한 시간대가 없습니다.
+                  </p>
+                )
+              ) : (
+                <p className="text-text-placeholder py-4 text-center text-xs">
+                  날짜를 먼저 선택해 주세요.
+                </p>
+              )}
+            </div>
 
-        {/* 총 합계 및 예약하기 버튼 */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-text-secondary text-xs font-bold">총 합계</span>
-            <span className="text-text-primary text-lg font-bold">
-              {totalPriceToString(totalPrice)}
-            </span>
-          </div>
-          <Button
-            onClick={handleReservation}
-            disabled={!selectedDate || !selectedScheduleId || isSubmitting}
-            className="!h-12 max-w-[150px] flex-1 !rounded-xl !px-0 text-sm whitespace-nowrap"
-          >
-            {isSubmitting ? '처리 중...' : '예약하기'}
-          </Button>
-        </div>
+            <hr className="border-border-default mb-6" style={{ borderTopWidth: '1px' }} />
+
+            {/* 총 합계 및 예약하기 버튼 */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <span className="text-text-secondary text-xs font-bold">총 합계</span>
+                <span className="text-text-primary text-lg font-bold">
+                  {totalPriceToString(totalPrice)}
+                </span>
+              </div>
+              <Button
+                onClick={handleReservation}
+                disabled={!selectedDate || !selectedScheduleId || isSubmitting}
+                className="!h-12 max-w-[150px] flex-1 !rounded-xl !px-0 text-sm whitespace-nowrap"
+              >
+                {isSubmitting ? '처리 중...' : '예약하기'}
+              </Button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* 2. 모바일/태블릿 하단 고정 플로팅 바 (lg 미만일 때만 보임) */}
       <div className="border-border-default fixed right-0 bottom-0 left-0 z-40 border-t bg-white px-6 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.04)] lg:hidden">
         <div className="mx-auto flex max-w-[768px] flex-col gap-3">
-          <div className="flex items-center justify-between">
-            {/* Left side: Price and Headcount */}
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-text-primary text-xl font-extrabold">
-                {totalPriceToString(totalPrice)}
-              </span>
-              <span className="text-text-tertiary text-sm">/ {headCount}명</span>
-            </div>
-
-            {/* Right side: Date Selection Link */}
-            <div>
-              {selectedDate && selectedTimeSlot ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-primary text-xs font-semibold">
-                    {toLocalDateString(selectedDate)} {selectedTimeSlot.startTime}~
-                    {selectedTimeSlot.endTime}
+          {showEmpty ? (
+            <p className="text-text-tertiary py-2 text-center text-sm font-medium">
+              현재 예약 가능한 일정이 없습니다.
+            </p>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                {/* Left side: Price and Headcount */}
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-text-primary text-xl font-extrabold">
+                    {totalPriceToString(totalPrice)}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(true)}
-                    className="text-text-secondary hover:text-text-primary cursor-pointer text-xs font-medium underline"
-                  >
-                    변경
-                  </button>
+                  <span className="text-text-tertiary text-sm">/ {headCount}명</span>
                 </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(true)}
-                  className="text-primary cursor-pointer text-sm font-semibold underline"
-                >
-                  날짜 선택하기
-                </button>
-              )}
-            </div>
-          </div>
 
-          <Button
-            onClick={handleBottomBarReserve}
-            disabled={isSubmitting}
-            className="!h-12 w-full !rounded-xl text-base font-bold"
-          >
-            {isSubmitting ? '처리 중...' : '예약하기'}
-          </Button>
+                {/* Right side: Date Selection Link */}
+                <div>
+                  {selectedDate && selectedTimeSlot ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-primary text-xs font-semibold">
+                        {toLocalDateString(selectedDate)} {selectedTimeSlot.startTime}~
+                        {selectedTimeSlot.endTime}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setIsModalOpen(true)}
+                        className="text-text-secondary hover:text-text-primary cursor-pointer text-xs font-medium underline"
+                      >
+                        변경
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(true)}
+                      className="text-primary cursor-pointer text-sm font-semibold underline"
+                    >
+                      날짜 선택하기
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <Button
+                onClick={handleBottomBarReserve}
+                disabled={isSubmitting}
+                className="!h-12 w-full !rounded-xl text-base font-bold"
+              >
+                {isSubmitting ? '처리 중...' : '예약하기'}
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -621,35 +671,43 @@ export function ReservationPaycard({
                 <div className="flex max-h-[280px] flex-col gap-2 overflow-y-auto pr-1">
                   {availableTimes.map((time) => {
                     const isSelected = selectedScheduleId === time.id;
+                    const isReserved = reservedScheduleIds.has(time.id);
                     return (
                       <button
                         key={time.id}
                         type="button"
+                        disabled={isReserved}
                         onClick={() => setSelectedScheduleId(isSelected ? undefined : time.id)}
                         className={cn(
-                          'flex w-full cursor-pointer items-center justify-between rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150',
-                          isSelected
-                            ? 'border-primary bg-primary-100 text-primary font-bold'
-                            : 'border-border-default text-text-secondary hover:bg-gray-25 bg-white'
+                          'flex w-full items-center justify-between rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150',
+                          isReserved
+                            ? 'border-border-default text-text-placeholder cursor-not-allowed bg-gray-50'
+                            : isSelected
+                              ? 'border-primary bg-primary-100 text-primary cursor-pointer font-bold'
+                              : 'border-border-default text-text-secondary hover:bg-gray-25 cursor-pointer bg-white'
                         )}
                       >
                         <span>
                           {time.startTime} ~ {time.endTime}
                         </span>
-                        <div
-                          className={cn(
-                            'flex h-[18px] w-[18px] items-center justify-center rounded border transition-colors',
-                            isSelected
-                              ? 'border-primary bg-primary text-white'
-                              : 'border-border-default bg-white'
-                          )}
-                        >
-                          {isSelected && (
-                            <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
-                              <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
-                            </svg>
-                          )}
-                        </div>
+                        {isReserved ? (
+                          <span className="text-xs font-semibold">이미 예약함</span>
+                        ) : (
+                          <div
+                            className={cn(
+                              'flex h-[18px] w-[18px] items-center justify-center rounded border transition-colors',
+                              isSelected
+                                ? 'border-primary bg-primary text-white'
+                                : 'border-border-default bg-white'
+                            )}
+                          >
+                            {isSelected && (
+                              <svg className="h-3 w-3 fill-current" viewBox="0 0 20 20">
+                                <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                              </svg>
+                            )}
+                          </div>
+                        )}
                       </button>
                     );
                   })}
