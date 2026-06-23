@@ -46,7 +46,6 @@ export function ActivityAdd() {
 
       if (!ImgUpload.success) {
         showToast.error(ImgUpload.message || '');
-        setIsSubmitting(false);
         return;
       }
 
@@ -67,7 +66,6 @@ export function ActivityAdd() {
       const res = await postActivities(submitData);
       if (!res.success) {
         showToast.error(res.message);
-        setIsSubmitting(false);
         return;
       }
       setIsOpen(true);

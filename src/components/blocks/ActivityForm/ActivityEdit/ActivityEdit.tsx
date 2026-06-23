@@ -90,7 +90,6 @@ export function ActivityEdit({ activityId }: EditPageProps) {
         const bannerUpload = await postActivitiesImage(bannerFile[0]);
         if (!bannerUpload.success) {
           showToast.error(bannerUpload.message);
-          setIsSubmitting(false);
           return;
         }
         bannerImageUrl = bannerUpload.data.activityImageUrl;
@@ -105,7 +104,6 @@ export function ActivityEdit({ activityId }: EditPageProps) {
       const detailFailed = detailUploadRes.find((r) => !r.success);
       if (detailFailed && !detailFailed.success) {
         showToast.error(detailFailed.message);
-        setIsSubmitting(false);
         return;
       }
       const subImageUrls = detailUploadRes.flatMap((r) =>
@@ -159,14 +157,12 @@ export function ActivityEdit({ activityId }: EditPageProps) {
       if (!isEdited) {
         setIsOpen(false);
         showToast.error('수정 사항이 없습니다.');
-        setIsSubmitting(false);
         return;
       }
 
       const patchRes = await patchMyActivity(activityId, submitData);
       if (!patchRes.success) {
         showToast.error(patchRes.message);
-        setIsSubmitting(false);
         return;
       }
       setIsOpen(false);
