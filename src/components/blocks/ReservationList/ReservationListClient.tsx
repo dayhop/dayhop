@@ -7,6 +7,7 @@ import { Reservation, ReservationStatus } from '@/lib/api/my-reservations/type';
 import { showToast } from '@/utils/toast';
 import { NavigationButton, ReservationFilterButton } from './NavigationButton';
 import { ReservationCard } from './ReservationCard';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const GET_SIZE = 10;
 
@@ -89,7 +90,7 @@ export const ReservationListClient = ({
             <ReservationCard key={reservation.id} data={reservation} onDelete={handleDelete} />
           ))
         ) : (
-          <div className="py-10 text-center text-gray-500">예약 내역이 없습니다.</div>
+          <EmptyState message="예약 내역이 없습니다." />
         )}
       </div>
       {cursorId !== null && <div ref={sentinelRef} className="h-4" />}

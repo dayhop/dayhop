@@ -85,19 +85,26 @@ export function SearchInput({ onSearch, onReset, initialValue = '' }: SearchInpu
       <div className="mb-8 flex w-full flex-col items-center text-center">
         <h2 className="flex flex-wrap items-center justify-center gap-y-1 text-[clamp(1.5rem,0.75rem+3.33vw,2rem)] leading-normal font-bold tracking-tight text-gray-900">
           <span>오늘은 새로운</span>
-          <div
-            className="relative mx-1 inline-block h-[1.3em] overflow-hidden align-bottom transition-all duration-300 ease-in-out md:mx-2"
-            style={{ width: `${words[wordIndex].length * 1.1}em` }}
-          >
-            <span
-              key={wordIndex}
-              className="text-primary animate-word-slide absolute right-0 left-0 inline-block text-center font-extrabold"
+
+          {/* 애니메이션 글씨 */}
+          <div className="flex">
+            <div
+              className="relative mx-1 inline-block h-[1.3em] overflow-hidden align-bottom transition-all duration-300 ease-in-out md:mx-2"
+              style={{ width: `${words[wordIndex].length * 1.1}em` }}
             >
-              {words[wordIndex]}
-            </span>
+              <span
+                key={wordIndex}
+                className="text-primary animate-word-slide absolute right-0 left-0 inline-block text-center font-extrabold"
+              >
+                {words[wordIndex]}
+              </span>
+            </div>
+            <div className="mr-2">로</div>
           </div>
+          {/* ===== */}
+
           <span className="flex items-center">
-            로 H
+            H
             <IconPin className="text-primary animate-bounce-slow relative bottom-[2px] mx-[1px] inline-block h-[26px] w-[26px] shrink-0 align-middle text-gray-900 md:h-[32px] md:w-[32px]" />
             p 해볼까요?
           </span>

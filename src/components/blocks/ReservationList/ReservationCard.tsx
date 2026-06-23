@@ -15,9 +15,9 @@ interface ReservationCardProps {
   onDelete: (id: number) => void;
 }
 export function ReservationCard({ data, onDelete }: ReservationCardProps) {
-  const { activity, startTime, endTime, date, totalPrice, status, headCount, id, reviewSubmitted } =
-    data;
+  const { activity, startTime, endTime, date, totalPrice, status, headCount, id } = data;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(data.reviewSubmitted);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
   const [imgError, setImgError] = useState(false);
@@ -47,7 +47,11 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
     <div className="mt-5 flex w-full max-w-160 min-w-0 flex-col gap-3">
       {/*모달*/}
       {isReviewModalOpen && (
-        <ReviewFormModal reservation={data} onClose={() => setIsReviewModalOpen(false)} />
+        <ReviewFormModal
+          reservation={data}
+          onClose={() => setIsReviewModalOpen(false)}
+          onSuccess={() => setReviewSubmitted(true)}
+        />
       )}
       {isDeleteModalOpen && (
         <ConfirmModal
@@ -66,31 +70,33 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
       )}
 
       <div className="text-text-secondary font-bold lg:hidden">{date}</div>
-      <div className="flex h-37 w-full items-stretch lg:h-43">
-        <div className="relative z-10 flex flex-1 flex-col justify-end gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)]">
+      <div className="relative flex h-34 w-full lg:h-45">
+        <div className="relative z-10 flex w-[calc(100%-98px)] flex-col justify-center gap-2 rounded-3xl bg-white p-5 text-sm shadow-[0_-8px_20px_0_rgba(0,0,0,0.05)] md:w-[calc(100%-116px)] lg:w-[calc(100%-155px)]">
           <ReservationStateBadge reservationState={status} />
           <div className="flex flex-col gap-1">
-            <div className="truncate font-bold">{activity.title}</div>
-            <div className="text-text-tertiary hidden text-[13px] lg:flex">{`${date} · ${startTime} ~ ${endTime}`}</div>
+            <div className="truncate text-[14px] font-bold lg:text-[18px]">{activity.title}</div>
+            <div className="text-text-tertiary hidden text-[13px] lg:flex lg:text-[16px]">{`${date} · ${startTime} ~ ${endTime}`}</div>
             <div className="text-text-tertiary text-[13px] lg:hidden">{`${startTime} ~ ${endTime}`}</div>
           </div>
           <div className="flex justify-between">
-            <div className="flex gap-1">
-              <div className="text-[16px] font-bold">{totalPriceToString(totalPrice)}</div>
-              <div className="text-text-placeholder">{headCount}명</div>
+            <div className="flex items-center gap-1">
+              <div className="text-[16px] font-bold lg:text-[18px]">
+                {totalPriceToString(totalPrice)}
+              </div>
+              <div className="text-text-placeholder lg:text-[16px]">{headCount}명</div>
             </div>
             {status === 'pending' && (
               <div className="hidden gap-2 lg:flex">
                 <Button
                   size="sm"
-                  className="border-bg-surface border bg-white px-2.5 whitespace-nowrap text-gray-600"
+                  className="border-bg-surface border bg-white px-2.5 whitespace-nowrap text-gray-600 hover:text-white lg:h-7.5"
                   onClick={() => setIsChangeModalOpen(true)}
                 >
                   예약변경
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-gray-50 px-2.5 py-1.5 whitespace-nowrap text-gray-600"
+                  className="bg-gray-50 px-2.5 py-1.5 whitespace-nowrap text-gray-600 hover:text-white lg:h-7.5"
                   onClick={() => setIsDeleteModalOpen(true)}
                 >
                   예약취소
@@ -102,14 +108,14 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
                 <Button
                   size="sm"
                   disabled
-                  className="hidden w-fit cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:flex"
+                  className="hidden w-fit cursor-default bg-gray-100 px-2.5 py-1.5 whitespace-nowrap text-gray-400 lg:flex lg:h-7.5"
                 >
                   작성 완료
                 </Button>
               ) : (
                 <Button
                   size="sm"
-                  className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex"
+                  className="bg-primary hidden w-fit px-2.5 py-1.5 whitespace-nowrap lg:flex lg:h-7.5"
                   onClick={() => setIsReviewModalOpen(true)}
                 >
                   후기 작성
@@ -117,12 +123,12 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
               ))}
           </div>
         </div>
-        <div className="relative -ml-5 aspect-square shrink-0 overflow-hidden rounded-r-3xl">
+        <div className="absolute top-0 right-0 h-34 w-34 overflow-hidden rounded-r-3xl lg:h-45 lg:w-45">
           <Image
             src={cardImg}
             alt="배너 이미지"
             fill
-            sizes="(min-width: 1024px) 280px, 160px"
+            sizes="(min-width: 1024px) 280px, 136px"
             quality={80}
             className="object-cover"
             onError={() => setImgError(true)}
@@ -131,12 +137,17 @@ export function ReservationCard({ data, onDelete }: ReservationCardProps) {
       </div>
       {status === 'pending' && (
         <div className="flex w-full gap-3 lg:hidden">
-          <Button size="sm" variant="secondary" onClick={() => setIsChangeModalOpen(true)}>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="border-gray-50 text-gray-600"
+            onClick={() => setIsChangeModalOpen(true)}
+          >
             예약 변경
           </Button>
           <Button
             size="sm"
-            className="bg-gray-50 text-gray-600"
+            className="bg-gray-50 text-gray-600 hover:text-white"
             onClick={() => setIsDeleteModalOpen(true)}
           >
             예약 취소

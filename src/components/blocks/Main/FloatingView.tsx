@@ -9,7 +9,6 @@ import { ActivityResponse } from '@/lib/api/activities/type';
 import { FloatingViewCard } from './FloatingViewCard';
 import { getMyUser } from '@/lib/api/users';
 import { EmptyState } from '@/components/ui/EmptyState';
-// 임시 데이터 (이미지 경로, 타이틀, 가격, 평점 등 프로젝트에 맞게 수정)
 
 export function FloatingRecentViews() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,7 +59,12 @@ export function FloatingRecentViews() {
         <div className="group relative">
           <div className="pointer-events-none absolute right-full mr-4 w-max scale-95 rounded-xl border border-gray-100 bg-white/90 px-4 py-2.5 text-sm opacity-0 shadow-xl backdrop-blur-sm transition-all group-hover:-translate-x-1 group-hover:scale-100 group-hover:opacity-100">
             <p className="font-medium text-gray-800">
-              <span className="text-primary font-bold">{nickname}</span>님이 방금 살펴본 체험!
+              <span
+                className={`${nickname !== '' ? 'text-primary font-bold' : 'text-text-primary'}`}
+              >
+                {nickname || '회원'}
+              </span>
+              님이 방금 살펴본 체험!
             </p>
           </div>
 
@@ -77,7 +81,6 @@ export function FloatingRecentViews() {
       </div>
 
       {/* --- 슬라이드 패널 영역 --- */}
-      {/* [예쁨3] 패널 - 둥근 곡률, 강한 그림자, 깔끔한 헤더 */}
       <div className="flex h-125 w-90 flex-col overflow-hidden rounded-l-3xl border border-gray-100 bg-white shadow-[-10px_0_60px_rgba(0,0,0,0.1)]">
         {/* 패널 헤더 */}
         <div className="flex items-center justify-between border-b border-gray-100 p-6 pb-4">
