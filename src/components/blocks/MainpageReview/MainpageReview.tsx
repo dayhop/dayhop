@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { getActivities, getActivityReviews } from '@/lib/api/activities';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { StarRating } from '@/components/ui/StarRating';
 
-import type { ActivityItem } from '@/types/api';
-import type { Reviews } from '@/lib/api/activities/type';
+import type { ActivityItem, Reviews } from '@/lib/api/activities/type';
 
 interface MainReviewItem {
   activity: ActivityItem;
@@ -39,9 +35,9 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
       try {
         const activityRes = await getActivities({
           method: 'offset',
-          sort: 'latest',
+          sort: 'most_reviewed',
           page: 1,
-          size: 4,
+          size: 50,
         });
 
         if (!activityRes.success) {
@@ -49,8 +45,12 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
           return;
         }
 
+        const activitiesWithReviews = activityRes.data.activities
+          .filter((activity) => activity.reviewCount > 0)
+          .slice(0, 8);
+
         const reviewResults = await Promise.all(
-          activityRes.data.activities.map(async (activity) => {
+          activitiesWithReviews.map(async (activity) => {
             const reviewRes = await getActivityReviews(activity.id, {
               page: 1,
               size: 1,
@@ -62,11 +62,16 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
             if (!review) return null;
 
-            return { activity, review };
+            return {
+              activity,
+              review,
+            };
           })
         );
 
-        setReviews(reviewResults.filter((item): item is MainReviewItem => item !== null));
+        setReviews(
+          reviewResults.filter((item): item is MainReviewItem => item !== null).slice(0, 4)
+        );
       } finally {
         setIsLoading(false);
       }
@@ -78,7 +83,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
   if (isLoading) {
     return (
       <section className="w-full max-w-300 py-10">
-        <h2 className="mb-8 text-xl font-bold md:text-2xl">✨ Hopper들의 생생한 후기</h2>
+        <h2 className="mb-8 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
 
         <div className="grid grid-cols-1 gap-y-8 min-[744px]:grid-cols-2 min-[744px]:gap-x-8 min-[1280px]:gap-x-10">
           {Array.from({ length: 4 }).map((_, index) => (
@@ -101,7 +106,7 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
   if (reviews.length === 0) {
     return (
       <section className="w-full max-w-300 py-10">
-        <h2 className="mb-8 text-xl font-bold md:text-2xl">✨ Hopper들의 생생한 후기</h2>
+        <h2 className="mb-8 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
 
         <div className="py-8 text-center text-sm text-gray-500">등록된 후기가 없습니다.</div>
       </section>
@@ -110,22 +115,21 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
 
   return (
     <section className="w-full max-w-300 py-10">
-      <h2 className="mb-8 text-xl font-bold md:text-2xl">✨ Hopper들의 생생한 후기</h2>
+      <h2 className="mb-8 text-2xl font-bold md:text-3xl">✨ Hopper들의 생생한 후기</h2>
 
       <div className="grid grid-cols-1 gap-y-8 min-[744px]:grid-cols-2 min-[744px]:gap-x-8 min-[1280px]:gap-x-10">
         {reviews.map((item) => (
           <article key={item.review.id} className="flex justify-between gap-3">
-            <div
-              className="min-w-0 flex-1 cursor-pointer"
+            <button
+              type="button"
+              className="min-w-0 flex-1 cursor-pointer text-left"
               onClick={() => moveToActivity(item.activity.id)}
             >
-              <p className="mb-1 text-xs text-gray-400">{item.activity.category}</p>
+              <p className="mb-1 text-sm text-gray-400">{item.activity.category}</p>
 
-              <h3 className="mb-2 text-sm font-bold">{item.activity.title}</h3>
+              <h3 className="mb-2 line-clamp-2 text-base font-bold">{item.activity.title}</h3>
 
-              <p className="line-clamp-4 text-xs leading-5 wrap-break-word text-gray-600">
-                {item.review.content}
-              </p>
+              <p className="line-clamp-3 text-sm leading-6 wrap-break-word text-gray-600">{item.review.content}</p>
 
               <div className="mt-3 flex items-center gap-2">
                 <div className="relative h-5 w-5 overflow-hidden rounded-full bg-gray-200">
@@ -141,25 +145,27 @@ export const MainpageReview = ({ items }: MainpageReviewProps) => {
                   )}
                 </div>
 
-                <span className="text-xs">{item.review.user.nickname}</span>
+                <span className="text-sm">{item.review.user.nickname}</span>
 
                 <StarRating mode="display" rating={item.review.rating} />
               </div>
-            </div>
+            </button>
 
-            <div
-              className="relative h-[120px] w-[84px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
+            <button
+              type="button"
+              className="relative h-[132px] w-[96px] shrink-0 cursor-pointer overflow-hidden rounded-xl"
               onClick={() => moveToActivity(item.activity.id)}
+              aria-label={`${item.activity.title} 상세 페이지로 이동`}
             >
               <Image
                 src={item.activity.bannerImageUrl}
                 alt={item.activity.title}
                 fill
-                sizes="168px"
+                sizes="96px"
                 quality={80}
                 className="object-cover"
               />
-            </div>
+            </button>
           </article>
         ))}
       </div>
