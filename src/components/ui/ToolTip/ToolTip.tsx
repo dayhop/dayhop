@@ -56,7 +56,7 @@ export function ToolTip({
 
   return createPortal(
     <div
-      className="pointer-events-none fixed z-30 hidden lg:flex"
+      className="pointer-events-none fixed z-30 flex"
       style={{ left: position.x, top: position.y }}
     >
       <div
