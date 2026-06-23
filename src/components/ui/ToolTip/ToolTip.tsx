@@ -55,7 +55,10 @@ export function ToolTip({
   if (!isOpen || !position) return null;
 
   return createPortal(
-    <div className="pointer-events-none fixed z-30" style={{ left: position.x, top: position.y }}>
+    <div
+      className="pointer-events-none fixed z-30 flex"
+      style={{ left: position.x, top: position.y }}
+    >
       <div
         className={`pointer-events-auto absolute flex w-max max-w-[calc(100vw-32px)] ${
           placement === 'top' ? 'bottom-0 mb-1 flex-col-reverse' : 'top-0 mt-1 flex-col'

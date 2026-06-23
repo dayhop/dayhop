@@ -15,7 +15,7 @@ export function ResetButton({ resetButtonBottom, onReset }: ResetButtonProp) {
         className="bg-primary flex h-15 w-15 items-center justify-center rounded-full p-0 text-white shadow-lg"
         onClick={onReset}
       >
-        <ResetIcon className="text-bg" />
+        <ResetIcon className="text-bg h-10 w-10" />
       </Button>
     </div>
   );

@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+
 export type ReservationFilterButton =
   | 'pending'
   | 'confirmed'
@@ -15,7 +19,7 @@ const buttonList: ReservationFilterButton[] = [
   'completed',
 ];
 
-const BUTTON_MATCH = {
+const BUTTON_MATCH: Record<ReservationFilterButton, string> = {
   all: '전체',
   pending: '예약 완료',
   canceled: '예약 취소',
@@ -30,12 +34,24 @@ interface NavigationButtonProps {
 }
 
 export function NavigationButton({ activeStatus, onClickButton }: NavigationButtonProps) {
+  const buttonRefs = useRef<Map<ReservationFilterButton, HTMLButtonElement>>(new Map());
+
+  useEffect(() => {
+    buttonRefs.current
+      .get(activeStatus)
+      ?.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+  }, [activeStatus]);
+
   return (
     <div className="flex scrollbar-none gap-2 overflow-scroll px-6 [-ms-overflow-style:none] md:px-0">
       {buttonList.map((button) => (
         <button
           type="button"
           key={button}
+          ref={(el) => {
+            if (el) buttonRefs.current.set(button, el);
+            else buttonRefs.current.delete(button);
+          }}
           className={`${activeStatus === button ? 'bg-text-primary text-bg' : 'text-text-primary bg-bg'} border-bg-surface h-10 w-23 shrink-0 cursor-pointer rounded-4xl border`}
           onClick={() => onClickButton(button)}
         >

@@ -1,15 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 
-import { ActivityCard } from '@/components/blocks/Main/ActivityCard';
 import { ActivityCardSkeleton } from '@/components/blocks/Main/ActivityCardSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { getActivities } from '@/lib/api/activities';
 
 import type { ActivityItem } from '@/lib/api/activities/type';
-import { ActivityCardContainer } from '../Main/ActivityCardContainer';
+import { MainActivityCardContainer } from '../Main/MainActivityCardContainer';
 
 interface LatestActivitiesProps {
   activities?: ActivityItem[];
@@ -64,5 +62,7 @@ export function LatestActivities({ activities: initialActivities }: LatestActivi
     );
   }
 
-  return <ActivityCardContainer activitiesList={activities} title="🔥 최신 체험" showMore={true} />;
+  return (
+    <MainActivityCardContainer activitiesList={activities} title="🔥 최신 체험" showMore={true} />
+  );
 }
