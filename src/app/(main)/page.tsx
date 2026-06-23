@@ -32,19 +32,20 @@ export default function Home() {
         <SearchInput onSearch={handleSearch} />
       </section>
 
-      <section className="mt-16 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
+      {/* <section className="mt-16 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0"> */}
+      <section className="mt-16 w-full xl:flex xl:justify-center xl:px-0">
         <Userfit />
       </section>
 
-      <section className="mt-16 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
+      <section className="mt-16 w-full xl:flex xl:justify-center xl:px-0">
         <BestActivities />
       </section>
 
-      <section className="mt-16 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
+      <section className="mt-16 w-full xl:flex xl:justify-center xl:px-0">
         <LatestActivities />
       </section>
 
-      <section className="mt-16 w-full px-4 md:px-6 xl:flex xl:justify-center xl:px-0">
+      <section className="mt-16 w-full px-5 md:px-6 xl:flex xl:justify-center xl:px-0">
         <MainpageReview />
       </section>
     </main>
