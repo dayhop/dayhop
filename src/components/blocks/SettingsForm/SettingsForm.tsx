@@ -8,6 +8,8 @@ import Input from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { PasswordConfirmModal } from '../PasswordConfirmModal';
 import { showToast } from '@/utils/toast';
+import { generateRandomNickname } from '@/utils/randomNickname';
+import DiceIcon from '@/assets/icon/DiceIcon.svg';
 
 const INITIAL_FORM = { nickname: '', newPassword: '', confirmPassword: '' };
 const INITIAL_ERRORS = { nickname: '', newPassword: '', confirmPassword: '' };
@@ -145,6 +147,21 @@ export const SettingsForm = ({ isOAuth = false }: SettingsFormProps) => {
           warningText={errors.nickname}
           onChange={handleChange('nickname')}
           onBlur={handleNicknameBlur}
+          suffix={
+            isEditMode ? (
+              <button
+                type="button"
+                className="text-text-placeholder hover:text-primary shrink-0 cursor-pointer transition-colors"
+                onClick={() => {
+                  setFormData((prev) => ({ ...prev, nickname: generateRandomNickname() }));
+                  setErrors((prev) => ({ ...prev, nickname: '' }));
+                }}
+                aria-label="랜덤 닉네임 생성"
+              >
+                <DiceIcon className="h-6 w-6" />
+              </button>
+            ) : undefined
+          }
         />
       </FormField>
 
