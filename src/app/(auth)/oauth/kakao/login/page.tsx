@@ -32,7 +32,7 @@ function KakaoLogin() {
     const res = await postOauthSignIn('kakao', body);
     if (!res.success) {
       showToast.error(res.message);
-      router.push('/login');
+      router.push('/signup');
       return;
     }
     if (res.data.accessToken || res.data.refreshToken) {
