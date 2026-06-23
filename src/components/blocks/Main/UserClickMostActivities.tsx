@@ -1,6 +1,6 @@
 'use client';
 
-import { ActivityCardContainer } from '@/components/blocks/Main/ActivityCardContainer';
+import { MainActivityCardContainer } from '@/components/blocks/Main/MainActivityCardContainer';
 import { getActivity } from '@/lib/api/activities';
 import { ActivityResponse } from '@/lib/api/activities/type';
 import { getMyUser } from '@/lib/api/users';
@@ -50,7 +50,10 @@ export function UserClickMostActivities() {
 
   return (
     <div>
-      <ActivityCardContainer title={`${name}님이 자주 찾는 체험`} activitiesList={activitiesList} />
+      <MainActivityCardContainer
+        title={`${name}님이 자주 찾는 체험`}
+        activitiesList={activitiesList}
+      />
     </div>
   );
 }
