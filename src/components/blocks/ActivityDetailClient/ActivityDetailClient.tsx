@@ -1,13 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ReservationPaycard } from '@/components/blocks/ReservationPaycard';
 import { KebabMenu } from '@/components/blocks/KebabMenu';
 import { ActivityDetailMap } from '@/components/blocks/ActivityDetailMap';
 import { ActivityReviews } from '@/components/blocks/ActivityReviews';
+import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/utils/cn';
+
+interface GalleryImageProps {
+  src: string;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  onOpen: (src: string) => void;
+}
+
+const GalleryImage = ({ src, alt, sizes, priority, onOpen }: GalleryImageProps) => (
+  <Image
+    src={src}
+    alt={alt}
+    fill
+    sizes={sizes}
+    quality={80}
+    priority={priority}
+    onClick={() => onOpen(src)}
+    className="cursor-zoom-in object-cover transition-transform duration-300 hover:scale-105"
+  />
+);
 
 interface SubImage {
   id: number;
@@ -44,6 +66,8 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
   const { user, isLogin } = useAuthStore();
   const isMyActivity = isLogin && user && activity.userId === user.id;
 
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
   const subImages = activity.subImages || [];
   const hasSubImages = subImages.length > 0;
 
@@ -62,14 +86,12 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
               )}
             >
               {activity.bannerImageUrl ? (
-                <Image
+                <GalleryImage
                   src={activity.bannerImageUrl}
                   alt={activity.title}
-                  fill
                   sizes="(max-width: 768px) 100vw, 600px"
-                  quality={80}
-                  className="object-cover transition-transform duration-300 hover:scale-105"
                   priority
+                  onOpen={setLightboxImage}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-gray-400">
@@ -83,13 +105,11 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
               <div className="col-span-1 h-full">
                 {subImages.length === 1 && (
                   <div className="border-border-default relative h-full w-full overflow-hidden rounded-3xl border bg-gray-50 shadow-sm">
-                    <Image
+                    <GalleryImage
                       src={subImages[0].imageUrl}
                       alt={`${activity.title} sub 0`}
-                      fill
                       sizes="(max-width: 768px) 100vw, 600px"
-                      quality={80}
-                      className="object-cover transition-transform duration-300 hover:scale-105"
+                      onOpen={setLightboxImage}
                     />
                   </div>
                 )}
@@ -100,13 +120,11 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                         key={sub.id || index}
                         className="border-border-default relative w-full flex-1 overflow-hidden rounded-3xl border bg-gray-50 shadow-sm"
                       >
-                        <Image
+                        <GalleryImage
                           src={sub.imageUrl}
                           alt={`${activity.title} sub ${index}`}
-                          fill
                           sizes="(max-width: 768px) 100vw, 600px"
-                          quality={80}
-                          className="object-cover transition-transform duration-300 hover:scale-105"
+                          onOpen={setLightboxImage}
                         />
                       </div>
                     ))}
@@ -115,33 +133,27 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                 {subImages.length === 3 && (
                   <div className="grid h-full grid-cols-2 grid-rows-2 gap-4">
                     <div className="border-border-default relative col-span-2 row-span-1 h-full w-full overflow-hidden rounded-3xl border bg-gray-50 shadow-sm">
-                      <Image
+                      <GalleryImage
                         src={subImages[0].imageUrl}
                         alt={`${activity.title} sub 0`}
-                        fill
                         sizes="(max-width: 768px) 100vw, 600px"
-                        quality={80}
-                        className="object-cover transition-transform duration-300 hover:scale-105"
+                        onOpen={setLightboxImage}
                       />
                     </div>
                     <div className="border-border-default relative col-span-1 row-span-1 h-full w-full overflow-hidden rounded-3xl border bg-gray-50 shadow-sm">
-                      <Image
+                      <GalleryImage
                         src={subImages[1].imageUrl}
                         alt={`${activity.title} sub 1`}
-                        fill
                         sizes="(max-width: 768px) 50vw, 300px"
-                        quality={80}
-                        className="object-cover transition-transform duration-300 hover:scale-105"
+                        onOpen={setLightboxImage}
                       />
                     </div>
                     <div className="border-border-default relative col-span-1 row-span-1 h-full w-full overflow-hidden rounded-3xl border bg-gray-50 shadow-sm">
-                      <Image
+                      <GalleryImage
                         src={subImages[2].imageUrl}
                         alt={`${activity.title} sub 2`}
-                        fill
                         sizes="(max-width: 768px) 50vw, 300px"
-                        quality={80}
-                        className="object-cover transition-transform duration-300 hover:scale-105"
+                        onOpen={setLightboxImage}
                       />
                     </div>
                   </div>
@@ -153,13 +165,11 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
                         key={sub.id || index}
                         className="border-border-default relative col-span-1 row-span-1 h-full w-full overflow-hidden rounded-3xl border bg-gray-50 shadow-sm"
                       >
-                        <Image
+                        <GalleryImage
                           src={sub.imageUrl}
                           alt={`${activity.title} sub ${index}`}
-                          fill
                           sizes="(max-width: 768px) 50vw, 300px"
-                          quality={80}
-                          className="object-cover transition-transform duration-300 hover:scale-105"
+                          onOpen={setLightboxImage}
                         />
                       </div>
                     ))}
@@ -302,6 +312,29 @@ export const ActivityDetailClient = ({ activity }: ActivityDetailClientProps) =>
           )}
         </div>
       </div>
+
+      {lightboxImage && (
+        <Modal
+          onClose={() => setLightboxImage(null)}
+          ariaLabel="원본 이미지 보기"
+          overlayClassName="bg-black/80 p-4"
+          className="!bg-transparent !p-0 !shadow-none"
+        >
+          <div
+            className="relative h-[85vh] w-[90vw] max-w-[1100px]"
+            onClick={() => setLightboxImage(null)}
+          >
+            <Image
+              src={lightboxImage}
+              alt="원본 이미지"
+              fill
+              sizes="90vw"
+              quality={90}
+              className="object-contain"
+            />
+          </div>
+        </Modal>
+      )}
     </main>
   );
 };
