@@ -56,10 +56,7 @@ export function NavigationButton({ activeStatus, onClickButton }: NavigationButt
       startX = e.pageX - el.offsetLeft;
       scrollLeft = el.scrollLeft;
       el.style.cursor = 'grabbing';
-    };
-    const onMouseLeave = () => {
-      isDown = false;
-      el.style.cursor = '';
+      e.preventDefault();
     };
     const onMouseUp = () => {
       isDown = false;
@@ -67,21 +64,18 @@ export function NavigationButton({ activeStatus, onClickButton }: NavigationButt
     };
     const onMouseMove = (e: MouseEvent) => {
       if (!isDown) return;
-      e.preventDefault();
       const x = e.pageX - el.offsetLeft;
       el.scrollLeft = scrollLeft - (x - startX);
     };
 
     el.addEventListener('mousedown', onMouseDown);
-    el.addEventListener('mouseleave', onMouseLeave);
-    el.addEventListener('mouseup', onMouseUp);
-    el.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
 
     return () => {
       el.removeEventListener('mousedown', onMouseDown);
-      el.removeEventListener('mouseleave', onMouseLeave);
-      el.removeEventListener('mouseup', onMouseUp);
-      el.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', onMouseMove);
     };
   }, []);
 
