@@ -13,6 +13,7 @@ interface SelectFieldProps {
   selectedOption?: string;
   isLabelReaction?: boolean;
   disabled?: boolean;
+  buttonClassName?: string;
 }
 
 export function SelectField({
@@ -23,6 +24,7 @@ export function SelectField({
   selectedOption,
   isLabelReaction = false,
   disabled = false,
+  buttonClassName,
 }: SelectFieldProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const selectedIndex = selectedOption ? list.indexOf(selectedOption) : null;
@@ -59,7 +61,7 @@ export function SelectField({
           onClick={handleClickDropdown}
           type="button"
           disabled={disabled}
-          className={`border-border-default focus-within:border-text-primary flex h-13 w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-5 md:min-w-35 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+          className={`border-border-default focus-within:border-text-primary flex h-13 w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-2xl border bg-white px-3 md:min-w-35 md:px-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${buttonClassName ?? ''}`}
         >
           <span
             className={`${displayedMessage === defaultMessage ? 'text-text-placeholder' : 'text-text-primary'} min-w-0 flex-1 truncate text-left font-medium`}

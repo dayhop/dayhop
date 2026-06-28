@@ -59,6 +59,7 @@ export function AddedTimeSlotForm({
               isLabelReaction={true}
               onSelectOption={(option) => handleSelectTime('startTime', option)}
               selectedOption={data.startTime}
+              buttonClassName="px-3 md:px-5 md:min-w-[120px]"
             />
           </div>
           <div>
@@ -72,6 +73,7 @@ export function AddedTimeSlotForm({
               isLabelReaction={true}
               onSelectOption={(option) => handleSelectTime('endTime', option)}
               selectedOption={data.endTime}
+              buttonClassName="px-3 md:px-5 md:min-w-[120px]"
             />
           </div>
         </div>

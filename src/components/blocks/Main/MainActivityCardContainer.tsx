@@ -65,7 +65,7 @@ export function MainActivityCardContainer({
         {showMore ? (
           <Link
             href={'/activities'}
-            className="flex h-10 items-center pr-5 text-sm text-gray-500 md:pr-7.5 xl:pr-3"
+            className="flex h-10 items-center pr-5 text-sm text-gray-500 md:pr-7.5 xl:pr-3 xl:text-base"
           >
             전체보기
           </Link>
