@@ -62,10 +62,7 @@ export const Footer = () => {
 
         {/* Links */}
         <div className="text-text-tertiary flex items-center gap-4 text-sm font-normal">
-          <Link
-            href="/privacy"
-            className="hover:text-text-primary text-text-secondary transition-colors"
-          >
+          <Link href="/privacy" className="hover:text-text-primary transition-colors">
             Privacy Policy
           </Link>
           <span className="text-gray-300">·</span>
