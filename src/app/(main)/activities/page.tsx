@@ -191,7 +191,7 @@ function ActivitiesPageContent() {
           </h1>
         )}
 
-        <div className="mb-8 flex [scrollbar-width:none] gap-4 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mb-8 flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] md:gap-4 [&::-webkit-scrollbar]:hidden">
           {CATEGORIES.map((category) => {
             const Icon = category.Icon;
             const isSelected = selectedCategory === category.value;
