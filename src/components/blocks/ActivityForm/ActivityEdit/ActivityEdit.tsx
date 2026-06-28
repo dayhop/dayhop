@@ -198,7 +198,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
   };
 
   return (
-    <div className="mx-6">
+    <div className="">
       {isOpen && (
         <ConfirmModal
           onConfirm={handleSubmit}
@@ -211,7 +211,7 @@ export function ActivityEdit({ activityId }: EditPageProps) {
       <ResetButton onReset={handleReset} resetButtonBottom={resetButtonBottom} />
       <form
         ref={formRef}
-        className="mx-auto mb-10 flex w-full max-w-175 grow flex-col justify-center gap-6 px-4 lg:mt-5 lg:mb-20"
+        className="mx-auto mt-5 mb-10 flex w-full max-w-187 grow flex-col justify-center gap-6 px-6 lg:mt-5 lg:mb-20"
         key={resetKey}
       >
         <div className="py-2.5 text-lg font-bold">내 체험 수정</div>
