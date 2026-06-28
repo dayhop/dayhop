@@ -76,23 +76,6 @@ export const Footer = () => {
 
         {/* SNS Icons */}
         <div className="text-text-placeholder flex items-center gap-5">
-          <button
-            type="button"
-            onClick={() => handleShare('facebook')}
-            className="hover:text-text-secondary cursor-pointer transition-colors"
-            aria-label="Facebook으로 공유"
-          >
-            <FacebookIcon className="h-5 w-5" />
-          </button>
-          <a
-            href="https://www.instagram.com/dayhop2026/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-text-secondary transition-colors"
-            aria-label="Instagram"
-          >
-            <InstagramIcon className="h-5 w-5" />
-          </a>
           <a
             href="https://github.com/dayhop/dayhop"
             target="_blank"
@@ -102,6 +85,24 @@ export const Footer = () => {
           >
             <GithubIcon className="h-5 w-5" />
           </a>
+          <a
+            href="https://www.instagram.com/dayhop2026/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text-secondary transition-colors"
+            aria-label="Instagram"
+          >
+            <InstagramIcon className="h-5 w-5" />
+          </a>
+          <button
+            type="button"
+            onClick={() => handleShare('facebook')}
+            className="hover:text-text-secondary cursor-pointer transition-colors"
+            aria-label="Facebook으로 공유"
+          >
+            <FacebookIcon className="h-5 w-5" />
+          </button>
+
           <button
             type="button"
             onClick={() => handleShare('x')}
