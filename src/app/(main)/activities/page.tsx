@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import type { ComponentType, SVGProps } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { cn } from '@/utils/cn';
 
 import CategoryCulture from '@/assets/icon/category-culture.svg';
 import CategoryFood from '@/assets/icon/category-food.svg';
@@ -191,7 +192,7 @@ function ActivitiesPageContent() {
           </h1>
         )}
 
-        <div className="mb-8 flex [scrollbar-width:none] gap-4 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mb-8 flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] md:gap-4 [&::-webkit-scrollbar]:hidden">
           {CATEGORIES.map((category) => {
             const Icon = category.Icon;
             const isSelected = selectedCategory === category.value;
@@ -201,11 +202,12 @@ function ActivitiesPageContent() {
                 key={category.value}
                 type="button"
                 onClick={() => handleCategoryClick(category.value)}
-                className={
+                className={cn(
+                  'flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-4 text-sm font-bold whitespace-nowrap md:h-12 md:gap-2 md:px-6 md:text-base',
                   isSelected
-                    ? 'flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-gray-900 px-4 text-sm font-bold whitespace-nowrap text-white md:h-12 md:gap-2 md:px-6 md:text-base'
-                    : 'flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 text-sm font-bold whitespace-nowrap text-gray-700 transition-colors hover:border-gray-400 md:h-12 md:gap-2 md:px-6 md:text-base'
-                }
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-300 bg-white text-gray-700 transition-colors hover:border-gray-400'
+                )}
               >
                 {Icon && (
                   <Icon

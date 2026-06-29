@@ -55,6 +55,7 @@ export function CreateTimeSlotForm({ onAddSchedule }: CreateTimeSlotFormProps) {
               label="시작 시간"
               onSelectOption={(option) => handleSelectTime('startTime', option)}
               selectedOption={scheduleFormData.startTime}
+              buttonClassName="px-3 md:px-5 md:min-w-[120px]"
             />
           </div>
           <div className="md:mt-7">
@@ -69,6 +70,7 @@ export function CreateTimeSlotForm({ onAddSchedule }: CreateTimeSlotFormProps) {
               label="종료 시간"
               onSelectOption={(option) => handleSelectTime('endTime', option)}
               selectedOption={scheduleFormData.endTime}
+              buttonClassName="px-3 md:px-5 md:min-w-[120px]"
             />
           </div>
         </div>
